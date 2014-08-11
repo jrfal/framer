@@ -1,0 +1,56 @@
+{
+  "css": "test.css",
+  "pages": [
+    {
+      "slug": "first",
+      "title": "first page",
+      "elements": [
+        {
+          "template": "grid",
+          "data": [
+            [
+              "First","Last"
+            ],
+            [
+              "Jeff","Fal"
+            ],
+            [
+              "Darth","Vader"
+            ],
+            [
+              "Spider","Man"
+            ]
+          ]
+        },
+        {
+          "template": "rectangle",
+          "x": 100,
+          "y": 100,
+          "w": 400,
+          "h": 250
+        }
+      ]
+    },
+    {
+      "slug": "second",
+      "title": "second page",
+      "elements": [
+        {
+          "template": "test",
+          "name": "Jose",
+          "city": "Calgary"
+        },
+        {
+          "template": "test",
+          "name": "Hank",
+          "city": "Los Angeles"
+        },
+        {
+          "template": "link",
+          "label": "page 1",
+          "href": "#first"
+        }
+      ]
+    }
+  ]
+}

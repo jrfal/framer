@@ -1,0 +1,65 @@
+$basic-color: #555;
+$highlight-color: #00a;
+$standard-font: 'Helvetica', sans-serif;
+
+#framer_backdrop {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+#framer_controls, #framer_pages {
+  position:absolute;
+}
+
+#framer_controls {
+  .control-box {
+    // display: none;
+    border: 1px solid $highlight-color;
+    min-height: 20px;
+    min-width: 20px;
+    position: absolute;
+
+    &.dragging {
+      border-color: #0f0;
+    }
+
+    .resize-handle {
+      background: $highlight-color;
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      right:-10px;
+      bottom:-10px;
+    }
+
+    .text-edit-handle {
+      font-family: $standard-font;
+      font-size:8px;
+      background: $highlight-color;
+      color: #fff;
+      position: absolute;
+      right: 0;
+      top: 0;
+      padding: 4px;
+    }
+  }
+}
+
+.framer-drawn-element {
+  border: 1px solid $basic-color;
+
+  &.oval {
+    border-radius: 50% / 50%;
+  }
+}
+
+.framer-modal {
+  position: absolute;
+  background: rgba(255,255,255,0.75);
+  left: 100px;
+  top: 100px;
+  padding: 10px;
+}

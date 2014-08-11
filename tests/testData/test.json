@@ -1,0 +1,61 @@
+{
+  "css": "test.css",
+  "pages": [
+    {
+      "slug": "first",
+      "title": "first page",
+      "elements": [
+        {
+          "template": "test2",
+          "name": "Jeff",
+          "city": "Denver"
+        },
+        {
+          "template": "test",
+          "name": "Bill",
+          "city": "Portland"
+        },
+        {
+          "template": "link",
+          "label": "page 2",
+          "href": "#second"
+        },
+        {
+          "template": "rectangle",
+          "x": 100,
+          "y": 100,
+          "w": 400,
+          "h": 250
+        }
+      ]
+    },
+    {
+      "slug": "second",
+      "title": "second page",
+      "elements": [
+        {
+          "template": "test",
+          "name": "Jose",
+          "city": "Calgary"
+        },
+        {
+          "template": "test",
+          "name": "Hank",
+          "city": "Los Angeles"
+        },
+        {
+          "template": "link",
+          "label": "page 1",
+          "href": "#first"
+        },
+        {
+          "template": "oval",
+          "x": 200,
+          "y": 100,
+          "w": 300,
+          "h": 200
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "pages": [
+    {
+      "slug": "grid",
+      "title": "grid page",
+      "elements": [
+        {
+          "template": "grid",
+          "data": [
+            [
+              "First","Last"
+            ],
+            [
+              "Jeff","Fal"
+            ],
+            [
+              "Darth","Vader"
+            ],
+            [
+              "Spider","Man"
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

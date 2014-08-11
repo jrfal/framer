@@ -1,0 +1,7 @@
+{
+  "name": "Framer-tests",
+  "main": "index.html",
+  "window": {
+    "toolbar": true
+  }
+}

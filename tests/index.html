@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Framer</title>
+    <link href="../src/css/framer.css" rel="stylesheet" type="text/css" />
+    <link id="cssLink" href="../src/css/default.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="node_modules/mocha/mocha.css" />
+  </head>
+  <body>
+    <div id="framer_backdrop"></div>
+    <div id="framer_pages">
+      <h1>Hello World!</h1>
+    </div>
+    <div id="framer_controls"></div>
+    <div id="mocha" style="position:absolute;left:0;top:0;background:rgba(200,200,255,0.5)"></div>
+    <input id="dataFile" type="file" style="display:none;" />
+    <input id="cssFile" type="file" style="display:none;" />
+    <script>
+      global.window = window
+      global.document = document
+      global.gui = require('nw.gui');
+      require('coffee-script/register');
+      global.cfg = require('./scripts/config.coffee');
+      require('../src/scripts/framer.coffee');
+      require('./main.coffee').run();
+    </script>
+  </body>
+</html>

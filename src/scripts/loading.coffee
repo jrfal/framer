@@ -4,6 +4,10 @@ controlBox = require './controlBox.coffee'
 fs = require 'fs'
 path = require 'path'
 $ = require 'jquery'
+templates = require './componentTemplates.coffee'
+Project = require './models/project.coffee'
+Page = require './models/page.coffee'
+Element = require './models/element.coffee'
 
 projectObj = ''
 
@@ -12,6 +16,9 @@ loadFile = (filename) ->
     project = JSON.parse(fs.readFileSync(filename).toString())
   catch
     return
+
+  projectModel = new Project()
+  pageModels = projectModel.get 'pages'
 
   projectObj = project
 
@@ -22,26 +29,31 @@ loadFile = (filename) ->
 
   pageEls = []
   for page in pages
+    pageModel = new Page()
+    pageModels.add pageModel
+    elementModels = pageModel.get 'elements'
+
     elements = page.elements
-    pageEl = $ "<div class=\"framer-page\" id=\"#{page.slug}\"></div>"
+    # pageEl = $ "<div class=\"framer-page\" id=\"#{page.slug}\"></div>"
 
     for data in elements
-      source = "{{> #{data.template}}}"
-      template = Handlebars.compile(source)
+      elementModel = new Element(data)
+      elementModels.add elementModel
 
-      pageEl.append template(data)
+      # template = templates.getTemplate data.template
+      # pageEl.append template(data)
 
-    $(pageEl).hide()
-    pageEls.push pageEl
+    # $(pageEl).hide()
+    # pageEls.push pageEl
 
-  $("#framer_pages").empty()
-  $("#framer_pages").append pageEl for pageEl in pageEls
-  if pageEls.length > 0
-    $(pageEls[0]).show()
-    controlBox.renderControls()
-
+  # $("#framer_pages").empty()
+  # $("#framer_pages").append pageEl for pageEl in pageEls
+  # if pageEls.length > 0
+  #   $(pageEls[0]).show()
+  #   controlBox.renderControls()
+  #
   if ("css" of project)
-    $("#cssLink").attr "href", path.dirname(filename) + project.css
+    $("#cssLink").attr "href", path.dirname(filename)+ '/' + project.css
 
 # trigger file load
 $("#dataFile").change ->

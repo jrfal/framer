@@ -1,3 +1,5 @@
+require './views/appView.coffee'
+
 Handlebars = require 'handlebars'
 fs = require 'fs'
 path = require 'path'
@@ -83,12 +85,6 @@ init = ->
     e.preventDefault()
 
   $("body").on 'drop', controlBox.controlDropHandler
-
-  # register all templates
-  partials = fs.readdirSync global.cfg.templateDir
-  for partial in partials
-    handle = partial.replace /\..*/, ""
-    Handlebars.registerPartial handle, fs.readFileSync(global.cfg.templateDir+partial).toString()
 
 makeMenu()
 init()

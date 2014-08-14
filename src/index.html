@@ -6,19 +6,11 @@
     <link id="cssLink" href="css/default.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
-    <div id="framer_backdrop"></div>
-    <div id="framer_pages">
-      <h1>Hello World!</h1>
-    </div>
-    <div id="framer_controls"></div>
-    <input id="dataFile" type="file" style="display:none;" />
-    <input id="cssFile" type="file" style="display:none;" />
-    <input id="saveFile" type="file" style="display:none;" nwsaveas />
     <script>
       global.gui = require('nw.gui');
       require('coffee-script/register');
       global.cfg = require('./scripts/config.coffee');
-      require('./scripts/loading.coffee');
+      // require('./scripts/loading.coffee');
       require('./scripts/framer.coffee');
     </script>
   </body>

@@ -6,10 +6,12 @@ _ = require 'underscore'
 Project = require './../models/project.coffee'
 BaseView = require './baseView.coffee'
 PageView = require './page.coffee'
+ControlLayer = require './controlBoxes.coffee'
 
 class ProjectView extends BaseView
   model: new Project()
   pageView: new PageView()
+  controlView: new ControlLayer()
   currentPage: null
 
   initialize: ->

@@ -5,7 +5,7 @@ _ = require 'underscore'
 Page = require './page.coffee'
 
 class Project extends Backbone.Model
-  defaults:
-    pages: new Backbone.Collection [], {model: Page}
+  initialize: ->
+    @set 'pages', new Backbone.Collection [], {model: Page}
 
 module.exports = Project

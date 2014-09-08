@@ -6,11 +6,13 @@
     <link id="cssLink" href="css/default.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
+    <div id="app"></div>
     <script>
+      global.window = window
+      global.document = document
       global.gui = require('nw.gui');
       require('coffee-script/register');
       global.cfg = require('./scripts/config.coffee');
-      // require('./scripts/loading.coffee');
       require('./scripts/framer.coffee');
     </script>
   </body>

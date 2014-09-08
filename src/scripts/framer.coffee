@@ -1,4 +1,5 @@
-require './views/appView.coffee'
+App = require './models/app.coffee'
+AppView = require './views/appView.coffee'
 
 Handlebars = require 'handlebars'
 fs = require 'fs'
@@ -9,7 +10,8 @@ $ = require 'jquery'
 # build main menu
 makeMenu = ->
   main_menu = new global.gui.Menu({ type: 'menubar'})
-  # main_menu.createMacBuiltin("framer");
+  try
+    main_menu.createMacBuiltin("framer");
 
   file_menu = new global.gui.Menu()
   file_menu.append new gui.MenuItem({
@@ -55,40 +57,6 @@ init = ->
   $("#framer_pages").on 'click', 'a[href^="#"]', ->
     localLinkHandler $(this).attr 'href'
 
-  # $("#framer_controls").on 'dragstart', '.control-box', controlBox.controlDragHandler
-  # $("#framer_controls").on 'dragend', '.control-box', controlBox.controlDragStopHandler
-  #
-  # $("#framer_controls").on 'dragstart', '.control-box .resize-handle', controlBox.resizeDragHandler
-  # $("#framer_controls").on 'dragend', '.control-box .resize-handle', controlBox.resizeDragStopHandler
-  #
-  # $("#framer_controls").on 'click', '.control-box .text-edit-handle', controlBox.textEditHandler
-  # $("#framer_controls").on 'click', '.text-update .cancel', (e) ->
-  #   $(e.target).closest('.framer-modal').remove()
-  # $("#framer_controls").on 'click', '.text-update .save', (e) ->
-  #   input = $(e.target).closest('.text-update').find('input[type="text"].content')
-  #   newText = input.val()
-  #   controlBox.updateText input.data("element"), newText
-  #
-  #   input = $(e.target).closest('.text-update').find('input[type="text"].font-family')
-  #   newFont = input.val()
-  #   if newFont != ''
-  #     controlBox.updateFontFamily input.data("element"), newFont
-  #
-  #   input = $(e.target).closest('.text-update').find('input[type="text"].font-size')
-  #   newSize = input.val()
-  #   if newSize != ''
-  #     controlBox.updateFontSize input.data("element"), newSize
-  #
-  #   $(e.target).closest('.framer-modal').remove()
-
-  # $("body").on 'dragover', (e) ->
-  #   e.preventDefault()
-  #
-  # $("body").on 'drop', controlBox.controlDropHandler
-
-makeMenu()
-init()
-
 nextPageHandler = ->
   currentPage = $("#framer_pages .framer-page:visible")
   nextPage = $(currentPage).next();
@@ -104,3 +72,10 @@ localLinkHandler = (href) ->
     $("#framer_pages .framer-page").hide()
     $(targetPage).show()
     controlBox.renderControls()
+
+app = new App()
+app_view = new AppView {model: app}
+module.exports = app
+
+makeMenu()
+init()

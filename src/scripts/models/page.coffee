@@ -6,10 +6,14 @@ Element = require './element.coffee'
 
 class Page extends Backbone.Model
   defaults:
-    elements: new Backbone.Collection({model: Element})
     slug: 'model'
 
   initialize: ->
-    true
+    _.bindAll @, 'getElementByID'
+    @set 'elements', new Backbone.Collection([], {model: Element})
+
+  getElementByID: (id) ->
+    return @get('elements').findWhere {id: id}
+
 
 module.exports = Page

@@ -14,10 +14,11 @@ class PageView extends Backbone.View
 
   initialize: ->
     _.bindAll @, 'render'
-    @render()
 
   render: ->
     if @model?
+      # console.log(@model.get 'slug')
+      $(@el).attr("id", @model.get 'slug')
       $(@el).children().detach()
       elements = @model.get 'elements'
 
@@ -32,5 +33,6 @@ class PageView extends Backbone.View
       elementView = new ElementView {model: element}
       @elementViews.push elementView
     return elementView
+
 
 module.exports = PageView

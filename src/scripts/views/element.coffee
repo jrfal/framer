@@ -13,18 +13,18 @@ class ElementView extends Backbone.View
   controlBox: null
 
   initialize: ->
-    @controlLayer = $ '#framer_controls'
-
+    if @model.has 'template'
+      template = @model.get 'template'
+      @template = templates.getTemplate template
     _.bindAll @, 'render', 'setElement'
+    @model.on "change", @render
     @render()
 
   render: ->
     if @model?
+      oldEl = @el
       @setElement $(@template(@model.attributes))
-
-      if !@controlBox?
-        @controlBox = uiTemplates.controlBox()
-        @controlLayer.append @controlBox
+      $(oldEl).replaceWith $(@el)
 
   modelData: ->
     return model.attributes

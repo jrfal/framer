@@ -10,28 +10,29 @@ Page = require './page.coffee'
 Element = require './element.coffee'
 
 class App extends Backbone.Model
-  defaults:
-    project: new Project()
   initialize: ->
-    # _.bindAll @, 'set'
-    true
+    @set 'project', new Project()
 
   loadFile: (filename) ->
     try
-      project = JSON.parse(fs.readFileSync(filename).toString())
+      attributes = JSON.parse(fs.readFileSync(filename).toString())
     catch
       return
 
-    projectModel = new Project()
-    pageModels = projectModel.get 'pages'
+    pages = []
+    if ('pages' of attributes)
+      pages = attributes.pages
+      delete attributes.pages
 
-    if "pages" of project
-      pages = project.pages
-    else
-      pages = []
+    projectModel = new Project(attributes)
+    pageModels = projectModel.get 'pages'
 
     for page in pages
       pageModel = new Page()
+      if 'slug' of page
+        pageModel.set 'slug', page.slug
+      if 'title' of page
+        pageModel.set 'title', page.title
       pageModels.add pageModel
       elementModels = pageModel.get 'elements'
 
@@ -40,9 +41,19 @@ class App extends Backbone.Model
         elementModel = new Element(data)
         elementModels.add elementModel
 
-    if ("css" of project)
-      $("#cssLink").attr "href", path.dirname(filename)+ '/' + project.css
+    if ("css" of attributes)
+      $("#cssLink").attr "href", path.dirname(filename)+ '/' + attributes.css
 
     @set 'project', projectModel
+
+  saveFile: (filename) ->
+    projectString = JSON.stringify(@get 'project')
+    projectObj = JSON.parse(projectString)
+    if 'pages' of projectObj and projectObj?
+      for page in projectObj.pages
+        if 'elements' of page and page?
+          for element in page.elements
+            delete element.id
+    fs.writeFile(filename, JSON.stringify(projectObj, null, "\t"))
 
 module.exports = App

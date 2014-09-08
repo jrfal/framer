@@ -1,3 +1,5 @@
+console.log 'LOADING'
+
 Handlebars = require 'handlebars'
 framer = require './framer.coffee'
 controlBox = require './controlBox.coffee'

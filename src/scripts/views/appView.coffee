@@ -8,19 +8,18 @@ ProjectView = require './project.coffee'
 BaseView = require './baseView.coffee'
 
 class AppView extends BaseView
-  el: $ 'body'
+  el: '#app'
 
   projectView: new ProjectView()
 
   initialize: ->
     _.bindAll @, 'render', 'loadFile', 'newProject'
-    @model = new App()
     @model.on "change:project", @newProject
 
     @render()
 
   render: ->
-    $(@el).html uiTemplates.app()
+    $(@el).html uiTemplates.app({})
     @assign @projectView, '#framer_pages'
 
     # trigger css file load
@@ -34,10 +33,10 @@ class AppView extends BaseView
   newProject: ->
     if @model?
       @projectView.model = @model.get 'project'
+      @projectView.currentPage = null
       @projectView.render()
 
   events:
     "change #dataFile"   : "loadFile"
 
-
-app_view = new AppView {model: new App()}
+module.exports = AppView

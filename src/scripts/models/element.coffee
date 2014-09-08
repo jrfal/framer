@@ -3,13 +3,12 @@ Backbone = require 'backbone'
 # Backbone.$ = $
 _ = require 'underscore'
 
+id = 1;
+
 class Element extends Backbone.Model
-  defaults:
-    template: 'rectangle'
-    x: 0
-    y: 0
-    width: 100
-    height: 100
+  initialize: ->
+    _.bindAll @, 'set'
+    @set 'id', id++
 
 
 module.exports = Element

@@ -1,0 +1,24 @@
+{
+  "pages": [
+    {
+      "slug": "first",
+      "title": "first page",
+      "elements": [
+        {
+          "template": "rectangle",
+          "x": 100,
+          "y": 100,
+          "w": 400,
+          "h": 250
+        },
+        {
+          "template": "oval",
+          "x": 200,
+          "y": 100,
+          "w": 300,
+          "h": 200
+        }
+      ]
+    }
+  ]
+}

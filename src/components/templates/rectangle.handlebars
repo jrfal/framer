@@ -1,3 +1,3 @@
-<div class="framer-element framer-drawn-element{{#if shapeClass}} {{shapeClass}}{{else}} rectangle{{/if}}" style="position:absolute;left:{{x}}px;top:{{y}}px;width:{{w}}px;height:{{h}}px">
-  <span class="framer-text"></span>
+<div class="framer-element framer-drawn-element{{#if shapeClass}} {{shapeClass}}{{else}} rectangle{{/if}}" {{> _elementStyle}}>
+  {{#if text}}<span class="framer-text" style="{{#if fontFamily}}font-family:'{{fontFamily}}';{{/if}}{{#if fontSize}}font-size:{{fontSize}};{{/if}}">{{text}}</span>{{/if}}
 </div>

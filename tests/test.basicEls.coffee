@@ -1,11 +1,10 @@
 assert = require 'assert'
 framer = require '../src/scripts/framer.coffee'
-loading = require '../src/scripts/loading.coffee'
 $ = require 'jquery'
 
 describe 'Basic Elements', ->
   before ->
-    loading.loadFile './testData/basicElements.json'
+    framer.loadFile './testData/basicElements.json'
 
   describe 'grid', ->
     it 'should be a 4 x 2 table', ->

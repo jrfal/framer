@@ -14,7 +14,9 @@ Dialog = require './../views/dialog.coffee'
 
 class App extends Backbone.Model
   initialize: ->
-    @set 'project', new Project()
+    newProject = new Project()
+    newProject.addPage()
+    @set 'project', newProject
 
   loadFile: (filename) ->
     if (!fs.existsSync(filename))
@@ -47,12 +49,10 @@ class App extends Backbone.Model
       if 'title' of page
         pageModel.set 'title', page.title
       pageModels.add pageModel
-      elementModels = pageModel.get 'elements'
 
       elements = page.elements
       for data in elements
-        elementModel = new Element(data)
-        elementModels.add elementModel
+        pageModel.addElement data
 
     if ("css" of attributes)
       $("#cssLink").attr "href", path.dirname(filename)+ '/' + attributes.css

@@ -16,10 +16,11 @@ class AppView extends BaseView
   elementPalette: null
 
   initialize: ->
-    _.bindAll @, 'render', 'loadFile', 'newProject'
+    _.bindAll @, 'loadFile', 'newProject', 'createElementHandler'
     @model.on "change:project", @newProject
-    @projectView = new ProjectView()
+    @projectView = new ProjectView({model: @model.get 'project'})
     @elementPalette = new ElementPaletteView()
+    @elementPalette.on('createElement', @createElementHandler)
 
     @render()
 
@@ -42,12 +43,8 @@ class AppView extends BaseView
       @projectView.currentPage = null
       @projectView.render()
 
-  showMessage: (message) ->
-    if ($ '#framer_message')
-      @hideMessage
-
-  hideMessage: ->
-
+  createElementHandler: (data) ->
+    @projectView.pageView.model.addElement data
 
   events:
     "change #dataFile"   : "loadFile"

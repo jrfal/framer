@@ -9,12 +9,14 @@ PageView = require './page.coffee'
 ControlLayer = require './controlLayer.coffee'
 
 class ProjectView extends BaseView
-  pageView: new PageView()
-  controlView: new ControlLayer()
+  pageView: null
+  controlView: null
   currentPage: null
 
   initialize: ->
     _.bindAll @, 'render'
+    @pageView = new PageView()
+    @controlView = new ControlLayer()
 
   render: ->
     if not @model?
@@ -27,15 +29,14 @@ class ProjectView extends BaseView
       page = pages.at(0)
 
     if page?
-      @pageView.model = page
+      @pageView.setModel page
       @pageView.render()
       $(@el).empty()
       $(@el).append(@pageView.el)
 
-      @controlView.model = page
+      @controlView.setModel page
       @controlView.setElement '#framer_controls'
       @controlView.render()
-      # @assign @controlView, '#framer_controls'
 
 
 module.exports = ProjectView

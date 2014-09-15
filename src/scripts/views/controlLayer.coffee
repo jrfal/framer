@@ -10,6 +10,13 @@ class ControlLayer extends BaseView
   initialize: ->
     _.bindAll @, 'render', 'controlDragHandler', 'dropHandler', 'resizeDragHandler'
 
+  setModel: (model) ->
+    @model = model
+    elements = @model.get 'elements'
+    elements.on 'add', @render
+    elements.on 'remove', @render
+    elements.on 'sort', @render
+
   render: ->
     if @model?
       $(@el).children().detach()

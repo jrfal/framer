@@ -13,11 +13,12 @@ class PageView extends Backbone.View
   model: null
 
   initialize: ->
-    _.bindAll @, 'render'
+    _.bindAll @, 'render', 'addElementHandler', 'removeElementHandler', 'sortElementsHandler'
+    if @model?
+      @setModel @model
 
   render: ->
     if @model?
-      # console.log(@model.get 'slug')
       $(@el).attr("id", @model.get 'slug')
       $(@el).children().detach()
       elements = @model.get 'elements'
@@ -34,5 +35,48 @@ class PageView extends Backbone.View
       @elementViews.push elementView
     return elementView
 
+  setModel: (model) ->
+    @model = model
+    elements = @model.get 'elements'
+    elements.on 'add', @addElementHandler
+    elements.on 'remove', @removeElementHandler
+    elements.on 'sort', @sortElementsHandler
+
+  addElementHandler: (model, collection) ->
+    elementView = @getElementView(model)
+    $(@el).append(elementView.el)
+    if collection.last() != model
+      @updateElementOrder()
+
+  removeElementHandler: (model, collection) ->
+    workingCopy = elementViews.slice 0
+
+    for elementView in workingCopy
+      if (elementView.model == model)
+        $(elementView.el).remove()
+        elementViews = _.without elementViews, elementView
+
+  sortElementsHandler: ->
+    @updateElementOrder()
+
+  updateElementOrder: ->
+    if @model?
+      elements = @model.get 'elements'
+
+      clean = false
+      while not clean
+        clean = true
+
+        for elementView in @elementViews
+          found = false
+          for element in elements.models
+            if not found
+              if element == elementView.model
+                found = true
+              else
+                for search in @elementViews
+                  if element == search.model
+                    $(elementView.el).before(search.el)
+                    clean = false
 
 module.exports = PageView

@@ -36,3 +36,6 @@ describe 'Problem Loading', ->
   describe 'badly formatted file', ->
     it 'should show bad file message', ->
       assert.equal $($(".dialog-message")[1]).text(), messages["bad file"]
+
+after ->
+  $('.bbm-wrapper').trigger 'click'

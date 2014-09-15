@@ -81,7 +81,6 @@ class ControlBox extends BaseView
     $("#framer_controls").append box.el
 
   textEditHandler: (e) ->
-    console.log 'clicked'
     @createTextEditBox($(e.target).closest('.control-box').data('element'))
 
   events:

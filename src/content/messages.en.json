@@ -1,0 +1,5 @@
+{
+  "no file":      "That file doesn't exist.",
+  "bad file":     "That file isn't formatted correctly.",
+  "file problem": "There's a problem loading that file."
+}

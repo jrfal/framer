@@ -3,6 +3,7 @@ framer = require '../src/scripts/framer.coffee'
 fs = require 'fs'
 $ = require 'jquery'
 _ = require 'underscore'
+messages = require './../src/content/messages.en.json'
 
 describe 'Loading', ->
   before ->
@@ -19,3 +20,19 @@ describe 'Loading', ->
       saveFile = JSON.parse(fs.readFileSync('./testData/savetest.json').toString())
       assert.ok _.isEqual(loadFile, saveFile)
       fs.unlink './testData/savetest.json'
+
+describe 'Problem Loading', ->
+  before ->
+    framer.loadFile './testData/not.a.file.json'
+
+  describe 'non-existent file', ->
+    it 'should show no file message', ->
+      assert.equal $($(".dialog-message")[0]).text(), messages["no file"]
+
+describe 'Problem Loading', ->
+  before ->
+    framer.loadFile './testData/invalid.json'
+
+  describe 'badly formatted file', ->
+    it 'should show bad file message', ->
+      assert.equal $($(".dialog-message")[1]).text(), messages["bad file"]

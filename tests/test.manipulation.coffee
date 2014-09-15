@@ -7,6 +7,7 @@ describe 'Manipulating', ->
     # move
     framer.loadFile './testData/test.json'
     controlBox = $('#framer_controls .control-box:last-child')
+    console.log controlBox
     dragData = {id: controlBox.data('element'), action: 'move', startX: 11, startY: 23}
     e = $.Event 'drop'
     e.clientX = 160 + 11

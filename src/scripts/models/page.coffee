@@ -13,6 +13,7 @@ class Page extends Backbone.Model
     @set 'elements', new Backbone.Collection([], {model: Element})
 
   getElementByID: (id) ->
+    console.log "id: #{id}"
     return @get('elements').findWhere {id: id}
 
 

@@ -16,6 +16,21 @@ describe 'Loading', ->
     it 'should have two pages', ->
       assert.equal framer.get('project').get('pages').length, 2
 
+  describe 'check control boxes', ->
+    it 'should match all the control box sizes and positions to their elements', ->
+      page = framer.get('project').get('pages').first()
+      $("#framer_controls .control-box").each ->
+        element = page.getElementByID $(this).data('element')
+        position = $(this).position()
+        if element.has 'x'
+          assert.equal element.get('x'), position.left
+        if element.has 'y'
+          assert.equal element.get('y'), position.top
+        if element.has 'w'
+          assert.equal element.get('w'), $(this).width()
+        if element.has 'h'
+          assert.equal element.get('h'), $(this).height()
+
   describe 'simple save', ->
     it 'should have all the same properties', ->
       loadFile = JSON.parse(fs.readFileSync('./testData/test.json').toString())

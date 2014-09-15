@@ -4,6 +4,8 @@ fs = require 'fs'
 $ = require 'jquery'
 _ = require 'underscore'
 messages = require './../src/content/messages.en.json'
+Project = require './../src/scripts/models/project.coffee'
+Page = require './../src/scripts/models/page.coffee'
 
 describe 'Loading', ->
   before ->
@@ -17,6 +19,26 @@ describe 'Loading', ->
   describe 'simple save', ->
     it 'should have all the same properties', ->
       loadFile = JSON.parse(fs.readFileSync('./testData/test.json').toString())
+      saveFile = JSON.parse(fs.readFileSync('./testData/savetest.json').toString())
+      assert.ok _.isEqual(loadFile, saveFile)
+      fs.unlink './testData/savetest.json'
+
+describe 'Save Changes', ->
+  before ->
+    project = new Project()
+    pages = project.get 'pages'
+    page = new Page()
+    pages.add page
+    framer.set 'project', project
+    data = {template: "link", label: "testing link", href: "#url"}
+    page.addElement data
+    data = {template: "oval", x: 40, y: 110, w: 800, h: 1001}
+    page.addElement data
+    framer.saveFile './testData/savetest.json'
+
+  describe 'save modifications', ->
+    it 'should be match a previously created reference file', ->
+      loadFile = JSON.parse(fs.readFileSync('./testData/reference.json').toString())
       saveFile = JSON.parse(fs.readFileSync('./testData/savetest.json').toString())
       assert.ok _.isEqual(loadFile, saveFile)
       fs.unlink './testData/savetest.json'
@@ -37,5 +59,5 @@ describe 'Problem Loading', ->
     it 'should show bad file message', ->
       assert.equal $($(".dialog-message")[1]).text(), messages["bad file"]
 
-after ->
-  $('.bbm-wrapper').trigger 'click'
+  after ->
+    $('.bbm-wrapper').trigger 'click'

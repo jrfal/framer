@@ -16,7 +16,7 @@ class AppView extends BaseView
   elementPalette: null
 
   initialize: ->
-    _.bindAll @, 'loadFile', 'newProject', 'createElementHandler'
+    _.bindAll @, 'loadFile', 'saveFile', 'newProject', 'createElementHandler'
     @model.on "change:project", @newProject
     @projectView = new ProjectView({model: @model.get 'project'})
     @elementPalette = new ElementPaletteView()
@@ -37,6 +37,9 @@ class AppView extends BaseView
   loadFile: (e) ->
     @model.loadFile $("#dataFile").val()
 
+  saveFile: (e) ->
+    @model.saveFile $("#saveFile").val()
+
   newProject: ->
     if @model?
       @projectView.model = @model.get 'project'
@@ -48,5 +51,6 @@ class AppView extends BaseView
 
   events:
     "change #dataFile"   : "loadFile"
+    "change #saveFile"   : "saveFile"
 
 module.exports = AppView

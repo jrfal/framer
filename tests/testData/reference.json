@@ -1,0 +1,21 @@
+{
+	"pages": [
+		{
+			"slug": "model",
+			"elements": [
+				{
+					"template": "link",
+					"label": "testing link",
+					"href": "#url"
+				},
+				{
+					"template": "oval",
+					"x": 40,
+					"y": 110,
+					"w": 800,
+					"h": 1001
+				}
+			]
+		}
+	]
+}

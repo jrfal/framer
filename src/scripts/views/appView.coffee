@@ -5,7 +5,7 @@ Backbone = require 'backbone'
 Backbone.$ = $
 _ = require 'underscore'
 App = require './../models/app.coffee'
-ProjectView = require './project.coffee'
+ProjectEditor = require './editors/projectEditor.coffee'
 BaseView = require './baseView.coffee'
 ElementPaletteView = require './elementPalette.coffee'
 
@@ -18,7 +18,7 @@ class AppView extends BaseView
   initialize: ->
     _.bindAll @, 'loadFile', 'saveFile', 'newProject', 'createElementHandler'
     @model.on "change:project", @newProject
-    @projectView = new ProjectView({model: @model.get 'project'})
+    @projectView = new ProjectEditor({model: @model.get 'project'})
     @elementPalette = new ElementPaletteView()
     @elementPalette.on('createElement', @createElementHandler)
 

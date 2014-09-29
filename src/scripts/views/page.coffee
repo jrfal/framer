@@ -8,8 +8,6 @@ ElementView = require './element.coffee'
 
 class PageView extends Backbone.View
   className: 'framer-page'
-  elementViews: []
-
   model: null
 
   initialize: ->
@@ -17,9 +15,10 @@ class PageView extends Backbone.View
     if @model?
       @setModel @model
 
+    @elementViews = []
+
   render: ->
     if @model?
-      $(@el).attr("id", @model.get 'slug')
       $(@el).children().detach()
       elements = @model.get 'elements'
 
@@ -27,11 +26,14 @@ class PageView extends Backbone.View
         elementView = @getElementView(element)
         $(@el).append(elementView.el)
 
+  newElementView: (model) ->
+    return new ElementView {model: model}
+
   getElementView: (element) ->
     elementView = _.find @elementViews, (item) ->
       item.model == element
     if !elementView?
-      elementView = new ElementView {model: element}
+      elementView = @newElementView element
       @elementViews.push elementView
     return elementView
 
@@ -43,7 +45,7 @@ class PageView extends Backbone.View
     elements.on 'sort', @sortElementsHandler
 
   addElementHandler: (model, collection) ->
-    elementView = @getElementView(model)
+    elementView = @getElementView model
     $(@el).append(elementView.el)
     if collection.last() != model
       @updateElementOrder()

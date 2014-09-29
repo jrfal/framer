@@ -10,8 +10,6 @@ class ElementView extends Backbone.View
 
   template: templates.getTemplate 'rectangle'
 
-  controlBox: null
-
   initialize: ->
     if @model.has 'template'
       template = @model.get 'template'

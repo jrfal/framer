@@ -6,7 +6,6 @@ _ = require 'underscore'
 Project = require './../models/project.coffee'
 BaseView = require './baseView.coffee'
 PageView = require './page.coffee'
-ControlLayer = require './controlLayer.coffee'
 
 class ProjectView extends BaseView
   pageView: null
@@ -15,8 +14,10 @@ class ProjectView extends BaseView
 
   initialize: ->
     _.bindAll @, 'render'
-    @pageView = new PageView()
-    @controlView = new ControlLayer()
+    @pageView = @newPageView()
+
+  newPageView: ->
+    return new PageView()
 
   render: ->
     if not @model?
@@ -33,10 +34,5 @@ class ProjectView extends BaseView
       @pageView.render()
       $(@el).empty()
       $(@el).append(@pageView.el)
-
-      @controlView.setModel page
-      @controlView.setElement '#framer_controls'
-      @controlView.render()
-
 
 module.exports = ProjectView

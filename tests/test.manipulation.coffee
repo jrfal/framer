@@ -29,7 +29,7 @@ describe 'Manipulating', ->
     $("#framer_controls").trigger e
 
     # edit text, font, size
-    $('#framer_controls .control-box:last-child .text-edit-handle').trigger "click"
+    $('#framer_controls .control-box:last-child').trigger "click"
     $(".text-update .content").val("so what is up?")
     $(".text-update .font-family").val("sans-serif")
     $(".text-update .font-size").val("19px")
@@ -60,3 +60,16 @@ describe 'Manipulating', ->
     it 'text size should be 19px', ->
       rectangleText = $ '#framer_pages #first .framer-drawn-element .framer-text'
       assert.equal rectangleText.css("font-size"), "19px"
+
+describe 'Selecting', ->
+  before ->
+    framer.loadFile './testData/test.json'
+    $('.control-box:first-child').trigger 'click'
+
+  describe 'clicking selects', ->
+    it 'should show the edit panel for this object', ->
+      assert.equal $('.text-update').length, 1
+    it 'should contain the correct id', ->
+      elementID = $('.text-update').data('element')
+
+      assert.equal $('.text-update').data('element'), $('.control-box:first-child').data('element')

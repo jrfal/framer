@@ -12,4 +12,10 @@ class Project extends Backbone.Model
     pages = @get 'pages'
     pages.add(new Page())
 
+  getPageBySlug: (slug) ->
+    pages = @get 'pages'
+    for page in pages
+      if page.slug == slug
+        return page
+
 module.exports = Project

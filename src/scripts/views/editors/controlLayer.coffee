@@ -1,38 +1,20 @@
 $ = require 'jquery'
 Backbone = require 'backbone'
-BaseView = require './baseView.coffee'
-uiTemplates = require './../uiTemplates.coffee'
+BaseView = require './../baseView.coffee'
+PageView = require './../page.coffee'
+uiTemplates = require './../../uiTemplates.coffee'
 _ = require 'underscore'
 
-class ControlLayer extends BaseView
-  controlBoxes: []
+class Editor extends PageView
+  className: 'framer-control-layer'
+  selected: null
 
   initialize: ->
-    _.bindAll @, 'render', 'controlDragHandler', 'dropHandler', 'resizeDragHandler'
+    super()
+    _.bindAll @, 'controlDragHandler', 'dropHandler', 'resizeDragHandler'
 
-  setModel: (model) ->
-    @model = model
-    elements = @model.get 'elements'
-    elements.on 'add', @render
-    elements.on 'remove', @render
-    elements.on 'sort', @render
-
-  render: ->
-    if @model?
-      $(@el).children().detach()
-      elements = @model.get 'elements'
-
-      for element in elements.models
-        controlBox = @getControlBox(element)
-        $(@el).append(controlBox.el)
-
-  getControlBox: (element) ->
-    controlBox = _.find @controlBoxes, (item) ->
-      item.model == element
-    if !controlBox?
-      controlBox = new ControlBox {model: element}
-      @controlBoxes.push controlBox
-    return controlBox
+  newElementView: (model) ->
+    return new ControlBox {model: model}
 
   controlDragHandler: (e) ->
     dragData = {id: $(e.target).data('element'), action: 'move', startX: e.clientX - e.target.offsetLeft, startY: e.clientY - e.target.offsetTop}
@@ -73,7 +55,7 @@ class ControlBox extends BaseView
   template: uiTemplates.controlBox
 
   initialize: ->
-    _.bindAll @, 'render', 'textEditHandler'
+    _.bindAll @, 'render', 'selectHandler'
     @model.on "change", @render
     @render()
 
@@ -87,11 +69,11 @@ class ControlBox extends BaseView
     box = new PropertyPanel {model: @model}
     $("#framer_controls").append box.el
 
-  textEditHandler: (e) ->
+  selectHandler: (e) ->
     @createTextEditBox($(e.target).closest('.control-box').data('element'))
 
   events:
-    "click .text-edit-handle" : "textEditHandler"
+    "click"                   : "selectHandler"
 
 class PropertyPanel extends BaseView
   template: uiTemplates.propertyPanel
@@ -125,4 +107,4 @@ class PropertyPanel extends BaseView
     "click .cancel" : "textEditCancelHandler"
     "click .save"   : "textEditSaveHandler"
 
-module.exports = ControlLayer
+module.exports = Editor

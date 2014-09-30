@@ -4,17 +4,19 @@ BaseView = require './../baseView.coffee'
 PageView = require './../page.coffee'
 uiTemplates = require './../../uiTemplates.coffee'
 _ = require 'underscore'
+Editor = require './../../models/editor.coffee'
 
-class Editor extends PageView
+class ControlLayer extends PageView
   className: 'framer-control-layer'
-  selected: null
+  editor: null
 
   initialize: ->
+    @editor = new Editor()
     super()
     _.bindAll @, 'controlDragHandler', 'dropHandler', 'resizeDragHandler'
 
   newElementView: (model) ->
-    return new ControlBox {model: model}
+    return new ControlBox {model: model, editor: @editor}
 
   controlDragHandler: (e) ->
     border = $(e.target).parent().find '.control-border'
@@ -87,24 +89,49 @@ class Editor extends PageView
 
 class ControlBox extends BaseView
   template: uiTemplates.controlBox
+  selected: false
+  editor: null
 
-  initialize: ->
-    _.bindAll @, 'render', 'selectHandler'
+  initialize: (options) ->
+    _.bindAll @, 'render', 'selectHandler', 'checkSelected'
     @model.on "change", @render
+    if 'editor' of options
+      @editor = options.editor
+      @editor.get('selection').on "add remove reset", @checkSelected if @editor?
     @render()
 
   render: ->
     if @model?
       oldEl = @el
-      @setElement $(@template(@model.attributes))
+      viewAttributes = _.clone @model.attributes
+      @setElement $(@template(_.extend(viewAttributes, {selected: @selected})))
       $(oldEl).replaceWith $(@el)
 
   createTextEditBox: (id) ->
     box = new PropertyPanel {model: @model}
     $("#framer_controls").append box.el
 
+  select: ->
+    @selected = true
+    @editor.selectElement @model if @editor?
+    @render()
+
+  deselect: ->
+    @selected = false
+    @editor.deselectElement @model if @editor?
+    @render()
+
   selectHandler: (e) ->
+    @editor.selectOnlyElement @model
     @createTextEditBox($(e.target).closest('.control-box').data('element'))
+
+  checkSelected: ->
+    if @editor.isSelected @model
+      if !@selected
+        @select()
+    else
+      if @selected
+        @deselect()
 
   events:
     "click"                   : "selectHandler"
@@ -141,4 +168,4 @@ class PropertyPanel extends BaseView
     "click .cancel" : "textEditCancelHandler"
     "click .save"   : "textEditSaveHandler"
 
-module.exports = Editor
+module.exports = ControlLayer

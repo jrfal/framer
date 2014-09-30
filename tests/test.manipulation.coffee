@@ -104,3 +104,9 @@ describe 'Selecting', ->
       elementID = $('.text-update').data('element')
 
       assert.equal $('.text-update').data('element'), $('.control-box:first-child').data('element')
+    it 'should show the resize handles', ->
+      count = 0
+      $('.control-box:first-child .resize-handle').each (i, item) ->
+        if $(item).css('visibility') == 'visible'
+          count++
+      assert.equal count, 8

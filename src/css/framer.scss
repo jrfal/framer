@@ -80,7 +80,7 @@ $control-box-border-offset: $resize-handle-size;
       }
     }
 
-    &:hover {
+    &:hover, &.selected {
       .control-border {
         visibility: visible;
       }

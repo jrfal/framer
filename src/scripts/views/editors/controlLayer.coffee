@@ -17,13 +17,31 @@ class Editor extends PageView
     return new ControlBox {model: model}
 
   controlDragHandler: (e) ->
-    dragData = {id: $(e.target).data('element'), action: 'move', startX: e.clientX - e.target.offsetLeft, startY: e.clientY - e.target.offsetTop}
+    border = $(e.target).parent().find '.control-border'
+    startX = e.originalEvent.x - border.offset().left
+    startY = e.originalEvent.y - border.offset().top
+    dragData = {id: $(e.target).data('element'), action: 'move', startX: startX, startY: startY}
     e.originalEvent.dataTransfer.setData('text/plain', JSON.stringify(dragData))
     $(e.target).addClass 'dragging'
 
   resizeDragHandler: (e) ->
-    target = $(e.target).parent()
-    dragData = {id: $(e.target).closest('.control-box').data('element'), action: 'resize', x: target.offset().left, y: target.offset().top}
+    target = $(e.target).parent().find '.control-border'
+    edge = $(e.target).data 'edge'
+
+    clickX = 0
+    clickY = 0
+
+    if edge in ['tl','t','tr']
+      clickY = $(e.target).offset().top + $(e.target).height() - e.originalEvent.y
+    else if edge in ['bl','b','br']
+      clickY = $(e.target).offset().top - e.originalEvent.y
+
+    if edge in ['tl','l','bl']
+      clickX = $(e.target).offset().left + $(e.target).width() - e.originalEvent.x
+    else if edge in ['tr','r','br']
+      clickX = $(e.target).offset().left - e.originalEvent.x
+
+    dragData = {id: $(e.target).closest('.control-box').data('element'), action: 'resize', edge: edge, top: target.offset().top, right: target.offset().left + target.width(), bottom: target.offset().top + target.height(), left: target.offset().left, clickX: clickX, clickY: clickY}
     e.originalEvent.dataTransfer.setData('text/plain', JSON.stringify(dragData))
 
     e.stopPropagation()
@@ -37,10 +55,26 @@ class Editor extends PageView
       element = @model.getElementByID(dragData.id)
       element.set({'x': x, 'y': y})
     else if dragData.action == 'resize'
-      width = Math.abs e.originalEvent.clientX - dragData.x
-      height = Math.abs e.originalEvent.clientY - dragData.y
+      newProps = {}
       element = @model.getElementByID(dragData.id)
-      element.set({'w': width, 'h': height})
+      x = e.originalEvent.clientX + dragData.clickX;
+      y = e.originalEvent.clientY + dragData.clickY;
+
+      if dragData.edge in ['tl','t','tr']
+        newProps.h = Math.abs y - dragData.bottom
+        newProps.y = y
+
+      if dragData.edge in ['tr','r','br']
+        newProps.w = Math.abs x - dragData.left
+
+      if dragData.edge in ['bl','b','br']
+        newProps.h = Math.abs y - dragData.top
+
+      if dragData.edge in ['tl','l','bl']
+        newProps.w = Math.abs x - dragData.right
+        newProps.x = x
+
+      element.set(newProps)
 
   dragOverHandler: (e) ->
     e.preventDefault()

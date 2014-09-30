@@ -2,6 +2,9 @@ $basic-color: #555;
 $highlight-color: #00a;
 $standard-font: 'Helvetica', sans-serif;
 
+$resize-handle-size: 20px;
+$control-box-border-offset: $resize-handle-size;
+
 #framer_backdrop {
   position: absolute;
   top: 0;
@@ -28,9 +31,9 @@ $standard-font: 'Helvetica', sans-serif;
     min-width: 20px;
     position: absolute;
     margin: 0;
-    padding-right:11px;
-    padding-bottom:11px;
-
+    margin-left: -1 * $resize-handle-size;
+    margin-top: -1 * $resize-handle-size;
+    padding: $resize-handle-size + 1px;
 
     &.dragging {
       border-color: #0f0;
@@ -40,20 +43,41 @@ $standard-font: 'Helvetica', sans-serif;
       visibility: hidden;
       border: 1px solid $highlight-color;
       position: absolute;
-      top: 0;
-      right: 9px;
-      left: 0;
-      bottom: 9px;
+      top: $control-box-border-offset;
+      right: $control-box-border-offset;
+      left: $control-box-border-offset;
+      bottom: $control-box-border-offset;
     }
 
     .resize-handle {
       visibility: hidden;
-      background: $highlight-color;
+      border: 1px solid $highlight-color;
       position: absolute;
-      width: 10px;
-      height: 10px;
-      right:-1px;
-      bottom:-1px;
+      width: $resize-handle-size;
+      height: $resize-handle-size;
+
+      &.resize-handle-t, &.resize-handle-b {
+        width: auto;
+        right: $resize-handle-size;
+        left: $resize-handle-size;
+      }
+      &.resize-handle-l, &.resize-handle-r {
+        height: auto;
+        bottom: $resize-handle-size;
+        top: $resize-handle-size;
+      }
+      &.resize-handle-tl, &.resize-handle-t, &.resize-handle-tr {
+        top: -1px;
+      }
+      &.resize-handle-tr, &.resize-handle-r, &.resize-handle-br {
+        right: -1px;
+      }
+      &.resize-handle-bl, &.resize-handle-b, &.resize-handle-br {
+        bottom: -1px;
+      }
+      &.resize-handle-tl, &.resize-handle-l, &.resize-handle-bl {
+        left: -1px;
+      }
     }
 
     &:hover {

@@ -17,17 +17,6 @@ describe 'Manipulating', ->
     e.originalEvent.dataTransfer['text/plain'] = JSON.stringify(dragData)
     $("#framer_controls").trigger e
 
-    # resize
-    dragData = {id: controlBox.data('element'), action: 'resize', x: controlBox.offset().left, y: controlBox.offset().top}
-    e = $.Event 'drop'
-    e.clientX = 90 + dragData.x
-    e.clientY = 110 + dragData.y
-    e.originalEvent = {dataTransfer: {}, clientX: e.clientX, clientY: e.clientY }
-    e.originalEvent.dataTransfer.getData = (key) ->
-      this[key]
-    e.originalEvent.dataTransfer['text/plain'] = JSON.stringify(dragData)
-    $("#framer_controls").trigger e
-
     # edit text, font, size
     $('#framer_controls .control-box:last-child').trigger "click"
     $(".text-update .content").val("so what is up?")
@@ -42,12 +31,6 @@ describe 'Manipulating', ->
       assert.equal position.left, 160
       assert.equal position.top, 5
 
-  describe 'resizing', ->
-    it 'should have resized rectangle to 90x110', ->
-      rectangle = $ '#framer_pages #first .framer-drawn-element'
-      assert.equal rectangle.width(), 90
-      assert.equal rectangle.height(), 110
-
   describe 'text edit', ->
     it 'should have text saying "so what is up?"', ->
       rectangleText = $ '#framer_pages #first .framer-drawn-element .framer-text'
@@ -60,6 +43,54 @@ describe 'Manipulating', ->
     it 'text size should be 19px', ->
       rectangleText = $ '#framer_pages #first .framer-drawn-element .framer-text'
       assert.equal rectangleText.css("font-size"), "19px"
+
+describe 'Resizing', ->
+  before ->
+    framer.loadFile './testData/resizing.json'
+
+    doResize = (number, edge, dropX, dropY) ->
+      controlBox = $('#framer_controls .control-box:nth-child('+number+')')
+      rectangle = $('#framer_pages #first .framer-drawn-element:nth-child('+number+')')
+      top = rectangle.offset().top
+      right = rectangle.offset().left + rectangle.width()
+      bottom = rectangle.offset().top + rectangle.height()
+      left = rectangle.offset().left
+      dragData = {id: controlBox.data('element'), action: 'resize', edge: edge, top: top, right: right, bottom: bottom, left: left, clickX: 0, clickY: 0}
+      e = $.Event 'drop'
+      e.clientX = dropX
+      e.clientY = dropY
+      e.originalEvent = {dataTransfer: {}, clientX: e.clientX, clientY: e.clientY }
+      e.originalEvent.dataTransfer.getData = (key) ->
+        this[key]
+      e.originalEvent.dataTransfer['text/plain'] = JSON.stringify(dragData)
+      $("#framer_controls").trigger e
+
+    doResize 1, 't', 100, 69
+    doResize 2, 'tr', 670, 87
+    doResize 3, 'r', 310, 75
+    doResize 4, 'br', 397, 383
+    doResize 5, 'b', 2, 572
+    doResize 6, 'bl', 30, 439
+    doResize 7, 'l', 87, 900
+    doResize 8, 'tl', 292, 569
+
+  describe 'resizing', ->
+    it 'should have 8 resized rectangles', ->
+      checkRectangle = (number, x, y, width, height) ->
+        rectangle = $ '#framer_pages #first .framer-drawn-element:nth-child('+number+')'
+        assert.equal rectangle.offset().left, x
+        assert.equal rectangle.offset().top, y
+        assert.equal rectangle.width(), width
+        assert.equal rectangle.height(), height
+      checkRectangle 1, 80,  69,  200, 370
+      checkRectangle 2, 43,  87,  627, 331
+      checkRectangle 3, 2,   18,  308, 410
+      checkRectangle 4, 210, 31,  187, 352
+      checkRectangle 5, 760, 12,  30,  560
+      checkRectangle 6, 30,  18,  387, 421
+      checkRectangle 7, 87,  170, 423, 250
+      checkRectangle 8, 292, 569, 908, 1281
+
 
 describe 'Selecting', ->
   before ->

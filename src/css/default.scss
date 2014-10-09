@@ -6,3 +6,11 @@ body {
   color: $basic-font-color;
   font-family: $standard-font;
 }
+
+.framer-page table {
+  border-collapse: collapse;
+  
+  &, td {
+    border: 1px solid #555;
+  }
+}

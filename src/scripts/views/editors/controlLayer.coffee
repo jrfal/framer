@@ -132,7 +132,7 @@ class PropertyPanel extends BaseView
   template: uiTemplates.propertyPanel
 
   initialize: ->
-    _.bindAll @, 'render', 'textEditCancelHandler', 'textEditSaveHandler'
+    _.bindAll @, 'render', 'textEditCancelHandler', 'textEditSaveHandler', 'remove'
     @render()
 
   render: ->
@@ -142,7 +142,7 @@ class PropertyPanel extends BaseView
       $(oldEl).replaceWith $(@el)
 
   textEditCancelHandler: ->
-    @remove()
+    @slideOut()
 
   textEditSaveHandler: ->
     newText =$(@el).find('.content').val()
@@ -154,14 +154,14 @@ class PropertyPanel extends BaseView
       @model.set('fontFamily': newFontFamily)
     if (newFontSize != '')
       @model.set('fontSize': newFontSize)
-    @remove()
+    @slideOut()
 
   slideIn: ->
     $(@el).css("margin-left", $(document).width() + "px")
     $(@el).animate({marginLeft: 0}, 400)
 
   slideOut: ->
-    $(@el).animate({marginLeft: $(document).width() + "px"}, 400)
+    $(@el).animate({marginLeft: $(document).width() + "px"}, 400, @remove)
 
   events:
     "click .cancel" : "textEditCancelHandler"

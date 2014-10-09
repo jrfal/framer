@@ -39,9 +39,10 @@ class ControlBox extends BaseView
       @setElement $(@template(_.extend(viewAttributes, {selected: @selected})))
       $(oldEl).replaceWith $(@el)
 
-  createTextEditBox: (id) ->
+  showPropertyPanel: (id) ->
     box = new PropertyPanel {model: @model}
     $("#framer_controls").append box.el
+    box.slideIn()
 
   select: ->
     @selected = true
@@ -55,7 +56,7 @@ class ControlBox extends BaseView
 
   selectHandler: (e) ->
     @editor.selectOnlyElement @model
-    @createTextEditBox($(e.target).closest('.control-box').data('element'))
+    @showPropertyPanel($(e.target).closest('.control-box').data('element'))
 
   checkSelected: ->
     if @editor.isSelected @model
@@ -154,6 +155,13 @@ class PropertyPanel extends BaseView
     if (newFontSize != '')
       @model.set('fontSize': newFontSize)
     @remove()
+
+  slideIn: ->
+    $(@el).css("margin-left", $(document).width() + "px")
+    $(@el).animate({marginLeft: 0}, 400)
+
+  slideOut: ->
+    $(@el).animate({marginLeft: $(document).width() + "px"}, 400)
 
   events:
     "click .cancel" : "textEditCancelHandler"

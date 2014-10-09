@@ -106,10 +106,20 @@ $control-box-border-offset: $resize-handle-size;
   left: 100px;
   top: 100px;
   padding: 10px;
+  width: 300px;
 }
 
 #framer_elementPalette {
   position: absolute;
   bottom: 0;
   background: #aaa;
+}
+
+@keyframes slideIn {
+  from {
+    margin-left: 5000px;
+  }
+  to {
+    margin-left: 0;
+  }
 }

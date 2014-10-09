@@ -7,15 +7,16 @@ describe 'Manipulating', ->
     # move
     framer.loadFile './testData/test.json'
     controlBox = $('#framer_controls .control-box:last-child')
-    dragData = {id: controlBox.data('element'), action: 'move', startX: 11, startY: 23}
-    e = $.Event 'drop'
+    e = $.Event 'mousedown'
+    e.clientX = 100 + 11
+    e.clientY = 100 + 23
+    $(controlBox).find('.control-border').trigger e
+    e = $.Event 'mousemove'
     e.clientX = 160 + 11
     e.clientY = 5 + 23
-    e.originalEvent = {dataTransfer: {}, clientX: e.clientX, clientY: e.clientY }
-    e.originalEvent.dataTransfer.getData = (key) ->
-      this[key]
-    e.originalEvent.dataTransfer['text/plain'] = JSON.stringify(dragData)
-    $("#framer_controls").trigger e
+    $(document).trigger e
+    e = $.Event 'mouseup'
+    $(document).trigger e
 
     # edit text, font, size
     $('#framer_controls .control-box:last-child').trigger "click"
@@ -51,19 +52,23 @@ describe 'Resizing', ->
     doResize = (number, edge, dropX, dropY) ->
       controlBox = $('#framer_controls .control-box:nth-child('+number+')')
       rectangle = $('#framer_pages #first .framer-drawn-element:nth-child('+number+')')
-      top = rectangle.offset().top
-      right = rectangle.offset().left + rectangle.width()
-      bottom = rectangle.offset().top + rectangle.height()
-      left = rectangle.offset().left
-      dragData = {id: controlBox.data('element'), action: 'resize', edge: edge, top: top, right: right, bottom: bottom, left: left, clickX: 0, clickY: 0}
-      e = $.Event 'drop'
+      handle = controlBox.find('.resize-handle-'+edge)
+      e = $.Event 'mousedown'
+      if edge in ['tl', 'l', 'bl']
+        e.clientX = handle.position().x + handle.width()
+      else
+        e.clientX = handle.position().x
+      if edge in ['tl', 't', 'tr']
+        e.clientX = handle.position().y + handle.height()
+      else
+        e.clientX = handle.position().y
+      handle.trigger e
+
+      e = $.Event 'mousemove'
       e.clientX = dropX
       e.clientY = dropY
-      e.originalEvent = {dataTransfer: {}, clientX: e.clientX, clientY: e.clientY }
-      e.originalEvent.dataTransfer.getData = (key) ->
-        this[key]
-      e.originalEvent.dataTransfer['text/plain'] = JSON.stringify(dragData)
-      $("#framer_controls").trigger e
+      $(document).trigger e
+      $(document).trigger 'mouseup'
 
     doResize 1, 't', 100, 69
     doResize 2, 'tr', 670, 87

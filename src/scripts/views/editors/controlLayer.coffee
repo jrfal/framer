@@ -13,79 +13,9 @@ class ControlLayer extends PageView
   initialize: ->
     @editor = new Editor()
     super()
-    _.bindAll @, 'controlDragHandler', 'dropHandler', 'resizeDragHandler'
 
   newElementView: (model) ->
     return new ControlBox {model: model, editor: @editor}
-
-  controlDragHandler: (e) ->
-    border = $(e.target).parent().find '.control-border'
-    startX = e.originalEvent.x - border.offset().left
-    startY = e.originalEvent.y - border.offset().top
-    dragData = {id: $(e.target).data('element'), action: 'move', startX: startX, startY: startY}
-    e.originalEvent.dataTransfer.setData('text/plain', JSON.stringify(dragData))
-    $(e.target).addClass 'dragging'
-
-  resizeDragHandler: (e) ->
-    target = $(e.target).parent().find '.control-border'
-    edge = $(e.target).data 'edge'
-
-    clickX = 0
-    clickY = 0
-
-    if edge in ['tl','t','tr']
-      clickY = $(e.target).offset().top + $(e.target).height() - e.originalEvent.y
-    else if edge in ['bl','b','br']
-      clickY = $(e.target).offset().top - e.originalEvent.y
-
-    if edge in ['tl','l','bl']
-      clickX = $(e.target).offset().left + $(e.target).width() - e.originalEvent.x
-    else if edge in ['tr','r','br']
-      clickX = $(e.target).offset().left - e.originalEvent.x
-
-    dragData = {id: $(e.target).closest('.control-box').data('element'), action: 'resize', edge: edge, top: target.offset().top, right: target.offset().left + target.width(), bottom: target.offset().top + target.height(), left: target.offset().left, clickX: clickX, clickY: clickY}
-    e.originalEvent.dataTransfer.setData('text/plain', JSON.stringify(dragData))
-
-    e.stopPropagation()
-
-  dropHandler: (e) ->
-    dragData = JSON.parse(e.originalEvent.dataTransfer.getData("text/plain"))
-
-    if dragData.action == 'move'
-      x = e.originalEvent.clientX - dragData.startX
-      y = e.originalEvent.clientY - dragData.startY
-      element = @model.getElementByID(dragData.id)
-      element.set({'x': x, 'y': y})
-    else if dragData.action == 'resize'
-      newProps = {}
-      element = @model.getElementByID(dragData.id)
-      x = e.originalEvent.clientX + dragData.clickX;
-      y = e.originalEvent.clientY + dragData.clickY;
-
-      if dragData.edge in ['tl','t','tr']
-        newProps.h = Math.abs y - dragData.bottom
-        newProps.y = y
-
-      if dragData.edge in ['tr','r','br']
-        newProps.w = Math.abs x - dragData.left
-
-      if dragData.edge in ['bl','b','br']
-        newProps.h = Math.abs y - dragData.top
-
-      if dragData.edge in ['tl','l','bl']
-        newProps.w = Math.abs x - dragData.right
-        newProps.x = x
-
-      element.set(newProps)
-
-  dragOverHandler: (e) ->
-    e.preventDefault()
-
-  events:
-    "dragstart .control-box"     : "controlDragHandler"
-    "dragstart .resize-handle"   : "resizeDragHandler"
-    "dragover"                   : "dragOverHandler"
-    "drop"                       : "dropHandler"
 
 class ControlBox extends BaseView
   template: uiTemplates.controlBox
@@ -93,7 +23,9 @@ class ControlBox extends BaseView
   editor: null
 
   initialize: (options) ->
-    _.bindAll @, 'render', 'selectHandler', 'checkSelected'
+    _.bindAll @, 'render', 'selectHandler', 'checkSelected', 'startMoveHandler',
+      'moveHandler', 'stopMoveHandler', 'startResizeHandler', 'resizeHandler',
+      'stopResizeHandler'
     @model.on "change", @render
     if 'editor' of options
       @editor = options.editor
@@ -133,8 +65,67 @@ class ControlBox extends BaseView
       if @selected
         @deselect()
 
+  startMoveHandler: (e) ->
+    @grab = {x: e.clientX - @model.get('x'), y: e.clientY - @model.get('y')}
+    $(document).on 'mousemove', @moveHandler
+    $(document).on 'mouseup', @stopMoveHandler
+
+  moveHandler: (e) ->
+    x =  e.clientX - @grab.x
+    y =  e.clientY - @grab.y
+    @model.set({'x': x, 'y': y})
+
+  stopMoveHandler: (e) ->
+    $(document).off 'mousemove', @moveHandler
+    $(document).off 'mouseup', @stopMoveHandler
+
+  startResizeHandler: (e) ->
+    @grab = {x: e.clientX, y: e.clientY - @model.get('y')}
+    @resizeEdge = $(e.target).data 'edge'
+    if @resizeEdge in ['tl', 't', 'tr']
+      @grab.y =  @model.get('y') - @grab.y
+    if @resizeEdge in ['tr', 'r', 'br']
+      @grab.x =  @model.get('x') + @model.get('w') - @grab.x
+    if @resizeEdge in ['bl', 'b', 'br']
+      @grab.y =  @model.get('y') + @model.get('h') - @grab.y
+    if @resizeEdge in ['tl', 'l', 'bl']
+      @grab.x =  @model.get('x') - @grab.x
+    @grab = {x: 0, y: 0}
+    $(document).on 'mousemove', @resizeHandler
+    $(document).on 'mouseup', @stopResizeHandler
+
+  resizeHandler: (e) ->
+    top = @model.get('y')
+    left = @model.get('x')
+    right = left + @model.get('w')
+    bottom = top + @model.get('h')
+    if @resizeEdge in ['tl', 't', 'tr']
+      top = e.clientY + @grab.y
+    if @resizeEdge in ['tr', 'r', 'br']
+      right = e.clientX + @grab.x
+    if @resizeEdge in ['bl', 'b', 'br']
+      bottom = e.clientY + @grab.y
+    if @resizeEdge in ['tl', 'l', 'bl']
+      left = e.clientX + @grab.x
+    if (left > right)
+      swap = left
+      left = right
+      right = swap
+    if (top > bottom)
+      swap = top
+      top = bottom
+      bottom = swap
+    @model.set({'x': left, 'y': top, 'w': right - left, 'h': bottom - top})
+
+
+  stopResizeHandler: (e) ->
+    $(document).off 'mousemove', @resizeHandler
+    $(document).off 'mouseup', @stopResizeHandler
+
   events:
-    "click"                   : "selectHandler"
+    "click"                     : "selectHandler"
+    "mousedown .control-border" : "startMoveHandler"
+    "mousedown .resize-handle"  : "startResizeHandler"
 
 class PropertyPanel extends BaseView
   template: uiTemplates.propertyPanel

@@ -8,6 +8,8 @@ App = require './../models/app.coffee'
 ProjectEditor = require './editors/projectEditor.coffee'
 BaseView = require './baseView.coffee'
 ElementPaletteView = require './elementPalette.coffee'
+Dialog = require './dialog.coffee'
+messages = require './../../content/messages.en.json'
 
 class AppView extends BaseView
   el: '#app'
@@ -16,8 +18,9 @@ class AppView extends BaseView
   elementPalette: null
 
   initialize: ->
-    _.bindAll @, 'loadFile', 'saveFile', 'newProject', 'createElementHandler'
+    _.bindAll @, 'loadFile', 'saveFile', 'newProject', 'createElementHandler', 'showError'
     @model.on "change:project", @newProject
+    @model.on "error", @showError
     @projectView = new ProjectEditor({model: @model.get 'project'})
     @elementPalette = new ElementPaletteView()
     @elementPalette.on('createElement', @createElementHandler)
@@ -48,6 +51,9 @@ class AppView extends BaseView
 
   createElementHandler: (data) ->
     @projectView.pageView.model.addElement data
+
+  showError: (e) ->
+    Dialog.dialog messages[e.type]
 
   events:
     "change #dataFile"   : "loadFile"

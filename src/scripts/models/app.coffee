@@ -9,9 +9,6 @@ Project = require './project.coffee'
 Page = require './page.coffee'
 Element = require './element.coffee'
 
-messages = require './../../content/messages.en.json'
-Dialog = require './../views/dialog.coffee'
-
 class App extends Backbone.Model
   initialize: ->
     newProject = new Project()
@@ -20,18 +17,18 @@ class App extends Backbone.Model
 
   loadFile: (filename) ->
     if (!fs.existsSync(filename))
-      Dialog.dialog messages['no file']
+      @trigger('error', {type: 'no file'})
       return
     try
       fileContents = fs.readFileSync(filename).toString()
     catch
-      Dialog.dialog messages['file problem']
+      @trigger('error', {type: 'file problem'})
       return
 
     try
       attributes = JSON.parse(fileContents)
     catch
-      Dialog.dialog messages['bad file']
+      @trigger('error', {type: 'bad file'})
       return
 
     pages = []

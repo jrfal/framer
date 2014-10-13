@@ -11,7 +11,7 @@ class ElementView extends BaseView
   template: uiTemplates.elementPalette
 
   render: ->
-    _.bindAll @, 'createElementHandler'
+    _.bindAll @, 'createElementHandler', 'closeHandler'
 
     $(@el).html @template()
 
@@ -22,7 +22,12 @@ class ElementView extends BaseView
     e.preventDefault()
     @createElement $(e.target).data('template')
 
+  closeHandler: (e) ->
+    e.preventDefault()
+    @trigger 'close'
+
   events:
-    "click a":   "createElementHandler"
+    "click a.create":       "createElementHandler"
+    "click a.close":        "closeHandler"
 
 module.exports = ElementView

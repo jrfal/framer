@@ -5,7 +5,9 @@ Handlebars = require 'handlebars'
 fs = require 'fs'
 path = require 'path'
 $ = require 'jquery'
-# controlBox = require './controlBox.coffee'
+
+app = new App()
+app_view = new AppView {model: app}
 
 # build main menu
 makeMenu = ->
@@ -42,6 +44,11 @@ makeMenu = ->
     click: ->
       nextPageHandler()
   })
+  view_menu.append new gui.MenuItem({
+    label: "Show Element Palette",
+    click: ->
+      showElementPaletteHandler()
+  })
 
   sub_menu = new global.gui.MenuItem({label: 'File'})
   sub_menu.submenu = file_menu
@@ -66,6 +73,9 @@ nextPageHandler = ->
   else
     $("#framer_pages .framer-page:first-child").show()
 
+showElementPaletteHandler = ->
+  app.showElementPalette()
+
 localLinkHandler = (href) ->
   targetPage = $("#{href}")
   if targetPage.length > 0
@@ -73,8 +83,6 @@ localLinkHandler = (href) ->
     $(targetPage).show()
     controlBox.renderControls()
 
-app = new App()
-app_view = new AppView {model: app}
 module.exports = app
 
 makeMenu()

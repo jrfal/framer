@@ -18,12 +18,15 @@ class AppView extends BaseView
   elementPalette: null
 
   initialize: ->
-    _.bindAll @, 'loadFile', 'saveFile', 'newProject', 'createElementHandler', 'showError'
+    _.bindAll @, 'loadFile', 'saveFile', 'newProject', 'createElementHandler', 'showError',
+      'closeElementPaletteHandler', 'showHideElementPalette'
     @model.on "change:project", @newProject
     @model.on "error", @showError
+    @model.on "change:elementPalette", @showHideElementPalette
     @projectView = new ProjectEditor({model: @model.get 'project'})
     @elementPalette = new ElementPaletteView()
-    @elementPalette.on('createElement', @createElementHandler)
+    @elementPalette.on 'createElement', @createElementHandler
+    @elementPalette.on 'close', @closeElementPaletteHandler
 
     @render()
 
@@ -54,6 +57,16 @@ class AppView extends BaseView
 
   showError: (e) ->
     Dialog.dialog messages[e.type]
+
+  closeElementPaletteHandler: ->
+    @model.hideElementPalette()
+    $(@elementPalette.el).hide()
+
+  showHideElementPalette: ->
+    if @model.get 'elementPalette'
+      $(@elementPalette.el).show()
+    else
+      $(@elementPalette.el).hide()
 
   events:
     "change #dataFile"   : "loadFile"

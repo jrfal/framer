@@ -10,6 +10,9 @@ Page = require './page.coffee'
 Element = require './element.coffee'
 
 class App extends Backbone.Model
+  defaults:
+    elementPalette: true
+
   initialize: ->
     newProject = new Project()
     newProject.addPage()
@@ -65,5 +68,11 @@ class App extends Backbone.Model
           for element in page.elements
             delete element.id
     fs.writeFile(filename, JSON.stringify(projectObj, null, "\t"))
+
+  showElementPalette: ->
+    @set 'elementPalette', true
+
+  hideElementPalette: ->
+    @set 'elementPalette', false
 
 module.exports = App

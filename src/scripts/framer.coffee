@@ -17,6 +17,14 @@ makeMenu = ->
 
   file_menu = new global.gui.Menu()
   file_menu.append new gui.MenuItem({
+    label: "New Project",
+    click: ->
+      app.newProject()
+    ,
+    key: "n",
+    modifiers: "cmd",
+  })
+  file_menu.append new gui.MenuItem({
     label: "Open File",
     click: ->
       $("#dataFile").click()

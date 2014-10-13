@@ -14,6 +14,9 @@ class App extends Backbone.Model
     elementPalette: true
 
   initialize: ->
+    @newProject()
+
+  newProject: ->
     newProject = new Project()
     newProject.addPage()
     @set 'project', newProject

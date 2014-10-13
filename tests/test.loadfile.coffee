@@ -76,3 +76,16 @@ describe 'Problem Loading', ->
 
   after ->
     $('.bbm-wrapper').trigger 'click'
+
+describe 'Creating a New Project', ->
+  before ->
+    framer.loadFile './testData/test.json'
+
+  describe 'new project', ->
+
+    it 'should have no elements', ->
+      framer.newProject()
+      project = framer.get 'project'
+      page = project.get('pages').first()
+      elements = page.get 'elements'
+      assert.equal elements.length, 0

@@ -4,7 +4,7 @@ $ = require 'jquery'
 
 describe 'Drawing', ->
   before ->
-    framer.loadFile './testData/drawn.json'
+    framer.app.loadFile './testData/drawn.json'
 
   describe 'rectangle', ->
     it 'should be a 400x250 rectangle', ->

@@ -9,16 +9,16 @@ Page = require './../src/scripts/models/page.coffee'
 
 describe 'Loading', ->
   before ->
-    framer.loadFile './testData/test.json'
-    framer.saveFile './testData/savetest.json'
+    framer.app.loadFile './testData/test.json'
+    framer.app.saveFile './testData/savetest.json'
 
   describe 'simple data', ->
     it 'should have two pages', ->
-      assert.equal framer.get('project').get('pages').length, 2
+      assert.equal framer.app.get('project').get('pages').length, 2
 
   describe 'check control boxes', ->
     it 'should match all the control box sizes and positions to their elements', ->
-      page = framer.get('project').get('pages').first()
+      page = framer.app.get('project').get('pages').first()
       $("#framer_controls .control-box").each ->
         element = page.getElementByID $(this).data('element')
         position = $(this).position()
@@ -44,12 +44,12 @@ describe 'Save Changes', ->
     pages = project.get 'pages'
     page = new Page()
     pages.add page
-    framer.set 'project', project
+    framer.app.set 'project', project
     data = {template: "link", label: "testing link", href: "#url"}
     page.addElement data
     data = {template: "oval", x: 40, y: 110, w: 800, h: 1001}
     page.addElement data
-    framer.saveFile './testData/savetest.json'
+    framer.app.saveFile './testData/savetest.json'
 
   describe 'save modifications', ->
     it 'should be match a previously created reference file', ->
@@ -60,7 +60,7 @@ describe 'Save Changes', ->
 
 describe 'Problem Loading', ->
   before ->
-    framer.loadFile './testData/not.a.file.json'
+    framer.app.loadFile './testData/not.a.file.json'
 
   describe 'non-existent file', ->
     it 'should show no file message', ->
@@ -68,7 +68,7 @@ describe 'Problem Loading', ->
 
 describe 'Problem Loading', ->
   before ->
-    framer.loadFile './testData/invalid.json'
+    framer.app.loadFile './testData/invalid.json'
 
   describe 'badly formatted file', ->
     it 'should show bad file message', ->
@@ -79,13 +79,13 @@ describe 'Problem Loading', ->
 
 describe 'Creating a New Project', ->
   before ->
-    framer.loadFile './testData/test.json'
+    framer.app.loadFile './testData/test.json'
 
   describe 'new project', ->
 
     it 'should have no elements', ->
-      framer.newProject()
-      project = framer.get 'project'
+      framer.app.newProject()
+      project = framer.app.get 'project'
       page = project.get('pages').first()
       elements = page.get 'elements'
       assert.equal elements.length, 0

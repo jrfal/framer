@@ -9,13 +9,100 @@ Editor = require './../../models/editor.coffee'
 class ControlLayer extends PageView
   className: 'framer-control-layer'
   editor: null
+  selectingFrame: null
+  selectingFrameEl: null
+  shiftKey: false
+  cmdKey: false
+  toggling: null
 
   initialize: ->
+    _.bindAll @, 'startDragHandler', 'moveDragHandler', 'stopDragHandler'
     @editor = new Editor()
+    @selectingFrameEl = $(uiTemplates.selectingFrame())
+    $(@selectingFrameEl).hide()
+    $(@el).append @selectingFrameEl
     super()
+
+  render: ->
+    super()
+    $(@selectingFrameEl).hide()
+    $(@el).append @selectingFrameEl
 
   newElementView: (model) ->
     return new ControlBox {model: model, editor: @editor}
+
+  usableFrame: (frame) ->
+    frame = {x: frame.x, y: frame.y, w: frame.w, h: frame.h}
+    if frame.w < 0
+      frame.x = frame.x + frame.w
+      frame.w = frame.w * -1
+    if frame.h < 0
+      frame.y = frame.y + frame.h
+      frame.h = frame.h * -1
+    return frame
+
+  updateSelectingFrame: (frame) ->
+    frame = @usableFrame frame
+    $(@selectingFrameEl).css 'left', frame.x+'px'
+    $(@selectingFrameEl).css 'top', frame.y+'px'
+    $(@selectingFrameEl).css 'width', frame.w+'px'
+    $(@selectingFrameEl).css 'height', frame.h+'px'
+    $(@selectingFrameEl).show()
+
+  hideSelectingFrame: ->
+    $(@selectingFrameEl).hide()
+
+  startDragHandler: (e) ->
+    @shiftKey = e.shiftKey
+    @metaKey = e.metaKey
+    @selectingFrame = {x: e.clientX, y: e.clientY, w: 0, h: 0}
+    @toggling = []
+    $(document).on 'mousemove', @moveDragHandler
+    $(document).on 'mouseup', @stopDragHandler
+
+  moveDragHandler: (e) ->
+    @selectingFrame.w = e.clientX - @selectingFrame.x
+    @selectingFrame.h = e.clientY - @selectingFrame.y
+    @updateSelectingFrame @selectingFrame
+
+    if @shiftKey or @metaKey
+      @toggling = @editor.toggleSelectElements @elementsInFrame(@selectingFrame), @toggling
+    else
+      @editor.selectOnlyElements @elementsInFrame(@selectingFrame)
+
+  stopDragHandler: ->
+    $(document).off 'mousemove', @moveDragHandler
+    $(document).off 'mouseup', @stopDragHandler
+    @hideSelectingFrame()
+
+  elementsInFrame: (frame) ->
+    frame = @usableFrame frame
+
+    inFrame = (rect) ->
+      # console.log "#{frame.x}, #{frame.y}, #{frame.w}, #{frame.h}"
+      # console.log "#{rect.x}, #{rect.y}, #{rect.w}, #{rect.h}"
+      if rect.x > frame.x + frame.w
+        return false
+      if rect.y > frame.y + frame.h
+        return false
+      if frame.x > rect.x + rect.w
+        return false
+      if frame.y > rect.y + rect.h
+        return false
+      # console.log 'selected?'
+      return true
+
+    elements = []
+    for elementView in @elementViews
+      if inFrame {x: elementView.model.get('x'), y: elementView.model.get('y'), w: elementView.model.get('w'), h: elementView.model.get('h')}
+        elements.push elementView.model
+
+    return elements
+
+  events:
+    # "click"                     : "deselectHandler"
+    "mousedown" : "startDragHandler"
+
 
 class ControlBox extends BaseView
   template: uiTemplates.controlBox
@@ -39,7 +126,7 @@ class ControlBox extends BaseView
       @setElement $(@template(_.extend(viewAttributes, {selected: @selected})))
       $(oldEl).replaceWith $(@el)
 
-  showPropertyPanel: (id) ->
+  showPropertyPanel: ->
     box = new PropertyPanel {model: @model}
     $("#framer_controls").append box.el
     box.slideIn()
@@ -55,32 +142,44 @@ class ControlBox extends BaseView
     @render()
 
   selectHandler: (e) ->
-    @editor.selectOnlyElement @model
-    @showPropertyPanel($(e.target).closest('.control-box').data('element'))
+    if e.shiftKey or e.metaKey
+      if @editor.isSelected @model
+        @editor.deselectElement @model
+      else
+        @editor.selectElement @model
+    else
+      @editor.selectOnlyElement @model
+    if @selected
+      @showPropertyPanel()
 
   checkSelected: ->
     if @editor.isSelected @model
-      if !@selected
+      if not @selected
         @select()
     else
       if @selected
         @deselect()
 
   startMoveHandler: (e) ->
+    e.stopPropagation()
     @grab = {x: e.clientX - @model.get('x'), y: e.clientY - @model.get('y')}
     $(document).on 'mousemove', @moveHandler
     $(document).on 'mouseup', @stopMoveHandler
 
   moveHandler: (e) ->
-    x =  e.clientX - @grab.x
-    y =  e.clientY - @grab.y
-    @model.set({'x': x, 'y': y})
+    if not @editor.isSelected @model
+      @editor.selectOnlyElement @model
+    dx =  e.clientX - @grab.x - @model.get 'x'
+    dy =  e.clientY - @grab.y - @model.get 'y'
+    @editor.moveSelectedBy dx, dy
+    # @model.set({'x': x, 'y': y})
 
   stopMoveHandler: (e) ->
     $(document).off 'mousemove', @moveHandler
     $(document).off 'mouseup', @stopMoveHandler
 
   startResizeHandler: (e) ->
+    e.stopPropagation()
     @grab = {x: e.clientX, y: e.clientY - @model.get('y')}
     @resizeEdge = $(e.target).data 'edge'
     if @resizeEdge in ['tl', 't', 'tr']
@@ -117,7 +216,6 @@ class ControlBox extends BaseView
       top = bottom
       bottom = swap
     @model.set({'x': left, 'y': top, 'w': right - left, 'h': bottom - top})
-
 
   stopResizeHandler: (e) ->
     $(document).off 'mousemove', @resizeHandler

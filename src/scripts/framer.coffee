@@ -91,7 +91,7 @@ localLinkHandler = (href) ->
     $(targetPage).show()
     controlBox.renderControls()
 
-module.exports = app
+module.exports = {app: app, app_view: app_view}
 
 makeMenu()
 init()

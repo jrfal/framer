@@ -6,7 +6,7 @@ describe 'Change View', ->
   describe 'showing element palette', ->
 
     it 'should be showing the element palette', ->
-      framer.showElementPalette()
+      framer.app.showElementPalette()
       palette = $ '#framer_elementPalette'
       assert.equal palette.css("display"), "block"
 
@@ -16,6 +16,6 @@ describe 'Change View', ->
       assert.equal palette.css("display"), "none"
 
     it 'should be showing the element palette again', ->
-      framer.showElementPalette()
+      framer.app.showElementPalette()
       palette = $ '#framer_elementPalette'
       assert.equal palette.css("display"), "block"

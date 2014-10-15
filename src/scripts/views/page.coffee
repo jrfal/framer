@@ -22,6 +22,12 @@ class PageView extends Backbone.View
       $(@el).children().detach()
       elements = @model.get 'elements'
 
+      unused = []
+      for elementView in @elementViews
+        if not @model.get('elements').contains elementView.model
+          unused.push elementView
+      @elementViews = _.difference @elementViews, unused
+
       for element in elements.models
         elementView = @getElementView(element)
         $(@el).append(elementView.el)

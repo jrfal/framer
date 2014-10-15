@@ -10,5 +10,11 @@ class Element extends Backbone.Model
     _.bindAll @, 'set'
     @set 'id', id++
 
+  moveBy: (dx, dy) ->
+    updates = {}
+    updates.x = @get('x') + dx
+    updates.y = @get('y') + dy
+    @set updates
+
 
 module.exports = Element

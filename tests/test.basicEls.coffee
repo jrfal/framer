@@ -4,7 +4,7 @@ $ = require 'jquery'
 
 describe 'Basic Elements', ->
   before ->
-    framer.loadFile './testData/basicElements.json'
+    framer.app.loadFile './testData/basicElements.json'
 
   describe 'grid', ->
     it 'should be a 4 x 2 table', ->

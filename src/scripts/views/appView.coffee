@@ -68,6 +68,9 @@ class AppView extends BaseView
     else
       $(@elementPalette.el).hide()
 
+  getSelected: ->
+    return @projectView.pageView.controlLayer.editor.get 'selection'
+
   events:
     "change #dataFile"   : "loadFile"
     "change #saveFile"   : "saveFile"

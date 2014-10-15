@@ -115,6 +115,11 @@ $control-box-border-offset: $resize-handle-size;
   background: #aaa;
 }
 
+.framer-selecting-frame {
+  position: absolute;
+  border: 1px solid $basic-color;
+}
+
 @keyframes slideIn {
   from {
     margin-left: 5000px;

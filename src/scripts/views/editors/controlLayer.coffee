@@ -14,10 +14,13 @@ class ControlLayer extends PageView
   shiftKey: false
   cmdKey: false
   toggling: null
+  propertyPanel: null
 
   initialize: ->
-    _.bindAll @, 'startDragHandler', 'moveDragHandler', 'stopDragHandler'
+    _.bindAll @, 'startDragHandler', 'moveDragHandler', 'stopDragHandler', 'selectionChange'
     @editor = new Editor()
+    @editor.on "change:selection", @selectionChange
+    @editor.get('selection').on "add remove", @selectionChange
     @selectingFrameEl = $(uiTemplates.selectingFrame())
     $(@selectingFrameEl).hide()
     $(@el).append @selectingFrameEl
@@ -75,12 +78,27 @@ class ControlLayer extends PageView
     $(document).off 'mouseup', @stopDragHandler
     @hideSelectingFrame()
 
+  selectionChange: ->
+    selected = @editor.get 'selection'
+    if selected.length > 0
+      element = selected.first()
+      if @propertyPanel?
+        if element != @propertyPanel.model
+          @propertyPanel.slideOut()
+          @propertyPanel = null
+      if not @propertyPanel?
+        @propertyPanel = new PropertyPanel {model: element}
+        $("#framer_controls").append @propertyPanel.el
+        @propertyPanel.slideIn()
+    else if @propertyPanel?
+      @propertyPanel.slideOut()
+      @propertyPanel = null
+
+
   elementsInFrame: (frame) ->
     frame = @usableFrame frame
 
     inFrame = (rect) ->
-      # console.log "#{frame.x}, #{frame.y}, #{frame.w}, #{frame.h}"
-      # console.log "#{rect.x}, #{rect.y}, #{rect.w}, #{rect.h}"
       if rect.x > frame.x + frame.w
         return false
       if rect.y > frame.y + frame.h
@@ -89,7 +107,7 @@ class ControlLayer extends PageView
         return false
       if frame.y > rect.y + rect.h
         return false
-      # console.log 'selected?'
+
       return true
 
     elements = []
@@ -126,11 +144,6 @@ class ControlBox extends BaseView
       @setElement $(@template(_.extend(viewAttributes, {selected: @selected})))
       $(oldEl).replaceWith $(@el)
 
-  showPropertyPanel: ->
-    box = new PropertyPanel {model: @model}
-    $("#framer_controls").append box.el
-    box.slideIn()
-
   select: ->
     @selected = true
     @editor.selectElement @model if @editor?
@@ -149,8 +162,6 @@ class ControlBox extends BaseView
         @editor.selectElement @model
     else
       @editor.selectOnlyElement @model
-    if @selected
-      @showPropertyPanel()
 
   checkSelected: ->
     if @editor.isSelected @model
@@ -259,6 +270,7 @@ class PropertyPanel extends BaseView
     $(@el).animate({marginLeft: 0}, 400)
 
   slideOut: ->
+    $(@el).removeClass "showing"
     $(@el).animate({marginLeft: $(document).width() + "px"}, 400, @remove)
 
   events:

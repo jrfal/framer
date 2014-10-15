@@ -65,8 +65,21 @@ class Editor extends Backbone.Model
     @selectElement element
 
   selectOnlyElements: (elements) ->
-    @unselectAll()
-    @selectElements elements
+    selected = @get 'selection'
+
+    adding = []
+    for element in elements
+      if not selected.contains element
+        adding.push element
+    if adding.length > 0
+      selected.add adding
+
+    removing = []
+    selected.each (element) ->
+      if not _.contains elements, element
+        removing.push element
+    if removing.length > 0
+      selected.remove removing
 
   unselectAll: ->
     elements = @get 'selection'

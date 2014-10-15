@@ -20,10 +20,10 @@ describe 'Manipulating', ->
 
     # edit text, font, size
     $('#framer_controls .control-box:last').trigger "click"
-    $(".text-update .content").val("so what is up?")
-    $(".text-update .font-family").val("sans-serif")
-    $(".text-update .font-size").val("19px")
-    $(".text-update .save").trigger "click"
+    $(".property-panel .content").val("so what is up?")
+    $(".property-panel .font-family").val("sans-serif")
+    $(".property-panel .font-size").val("19px")
+    $(".property-panel .save").trigger "click"
 
   describe 'moving', ->
     it 'should have moved the rectangle to 160,5', ->
@@ -104,11 +104,11 @@ describe 'Selecting', ->
 
   describe 'clicking selects', ->
     it 'should show the edit panel for this object', ->
-      assert.equal $('.text-update').length, 1
+      assert.equal $('.property-panel').length, 1
     it 'should contain the correct id', ->
-      elementID = $('.text-update').data('element')
+      elementID = $('.property-panel').data('element')
 
-      assert.equal $('.text-update').data('element'), $('.control-box:first-child').data('element')
+      assert.equal $('.property-panel').data('element'), $('.control-box:first-child').data('element')
     it 'should show the resize handles', ->
       count = 0
       $('.control-box:first-child .resize-handle').each (i, item) ->
@@ -186,6 +186,9 @@ describe 'Multi-Selecting', ->
       $(document).trigger e
 
       assert.equal framer.app_view.getSelected().length, 2
+
+    it 'should only show one property panel', ->
+      assert.equal $('.property-panel.showing').length, 1
 
   describe 'unselect one of current selection by cmd-clicking on it', ->
     it 'should have only one selected', ->

@@ -6,7 +6,10 @@ Page = require './page.coffee'
 
 class Project extends Backbone.Model
   initialize: ->
-    @set 'pages', new Backbone.Collection [], {model: Page}
+    _.bindAll @, 'checkNewPage', 'checkNewSlug'
+    pages = new Backbone.Collection [], {model: Page}
+    @set 'pages', pages
+    pages.on 'add', @checkNewPage
 
   addPage: ->
     pages = @get 'pages'
@@ -14,8 +17,35 @@ class Project extends Backbone.Model
 
   getPageBySlug: (slug) ->
     pages = @get 'pages'
-    for page in pages
-      if page.slug == slug
+    pages.each (page) ->
+      if page.get('slug') == slug
         return page
+
+  checkNewPage: (page) ->
+    slug = @checkSlugFor(page.get('slug'), page)
+    if slug != page.get('slug')
+      page.set 'slug', slug
+    page.on 'change:slug', @checkNewSlug
+
+  checkSlugFor: (slug, page) ->
+    pages = @get 'pages'
+    clean = false
+    index = 1
+    testSlug = slug
+    while not clean
+      if index > 1
+        testSlug = slug + '_' + index
+      clean = true
+      pages.each (page2) ->
+        if page != page2
+          if page2.get('slug') == testSlug
+            index++
+            clean = false
+    return testSlug
+
+  checkNewSlug: (page) ->
+    slug = @checkSlugFor(page.get('slug'), page)
+    if slug != page.get('slug')
+      page.set 'slug', slug
 
 module.exports = Project

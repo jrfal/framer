@@ -1,0 +1,44 @@
+{
+  "pages": [
+    {
+      "slug": "first",
+      "title": "first page",
+      "elements": [
+        {
+          "template": "rectangle",
+          "x": 50,
+          "y": 50,
+          "w": 100,
+          "h": 100
+        },
+        {
+          "template": "rectangle",
+          "x": 100,
+          "y": 100,
+          "w": 100,
+          "h": 100
+        }
+      ]
+    },
+    {
+      "slug": "first",
+      "title": "first page",
+      "elements": [
+        {
+          "template": "rectangle",
+          "x": 50,
+          "y": 50,
+          "w": 100,
+          "h": 100
+        },
+        {
+          "template": "rectangle",
+          "x": 100,
+          "y": 100,
+          "w": 100,
+          "h": 100
+        }
+      ]
+    }
+  ]
+}

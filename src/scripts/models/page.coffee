@@ -6,7 +6,7 @@ Element = require './element.coffee'
 
 class Page extends Backbone.Model
   defaults:
-    slug: 'model'
+    slug: 'page'
 
   initialize: ->
     _.bindAll @, 'getElementByID'

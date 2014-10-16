@@ -89,3 +89,15 @@ describe 'Creating a New Project', ->
       page = project.get('pages').first()
       elements = page.get 'elements'
       assert.equal elements.length, 0
+
+describe 'Naming Pages', ->
+  before ->
+    framer.app.loadFile './testData/same-name-pages.json'
+
+  describe 'Make page slugs unique', ->
+    it 'should not have any page slugs equal to any others', ->
+      pages = framer.app.get('project').get('pages')
+      pages.each (page1) ->
+        pages.each (page2) ->
+          if page1 != page2
+            assert.notEqual page1.get('slug'), page2.get('slug')

@@ -1,7 +1,7 @@
 {
 	"pages": [
 		{
-			"slug": "model",
+			"slug": "page",
 			"elements": [
 				{
 					"template": "link",

@@ -6,22 +6,26 @@
       "title": "first page",
       "elements": [
         {
-          "template": "test2",
+          "component": "test2",
           "name": "Jeff",
           "city": "Denver"
         },
         {
-          "template": "test",
+          "component": "test",
           "name": "Bill",
           "city": "Portland"
         },
         {
-          "template": "link",
+          "component": "link",
           "label": "page 2",
           "href": "#second"
         },
         {
-          "template": "rectangle",
+          "component": "grid",
+          "text": "test, test"
+        },
+        {
+          "component": "rectangle",
           "x": 100,
           "y": 100,
           "w": 400,
@@ -34,22 +38,22 @@
       "title": "second page",
       "elements": [
         {
-          "template": "test",
+          "component": "test",
           "name": "Jose",
           "city": "Calgary"
         },
         {
-          "template": "test",
+          "component": "test",
           "name": "Hank",
           "city": "Los Angeles"
         },
         {
-          "template": "link",
+          "component": "link",
           "label": "page 1",
           "href": "#first"
         },
         {
-          "template": "oval",
+          "component": "oval",
           "x": 200,
           "y": 100,
           "w": 300,

@@ -4,12 +4,12 @@
 			"slug": "page",
 			"elements": [
 				{
-					"template": "link",
+					"component": "link",
 					"label": "testing link",
 					"href": "#url"
 				},
 				{
-					"template": "oval",
+					"component": "oval",
 					"x": 40,
 					"y": 110,
 					"w": 800,

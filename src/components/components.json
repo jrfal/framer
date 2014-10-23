@@ -1,38 +1,28 @@
-{
-  "link": {
-    "template": "link",
+[
+  {
+    "component": "link",
     "label": "page 1",
     "href": "#first"
   },
-  "oval": {
-    "template": "oval",
+  {
+    "component": "oval",
     "x": 200,
     "y": 100,
     "w": 300,
     "h": 200
   },
-  "rectangle": {
-    "template": "rectangle",
+  {
+    "component": "rectangle",
     "x": 200,
     "y": 100,
     "w": 300,
     "h": 200
   },
-  "grid": {
-    "template": "grid",
-    "data": [
-      [
-        "First","Last"
-      ],
-      [
-        "Jeff","Fal"
-      ],
-      [
-        "Darth","Vader"
-      ],
-      [
-        "Spider","Man"
-      ]
-    ]
+  {
+    "component": "grid",
+    "transformations": [
+      ["comma-delimited", "text", "table"]
+    ],
+    "text": "First, Last\nJeff, Fal\nDarth, Vader\nSpider, Man"
   }
-}
+]

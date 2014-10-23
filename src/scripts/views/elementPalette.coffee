@@ -15,8 +15,10 @@ class ElementView extends BaseView
 
     $(@el).html @template()
 
-  createElement: (template) ->
-    @trigger 'createElement', components[template]
+  createElement: (componentName) ->
+    component = _.findWhere components, {component: componentName}
+    if component?
+      @trigger 'createElement', component
 
   createElementHandler: (e) ->
     e.preventDefault()

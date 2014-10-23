@@ -17,16 +17,43 @@ describe 'Creating', ->
 
   describe 'rectangle', ->
     it 'should be a rectangle', ->
-      assert.equal 1, framer.app.get('project').get('pages').first().get('elements').where({'template': 'rectangle'}).length
+      assert.equal 1, framer.app.get('project').get('pages').first().get('elements').where({'component': 'rectangle'}).length
 
   describe 'oval', ->
     it 'should be an oval', ->
-      assert.equal 1, framer.app.get('project').get('pages').first().get('elements').where({'template': 'oval'}).length
+      assert.equal 1, framer.app.get('project').get('pages').first().get('elements').where({'component': 'oval'}).length
 
   describe 'grid', ->
     it 'should be a grid', ->
-      assert.equal 1, framer.app.get('project').get('pages').first().get('elements').where({'template': 'grid'}).length
+      assert.equal 1, framer.app.get('project').get('pages').first().get('elements').where({'component': 'grid'}).length
 
   describe 'link', ->
     it 'should be an link', ->
-      assert.equal 1, framer.app.get('project').get('pages').first().get('elements').where({'template': 'link'}).length
+      assert.equal 1, framer.app.get('project').get('pages').first().get('elements').where({'component': 'link'}).length
+
+describe 'Creating from Palette', ->
+  before ->
+    project = new Project()
+    pages = project.get 'pages'
+    page = new Page()
+    pages.add page
+    framer.app.set 'project', project
+    for component in components
+      paletteLink = $("#framer_element_palette a[data-template=#{component.component}]")
+      paletteLink.trigger "click"
+
+  describe 'rectangle', ->
+    it 'should be a rectangle', ->
+      assert.equal 1, framer.app.get('project').get('pages').first().get('elements').where({'component': 'rectangle'}).length
+
+  describe 'oval', ->
+    it 'should be an oval', ->
+      assert.equal 1, framer.app.get('project').get('pages').first().get('elements').where({'component': 'oval'}).length
+
+  describe 'grid', ->
+    it 'should be a grid', ->
+      assert.equal 1, framer.app.get('project').get('pages').first().get('elements').where({'component': 'grid'}).length
+
+  describe 'link', ->
+    it 'should be an link', ->
+      assert.equal 1, framer.app.get('project').get('pages').first().get('elements').where({'component': 'link'}).length

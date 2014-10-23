@@ -45,9 +45,9 @@ describe 'Save Changes', ->
     page = new Page()
     pages.add page
     framer.app.set 'project', project
-    data = {template: "link", label: "testing link", href: "#url"}
+    data = {component: "link", label: "testing link", href: "#url"}
     page.addElement data
-    data = {template: "oval", x: 40, y: 110, w: 800, h: 1001}
+    data = {component: "oval", x: 40, y: 110, w: 800, h: 1001}
     page.addElement data
     framer.app.saveFile './testData/savetest.json'
 

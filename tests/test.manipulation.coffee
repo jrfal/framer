@@ -20,10 +20,19 @@ describe 'Manipulating', ->
 
     # edit text, font, size
     $('#framer_controls .control-box:last').trigger "click"
-    $(".property-panel .content").val("so what is up?")
-    $(".property-panel .font-family").val("sans-serif")
-    $(".property-panel .font-size").val("19px")
-    $(".property-panel .save").trigger "click"
+    el_id = $('#framer_controls .control-box:last').data('element')
+    $(".property-panel[data-element=#{el_id}] .content").val("so what is up?")
+    $(".property-panel[data-element=#{el_id}] .font-family").val("sans-serif")
+    $(".property-panel[data-element=#{el_id}] .font-size").val("19px")
+    $(".property-panel[data-element=#{el_id}] .save").trigger "click"
+
+    # edit grid
+    $('#framer_controls .control-box:last').prev('.control-box').trigger "click"
+    el_id = $('#framer_controls .control-box:last').prev('.control-box').data('element')
+    $(".property-panel[data-element=#{el_id}] .content").val("one\ntwo\nthree")
+    $(".property-panel[data-element=#{el_id}] .font-family").val("sans-serif")
+    $(".property-panel[data-element=#{el_id}] .font-size").val("19px")
+    $(".property-panel[data-element=#{el_id}] .save").trigger "click"
 
   describe 'moving', ->
     it 'should have moved the rectangle to 160,5', ->
@@ -44,6 +53,13 @@ describe 'Manipulating', ->
     it 'text size should be 19px', ->
       rectangleText = $ '#framer_pages #first .framer-drawn-element .framer-text'
       assert.equal rectangleText.css("font-size"), "19px"
+  describe 'grid content edit', ->
+    it 'should have a 1x3 grid', ->
+      grid = $ '#framer_pages #first table.framer-element'
+      rows = grid.find 'tr'
+      assert.equal rows.length, 3
+      columns = grid.find 'tr:first-of-type td'
+      assert.equal columns.length, 1
 
 describe 'Resizing', ->
   before ->
@@ -95,123 +111,3 @@ describe 'Resizing', ->
       checkRectangle 6, 30,  18,  387, 421
       checkRectangle 7, 87,  170, 423, 250
       checkRectangle 8, 292, 569, 908, 1281
-
-
-describe 'Selecting', ->
-  before ->
-    framer.app.loadFile './testData/test.json'
-    $('.control-box:first-child').trigger 'click'
-
-  describe 'clicking selects', ->
-    it 'should show the edit panel for this object', ->
-      assert.equal $('.property-panel').length, 1
-    it 'should contain the correct id', ->
-      elementID = $('.property-panel').data('element')
-
-      assert.equal $('.property-panel').data('element'), $('.control-box:first-child').data('element')
-    it 'should show the resize handles', ->
-      count = 0
-      $('.control-box:first-child .resize-handle').each (i, item) ->
-        if $(item).css('visibility') == 'visible'
-          count++
-      assert.equal count, 8
-
-describe 'Multi-Selecting', ->
-  before ->
-    framer.app.loadFile './testData/two-rects.json'
-
-  describe 'select a second element with cmd-click', ->
-    it 'should have two selected', ->
-      $('.control-box:first-child').trigger 'click'
-      e = $.Event 'click'
-      e.metaKey = true
-      $('.control-box:last').trigger e
-      assert.equal framer.app_view.getSelected().length, 2
-
-  describe 'move one, and it should move both', ->
-    it 'should have updated the positions to 75,70 and 125,120', ->
-      controlBox = $('#framer_controls .control-box:first')
-      e = $.Event 'mousedown'
-      e.clientX = 50 + 9
-      e.clientY = 50 + 17
-      $(controlBox).find('.control-border').trigger e
-      e = $.Event 'mousemove'
-      e.clientX = 75 + 9
-      e.clientY = 70 + 17
-      $(document).trigger e
-      e = $.Event 'mouseup'
-      $(document).trigger e
-
-      rects = $ '#framer_pages .framer-drawn-element'
-
-      rectangle = $(rects[0])
-      position = rectangle.position()
-      assert.equal position.left, 75
-      assert.equal position.top, 70
-
-      rectangle = $(rects[1])
-      position = rectangle.position()
-      assert.equal position.left, 125
-      assert.equal position.top, 120
-
-  describe 'select multiple objects by dragging', ->
-    it 'should have none selected if we drag through none', ->
-      e = $.Event 'mousedown'
-      e.clientX = 1
-      e.clientY = 1
-      e.shiftKey = false
-      e.metaKey = false
-      $("#framer_controls").trigger e
-      e = $.Event 'mousemove'
-      e.clientX = 2
-      e.clientY = 2
-      $(document).trigger e
-      e = $.Event 'mouseup'
-      $(document).trigger e
-
-      assert.equal framer.app_view.getSelected().length, 0
-
-    it 'should have two selected if we drag through both', ->
-      e = $.Event 'mousedown'
-      e.clientX = 125
-      e.clientY = 120
-      e.shiftKey = false
-      e.metaKey = false
-      $("#framer_controls").trigger e
-      e = $.Event 'mousemove'
-      e.clientX = 175
-      e.clientY = 170
-      $(document).trigger e
-      e = $.Event 'mouseup'
-      $(document).trigger e
-
-      assert.equal framer.app_view.getSelected().length, 2
-
-    it 'should only show one property panel', ->
-      assert.equal $('.property-panel.showing').length, 1
-
-  describe 'unselect one of current selection by cmd-clicking on it', ->
-    it 'should have only one selected', ->
-      e = $.Event 'click'
-      e.metaKey = true
-      $('.control-box:last').trigger e
-      assert.equal framer.app_view.getSelected().length, 1
-
-  describe 'toggle selection on both by cmd-dragging through them', ->
-    it 'should have only one selected', ->
-      e = $.Event 'mousedown'
-      e.clientX = 125
-      e.clientY = 120
-      e.metaKey = true
-      $("#framer_controls").trigger e
-      e = $.Event 'mousemove'
-      e.clientX = 175
-      e.clientY = 170
-      $(document).trigger e
-      e = $.Event 'mouseup'
-      $(document).trigger e
-
-      assert.equal framer.app_view.getSelected().length, 1
-
-    it 'should have only the second one selected', ->
-      assert.equal framer.app_view.getSelected().first().get('id'), $('.control-box:last').data('element')

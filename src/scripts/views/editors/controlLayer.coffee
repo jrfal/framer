@@ -112,7 +112,10 @@ class ControlLayer extends PageView
 
     elements = []
     for elementView in @elementViews
-      if inFrame {x: elementView.model.get('x'), y: elementView.model.get('y'), w: elementView.model.get('w'), h: elementView.model.get('h')}
+      el_id = elementView.model.get('id')
+      elel = $(".framer-page [data-element=#{el_id}]")
+      position = elel.position()
+      if inFrame {x: position.left, y: position.top, w: elel.width(), h: elel.height()}
         elements.push elementView.model
 
     return elements
@@ -141,6 +144,13 @@ class ControlBox extends BaseView
     if @model?
       oldEl = @el
       viewAttributes = _.clone @model.attributes
+      el_id = @model.get('id')
+      elel = $(".framer-page [data-element=#{el_id}]")
+      if elel.length > 0
+        viewAttributes.x = elel.position().left
+        viewAttributes.y = elel.position().top
+        viewAttributes.w = elel.width()
+        viewAttributes.h = elel.height()
       @setElement $(@template(_.extend(viewAttributes, {selected: @selected})))
       $(oldEl).replaceWith $(@el)
 
@@ -171,8 +181,20 @@ class ControlBox extends BaseView
       if @selected
         @deselect()
 
+  giveModelPosition: ->
+    if not @model.has 'x' or not @model has 'y'
+      el_id = @model.get('id')
+      elel = $(".framer-page [data-element=#{el_id}]")
+      position = {}
+      if not @model.has 'x'
+        position.x = elel.position().left
+      if not @model.has 'y'
+        position.y = elel.position().top
+      @model.set position
+
   startMoveHandler: (e) ->
     e.stopPropagation()
+    @giveModelPosition()
     @grab = {x: e.clientX - @model.get('x'), y: e.clientY - @model.get('y')}
     $(document).on 'mousemove', @moveHandler
     $(document).on 'mouseup', @stopMoveHandler

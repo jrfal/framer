@@ -5,21 +5,8 @@
       "title": "grid page",
       "elements": [
         {
-          "template": "grid",
-          "data": [
-            [
-              "First","Last"
-            ],
-            [
-              "Jeff","Fal"
-            ],
-            [
-              "Darth","Vader"
-            ],
-            [
-              "Spider","Man"
-            ]
-          ]
+          "component": "grid",
+          "text": "First, Last\nJeff, Fal\nDarth, Vader\nSpider, Man"
         }
       ]
     }

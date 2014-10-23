@@ -276,16 +276,19 @@ class PropertyPanel extends BaseView
     @slideOut()
 
   textEditSaveHandler: ->
-    newText =$(@el).find('.content').val()
-    newFontFamily =$(@el).find('.font-family').val()
-    newFontSize =$(@el).find('.font-size').val()
-    if (newText != '')
-      @model.set('text': newText)
-    if (newFontFamily != '')
-      @model.set('fontFamily': newFontFamily)
-    if (newFontSize != '')
-      @model.set('fontSize': newFontSize)
-    @slideOut()
+    properties =
+      'content':      'text'
+      'font-family':  'fontFamily'
+      'font-size':    'fontSize'
+      'border-width': 'borderWidth'
+      'border-color': 'borderColor'
+      'fill-color':   'fillColor'
+    updates = {}
+    for key, value of properties
+      newProperty = $(@el).find('.'+key).val()
+      if (newProperty != '')
+        updates[value] = newProperty
+    @model.set updates
 
   slideIn: ->
     $(@el).css("margin-left", $(document).width() + "px")

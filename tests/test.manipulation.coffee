@@ -24,6 +24,9 @@ describe 'Manipulating', ->
     $(".property-panel[data-element=#{el_id}] .content").val("so what is up?")
     $(".property-panel[data-element=#{el_id}] .font-family").val("sans-serif")
     $(".property-panel[data-element=#{el_id}] .font-size").val("19px")
+    $(".property-panel[data-element=#{el_id}] .border-color").val("#f00")
+    $(".property-panel[data-element=#{el_id}] .border-width").val("4")
+    $(".property-panel[data-element=#{el_id}] .fill-color").val("#00f")
     $(".property-panel[data-element=#{el_id}] .save").trigger "click"
 
     # edit grid
@@ -53,6 +56,18 @@ describe 'Manipulating', ->
     it 'text size should be 19px', ->
       rectangleText = $ '#framer_pages #first .framer-drawn-element .framer-text'
       assert.equal rectangleText.css("font-size"), "19px"
+  describe 'border color edit', ->
+    it 'the border color should be #f00', ->
+      rectangle = $ '#framer_pages #first .framer-drawn-element'
+      assert.equal rectangle.css("border-color"), "rgb(255, 0, 0)"
+  describe 'border width edit', ->
+    it 'the border width should be 4px', ->
+      rectangle = $ '#framer_pages #first .framer-drawn-element'
+      assert.equal rectangle.css("border-width"), "4px"
+  describe 'fill color edit', ->
+    it 'the fill color should be #00f', ->
+      rectangle = $ '#framer_pages #first .framer-drawn-element'
+      assert.equal rectangle.css("background-color"), "rgb(0, 0, 255)"
   describe 'grid content edit', ->
     it 'should have a 1x3 grid', ->
       grid = $ '#framer_pages #first table.framer-element'

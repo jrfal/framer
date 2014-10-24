@@ -22,7 +22,7 @@ class AppView extends BaseView
       'closeElementPaletteHandler', 'showHideElementPalette'
     @model.on "change:project", @newProject
     @model.on "error", @showError
-    @model.on "change:elementPalette", @showHideElementPalette
+    @model.get('settings').on "change:elementPalette", @showHideElementPalette
     @projectView = new ProjectEditor({model: @model.get 'project'})
     @elementPalette = new ElementPaletteView()
     @elementPalette.on 'createElement', @createElementHandler
@@ -34,6 +34,7 @@ class AppView extends BaseView
     $(@el).html uiTemplates.app({})
     @assign @projectView, '#framer_pages'
     @assign @elementPalette, '#framer_elementPalette'
+    @showHideElementPalette()
 
     # trigger css file load
     $("#cssFile").change ->
@@ -63,7 +64,7 @@ class AppView extends BaseView
     $(@elementPalette.el).hide()
 
   showHideElementPalette: ->
-    if @model.get 'elementPalette'
+    if @model.get('settings').get 'elementPalette'
       $(@elementPalette.el).show()
     else
       $(@elementPalette.el).hide()

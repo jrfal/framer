@@ -5,7 +5,6 @@ Backbone = require 'backbone'
 Backbone.$ = $
 _ = require 'underscore'
 uiTemplates = require './../uiTemplates.coffee'
-config = require './../config.coffee'
 
 class ElementView extends Backbone.View
   className: 'framer-element'
@@ -34,7 +33,7 @@ class ElementView extends Backbone.View
       oldEl = @el
       viewAttributes = _.clone @model.attributes
       for transformation in @transformations
-        viewAttributes[transformation[2]] = config.transformations[transformation[0]](viewAttributes[transformation[1]])
+        viewAttributes[transformation[2]] = global.cfg.transformations[transformation[0]](viewAttributes[transformation[1]])
       @setElement $(@template(viewAttributes))
       @$el.attr("data-element", @model.get('id'))
       $(oldEl).replaceWith $(@el)

@@ -10,10 +10,12 @@ Page = require './page.coffee'
 Element = require './element.coffee'
 
 class App extends Backbone.Model
-  defaults:
-    elementPalette: true
-
   initialize: ->
+    _.bindAll @, 'saveSettings'
+    settings = new Backbone.Model {elementPalette: true}
+    @set 'settings', settings
+    @loadSettings()
+    settings.on "change", @saveSettings
     @newProject()
 
   newProject: ->
@@ -73,9 +75,18 @@ class App extends Backbone.Model
     fs.writeFile(filename, JSON.stringify(projectObj, null, "\t"))
 
   showElementPalette: ->
-    @set 'elementPalette', true
+    @get('settings').set 'elementPalette', true
 
   hideElementPalette: ->
-    @set 'elementPalette', false
+    @get('settings').set 'elementPalette', false
+
+  saveSettings: ->
+    fs.writeFile(global.cfg.settings, JSON.stringify(@get('settings').attributes))
+
+  loadSettings: (filename) ->
+    if not filename?
+      filename = global.cfg.settings
+    fileContents = fs.readFileSync(filename).toString()
+    @set 'settings', @get('settings').set(JSON.parse(fileContents))
 
 module.exports = App

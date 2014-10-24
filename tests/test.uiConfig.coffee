@@ -19,3 +19,10 @@ describe 'Change View', ->
       framer.app.showElementPalette()
       palette = $ '#framer_elementPalette'
       assert.equal palette.css("display"), "block"
+
+describe 'Load Settings', ->
+  before ->
+    framer.app.loadSettings './testData/testSettings.json'
+  it 'should be hiding the element palette', ->
+    palette = $ '#framer_elementPalette'
+    assert.equal palette.css("display"), "none"

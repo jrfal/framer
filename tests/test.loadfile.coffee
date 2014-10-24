@@ -101,3 +101,11 @@ describe 'Naming Pages', ->
         pages.each (page2) ->
           if page1 != page2
             assert.notEqual page1.get('slug'), page2.get('slug')
+
+describe 'Various File Issues', ->
+  describe 'deal with some bad files', ->
+    it 'should not choke on these', ->
+      framer.app.loadFile './testData/badData/wrongPages.json'
+
+  after ->
+    $('.bbm-wrapper').trigger 'click'

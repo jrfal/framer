@@ -1,10 +1,12 @@
 [
   {
+    "title": "Link",
     "component": "link",
     "label": "page 1",
     "href": "#first"
   },
   {
+    "title": "Oval",
     "component": "oval",
     "x": 200,
     "y": 100,
@@ -15,6 +17,7 @@
     ]
   },
   {
+    "title": "Rectangle",
     "component": "rectangle",
     "x": 200,
     "y": 100,
@@ -31,6 +34,7 @@
     ]
   },
   {
+    "title": "Grid",
     "component": "grid",
     "transformations": [
       ["comma-delimited", "text", "table"],

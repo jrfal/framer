@@ -13,7 +13,7 @@ class ElementView extends BaseView
   render: ->
     _.bindAll @, 'createElementHandler', 'closeHandler'
 
-    $(@el).html @template()
+    $(@el).html @template(components)
 
   createElement: (componentName) ->
     component = _.findWhere components, {component: componentName}

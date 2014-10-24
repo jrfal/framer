@@ -12,8 +12,22 @@ describe 'Selecting', ->
       assert.equal $('.property-panel').length, 1
     it 'should contain the correct id', ->
       elementID = $('.property-panel').data('element')
-
       assert.equal $('.property-panel').data('element'), $('.control-box:first-child').data('element')
+    it 'should be able to move the edit panel', ->
+      position = $('.property-panel').position()
+      e = $.Event 'mousedown'
+      e.clientX = 0
+      e.clientY = 0
+      $('.property-panel').trigger e
+      e = $.Event 'mousemove'
+      e.clientX = 50
+      e.clientY = 75
+      $('.property-panel').trigger e
+      e = $.Event 'mouseup'
+      $('.property-panel').trigger e
+      assert.equal Math.round(position.left) + 50, Math.round($('.property-panel').position().left)
+      assert.equal Math.round(position.top) + 75, Math.round($('.property-panel').position().top)
+
     it 'should show the resize handles', ->
       count = 0
       $('.control-box:first-child .resize-handle').each (i, item) ->

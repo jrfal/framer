@@ -264,7 +264,8 @@ class PropertyPanel extends BaseView
   template: uiTemplates.propertyPanel
 
   initialize: ->
-    _.bindAll @, 'render', 'textEditCancelHandler', 'textEditSaveHandler', 'remove'
+    _.bindAll @, 'render', 'textEditCancelHandler', 'textEditSaveHandler', 'remove',
+      'startDragHandler', 'dragHandler', 'stopDragHandler'
     @render()
 
   render: ->
@@ -318,8 +319,25 @@ class PropertyPanel extends BaseView
     $(@el).removeClass "showing"
     $(@el).animate({marginLeft: $(document).width() + "px"}, 400, @remove)
 
+  startDragHandler: (e) ->
+    $(document).on 'mousemove', @dragHandler
+    $(document).on 'mouseup', @stopDragHandler
+    e.stopPropagation()
+    @grab = {x: e.clientX - $(@el).position().left, y: e.clientY - $(@el).position().top}
+
+  dragHandler: (e) ->
+    x =  e.clientX - @grab.x
+    y =  e.clientY - @grab.y
+    $(@el).css "left", x
+    $(@el).css "top", y
+
+  stopDragHandler: (e) ->
+    $(document).off 'mousemove', @dragHandler
+    $(document).off 'mouseup', @stopDragHandler
+
   events:
     "click .cancel" : "textEditCancelHandler"
     "click .save"   : "textEditSaveHandler"
+    "mousedown"     : "startDragHandler"
 
 module.exports = ControlLayer

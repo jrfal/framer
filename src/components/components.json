@@ -9,20 +9,38 @@
     "x": 200,
     "y": 100,
     "w": 300,
-    "h": 200
+    "h": 200,
+    "properties": [
+      {"inherit": "rectangle"}
+    ]
   },
   {
     "component": "rectangle",
     "x": 200,
     "y": 100,
     "w": 300,
-    "h": 200
+    "h": 200,
+    "properties": [
+      {"property": "text", "type": "paragraph"},
+      {"property": "fontSize", "type": "number"},
+      {"property": "fontFamily", "type": "text"},
+      {"property": "fontColor", "type": "color"},
+      {"property": "borderColor", "type": "color"},
+      {"property": "borderWidth", "type": "color"},
+      {"property": "fillColor", "type": "color"}
+    ]
   },
   {
     "component": "grid",
     "transformations": [
-      ["comma-delimited", "text", "table"]
+      ["comma-delimited", "text", "table"],
+      ["table-meta", "table", "tableMeta"]
     ],
-    "text": "First, Last\nJeff, Fal\nDarth, Vader\nSpider, Man"
+    "text": "First, Last\nJeff, Fal\nDarth, Vader\nSpider, Man",
+    "properties": [
+      {"inherit": "rectangle"},
+      {"property": "oddColor", "type": "color"},
+      {"property": "evenColor", "type": "color"}
+    ]
   }
 ]

@@ -1,7 +1,7 @@
 <table class="framer-element" {{> _elementStyle}}>
-  {{#each table}}
-    <tr>
-      {{#each this}}
+  {{#each tableMeta}}
+    <tr style="{{#if even}}{{#if ../../evenColor}}background:{{../../../evenColor}};{{/if}}{{else}}{{#if ../../oddColor}}background:{{../../../oddColor}};{{/if}}{{/if}}">
+      {{#each columns}}
       <td>{{this}}</td>
       {{/each}}
     </tr>

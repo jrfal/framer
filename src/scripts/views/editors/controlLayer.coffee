@@ -5,6 +5,7 @@ PageView = require './../page.coffee'
 uiTemplates = require './../../uiTemplates.coffee'
 _ = require 'underscore'
 Editor = require './../../models/editor.coffee'
+components = require './../../../components/components.json'
 
 class ControlLayer extends PageView
   className: 'framer-control-layer'
@@ -269,25 +270,44 @@ class PropertyPanel extends BaseView
   render: ->
     if @model?
       oldEl = @el
+      propsFromComponent = (component) ->
+        properties = []
+        if component.properties?
+          for property in component.properties
+            if property.inherit?
+              inherit = _.findWhere components, {component: property.inherit}
+              if inherit?
+                properties = _.union properties, propsFromComponent(inherit)
+            else
+              properties.push property
+        return properties
+
       @setElement $(@template(@model.attributes))
+
+      if @model.get('component')?
+        component = _.findWhere components, {component: @model.get('component')}
+        if component?
+          for property in propsFromComponent(component)
+            if property.type == 'paragraph'
+              prop_el = $ "<textarea></textarea>"
+            else
+              prop_el = $ "<input type=\"text\" />"
+            prop_el.attr "data-element", @model.get('id')
+            prop_el.attr "data-property", property.property
+            prop_el.attr "placeholder", property.property
+            prop_el.val @model.get(property.property)
+            $(@el).find('.framer-fields').append prop_el
+
       $(oldEl).replaceWith $(@el)
 
   textEditCancelHandler: ->
     @slideOut()
 
   textEditSaveHandler: ->
-    properties =
-      'content':      'text'
-      'font-family':  'fontFamily'
-      'font-size':    'fontSize'
-      'border-width': 'borderWidth'
-      'border-color': 'borderColor'
-      'fill-color':   'fillColor'
     updates = {}
-    for key, value of properties
-      newProperty = $(@el).find('.'+key).val()
-      if (newProperty != '')
-        updates[value] = newProperty
+    fields = $(@el).find(".framer-fields > *")
+    for field in fields
+      updates[$(field).data("property")] = $(field).val()
     @model.set updates
 
   slideIn: ->

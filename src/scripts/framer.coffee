@@ -9,6 +9,12 @@ $ = require 'jquery'
 app = new App()
 app_view = new AppView {model: app}
 
+# Register Handlebars helpers
+Handlebars.registerHelper 'even', (value, block) ->
+  if block.data.index % 2 == 0
+    return true
+  false
+
 # build main menu
 makeMenu = ->
   main_menu = new global.gui.Menu({ type: 'menubar'})

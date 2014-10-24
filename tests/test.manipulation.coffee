@@ -21,20 +21,20 @@ describe 'Manipulating', ->
     # edit text, font, size
     $('#framer_controls .control-box:last').trigger "click"
     el_id = $('#framer_controls .control-box:last').data('element')
-    $(".property-panel[data-element=#{el_id}] .content").val("so what is up?")
-    $(".property-panel[data-element=#{el_id}] .font-family").val("sans-serif")
-    $(".property-panel[data-element=#{el_id}] .font-size").val("19px")
-    $(".property-panel[data-element=#{el_id}] .border-color").val("#f00")
-    $(".property-panel[data-element=#{el_id}] .border-width").val("4")
-    $(".property-panel[data-element=#{el_id}] .fill-color").val("#00f")
+    $(".property-panel[data-element=#{el_id}] [data-property=text]").val("so what is up?")
+    $(".property-panel[data-element=#{el_id}] [data-property=fontFamily]").val("sans-serif")
+    $(".property-panel[data-element=#{el_id}] [data-property=fontSize]").val("19px")
+    $(".property-panel[data-element=#{el_id}] [data-property=borderColor]").val("#f00")
+    $(".property-panel[data-element=#{el_id}] [data-property=borderWidth]").val("4")
+    $(".property-panel[data-element=#{el_id}] [data-property=fillColor]").val("#00f")
     $(".property-panel[data-element=#{el_id}] .save").trigger "click"
 
     # edit grid
     $('#framer_controls .control-box:last').prev('.control-box').trigger "click"
     el_id = $('#framer_controls .control-box:last').prev('.control-box').data('element')
-    $(".property-panel[data-element=#{el_id}] .content").val("one\ntwo\nthree")
-    $(".property-panel[data-element=#{el_id}] .font-family").val("sans-serif")
-    $(".property-panel[data-element=#{el_id}] .font-size").val("19px")
+    $(".property-panel[data-element=#{el_id}] [data-property=text]").val("one\ntwo\nthree")
+    $(".property-panel[data-element=#{el_id}] [data-property=evenColor]").val("red")
+    $(".property-panel[data-element=#{el_id}] [data-property=oddColor]").val("yellow")
     $(".property-panel[data-element=#{el_id}] .save").trigger "click"
 
   describe 'moving', ->
@@ -75,6 +75,12 @@ describe 'Manipulating', ->
       assert.equal rows.length, 3
       columns = grid.find 'tr:first-of-type td'
       assert.equal columns.length, 1
+  describe 'grid colors edit', ->
+    it 'should make the first row red and the second yellow', ->
+      grid = $ '#framer_pages #first table.framer-element'
+      rows = grid.find 'tr'
+      assert.equal $(rows[0]).css("background-color"), "rgb(255, 0, 0)"
+      assert.equal $(rows[1]).css("background-color"), "rgb(255, 255, 0)"
 
 describe 'Resizing', ->
   before ->

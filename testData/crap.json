@@ -1,0 +1,39 @@
+{
+	"pages": [
+		{
+			"slug": "page",
+			"elements": [
+				{
+					"title": "Grid",
+					"component": "grid",
+					"transformations": [
+						[
+							"comma-delimited",
+							"text",
+							"table"
+						],
+						[
+							"table-meta",
+							"table",
+							"tableMeta"
+						]
+					],
+					"text": "First, Last\nJeff, Fal\nDarth, Vader\nSpider, Man",
+					"properties": [
+						{
+							"inherit": "rectangle"
+						},
+						{
+							"property": "oddColor",
+							"type": "color"
+						},
+						{
+							"property": "evenColor",
+							"type": "color"
+						}
+					]
+				}
+			]
+		}
+	]
+}

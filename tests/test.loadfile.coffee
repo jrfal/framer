@@ -6,6 +6,7 @@ _ = require 'underscore'
 messages = require './../src/content/messages.en.json'
 Project = require './../src/scripts/models/project.coffee'
 Page = require './../src/scripts/models/page.coffee'
+components = require '../src/components/components.json'
 
 describe 'Loading', ->
   before ->
@@ -52,43 +53,78 @@ describe 'Save Changes', ->
     framer.app.saveFile './testData/savetest.json'
 
   describe 'save modifications', ->
-    it 'should be match a previously created reference file', ->
+    it 'should match a previously created reference file', ->
       loadFile = JSON.parse(fs.readFileSync('./testData/reference.json').toString())
       saveFile = JSON.parse(fs.readFileSync('./testData/savetest.json').toString())
       assert.ok _.isEqual(loadFile, saveFile)
       fs.unlink './testData/savetest.json'
 
 describe 'Problem Loading', ->
-  before ->
-    framer.app.loadFile './testData/not.a.file.json'
-
   describe 'non-existent file', ->
     it 'should show no file message', ->
-      assert.equal $($(".dialog-message")[0]).text(), messages["no file"]
+      framer.app.loadFile './testData/not.a.file.json'
+      els = $(".dialog-message")
+      assert.equal $(els[els.length - 1]).text(), messages["no file"]
+      $('.bbm-wrapper').trigger 'click'
 
 describe 'Problem Loading', ->
-  before ->
-    framer.app.loadFile './testData/invalid.json'
-
   describe 'badly formatted file', ->
     it 'should show bad file message', ->
-      assert.equal $($(".dialog-message")[1]).text(), messages["bad file"]
-
-  after ->
-    $('.bbm-wrapper').trigger 'click'
+      framer.app.loadFile './testData/invalid.json'
+      els = $(".dialog-message")
+      assert.equal $(els[els.length - 1]).text(), messages["bad file"]
+      $('.bbm-wrapper').trigger 'click'
 
 describe 'Creating a New Project', ->
-  before ->
-    framer.app.loadFile './testData/test.json'
-
   describe 'new project', ->
-
     it 'should have no elements', ->
+      framer.app.loadFile './testData/test.json'
       framer.app.newProject()
       project = framer.app.get 'project'
       page = project.get('pages').first()
       elements = page.get 'elements'
       assert.equal elements.length, 0
+
+describe 'Unsaved Project', ->
+  before ->
+    framer.app.loadFile './testData/test.json'
+    project = framer.app.get 'project'
+    page = project.get('pages').first()
+    page.addElement components[0]
+
+  describe 'new project', ->
+    it 'should show message about unsaved project', ->
+      framer.app_view.newProjectCmd()
+      els = $(".dialog-message")
+      assert.equal $(els[els.length - 1]).text(), messages["load while unsaved"]
+      $(".bbm-button.cancel").click()
+
+  describe 'load project', ->
+    it 'should show message about unsaved project', ->
+      framer.app_view.loadFileCmd()
+      els = $(".dialog-message")
+      assert.equal $(els[els.length - 1]).text(), messages["load while unsaved"]
+      $(".bbm-button.cancel").click()
+
+describe 'Save and New', ->
+  before ->
+    framer.app.loadFile './testData/reference2.json'
+    framer.app_view.projectView.projectChanged()
+    framer.app_view.afterSaving = framer.app_view.newProjectCmd
+    framer.app_view.saveFile {}, './testData/savetest.json'
+
+  describe 'save and new', ->
+    it 'should have no elements', ->
+      project = framer.app.get 'project'
+      page = project.get('pages').first()
+      elements = page.get 'elements'
+      assert.equal elements.length, 0
+
+    it 'should match a previously created reference file', ->
+      loadFile = JSON.parse(fs.readFileSync('./testData/reference2.json').toString())
+      saveFile = JSON.parse(fs.readFileSync('./testData/savetest.json').toString())
+      assert.ok _.isEqual(loadFile, saveFile)
+      fs.unlink './testData/savetest.json'
 
 describe 'Naming Pages', ->
   before ->

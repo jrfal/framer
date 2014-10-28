@@ -9,12 +9,6 @@ $ = require 'jquery'
 app = new App()
 app_view = new AppView {model: app}
 
-# Register Handlebars helpers
-Handlebars.registerHelper 'even', (value, block) ->
-  if block.data.index % 2 == 0
-    return true
-  false
-
 # build main menu
 makeMenu = ->
   main_menu = new global.gui.Menu({ type: 'menubar'})
@@ -25,7 +19,7 @@ makeMenu = ->
   file_menu.append new gui.MenuItem({
     label: "New Project",
     click: ->
-      app.newProject()
+      app_view.newProjectCmd()
     ,
     key: "n",
     modifiers: "cmd",
@@ -33,7 +27,7 @@ makeMenu = ->
   file_menu.append new gui.MenuItem({
     label: "Open File",
     click: ->
-      $("#dataFile").click()
+      app_view.loadFileCmd()
     ,
     key: "o",
     modifiers: "cmd",
@@ -41,7 +35,7 @@ makeMenu = ->
   file_menu.append new gui.MenuItem({
     label: "Save File",
     click: ->
-      $("#saveFile").click()
+      app_view.saveFileCmd()
     ,
     key: "s",
     modifiers: "cmd",

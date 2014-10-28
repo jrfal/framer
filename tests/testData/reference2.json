@@ -1,0 +1,21 @@
+{
+	"pages": [
+		{
+			"slug": "page",
+			"elements": [
+				{
+					"component": "link",
+					"label": "testing links",
+					"href": "#url"
+				},
+				{
+					"component": "rectangle",
+					"x": 50,
+					"y": 102,
+					"w": 300,
+					"h": 700
+				}
+			]
+		}
+	]
+}

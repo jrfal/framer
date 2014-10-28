@@ -16,12 +16,15 @@ class AppView extends BaseView
 
   projectView: null
   elementPalette: null
+  afterSaving: null
 
   initialize: ->
-    _.bindAll @, 'loadFile', 'saveFile', 'newProject', 'createElementHandler', 'showError',
-      'closeElementPaletteHandler', 'showHideElementPalette'
+    _.bindAll @, 'loadFile', 'saveFile', 'loadFileCmd', 'newProject', 'newProjectCmd', 'createElementHandler', 'showError',
+      'closeElementPaletteHandler', 'showHideElementPalette', 'savedProject', 'saveAndLoad',
+      'saveAndNew', 'makeNewProject'
     @model.on "change:project", @newProject
     @model.on "error", @showError
+    @model.on "saved", @savedProject
     @model.get('settings').on "change:elementPalette", @showHideElementPalette
     @projectView = new ProjectEditor({model: @model.get 'project'})
     @elementPalette = new ElementPaletteView()
@@ -42,22 +45,71 @@ class AppView extends BaseView
       $("#cssLink").attr "href", cssFile
 
   loadFile: (e) ->
-    @model.loadFile $("#dataFile").val()
+    filename = $("#dataFile").val()
+    if filename == ''
+      return
+    @model.loadFile filename
+    @projectView.filename = filename
+    $('#dataFile').val('')
 
-  saveFile: (e) ->
-    @model.saveFile $("#saveFile").val()
+  saveAndLoad: ->
+    @afterSaving = @loadFileCmd
+    @saveFileCmd()
+
+  saveAndNew: ->
+    @afterSaving = @newProjectCmd
+    @saveFileCmd()
+
+  loadFileCmd: ->
+    if not @projectView.saved
+      question = Dialog.question messages["unsaved title"], messages["load while unsaved"], [{label: messages["no-save label"], class: "no-save"}, {label: messages["save label"], class: "save"}]
+      $(question.el).find(".save").on "click", @saveAndLoad
+      $(question.el).find(".no-save").on "click", ->
+        $("#dataFile").click()
+    else
+      $("#dataFile").click()
+
+  saveFile: (e, filename) ->
+    if not filename?
+      filename = $("#saveFile").val()
+    if filename == ''
+      return
+    @model.saveFile filename
+    @projectView.saved = true
+    if @afterSaving?
+      @afterSaving()
+      @afterSaving = null
+    $('#saveFile').val('')
+
+  saveFileCmd: ->
+    $("#saveFile").click()
+
+  makeNewProject: ->
+    if @model?
+      @model.newProject()
+
+  newProjectCmd: ->
+    if not @projectView.saved
+      question = Dialog.question messages["unsaved title"], messages["load while unsaved"], [{label: messages["no-save label"], class: "no-save"}, {label: messages["save label"], class: "save"}]
+      $(question.el).find(".save").on "click", @saveAndNew
+      $(question.el).find(".no-save").on "click", @makeNewProject
+    else
+      @makeNewProject()
 
   newProject: ->
     if @model?
-      @projectView.model = @model.get 'project'
+      @projectView.setModel @model.get 'project'
       @projectView.currentPage = null
       @projectView.render()
+
+  savedProject: ->
+    @projectView.projectSaved()
 
   createElementHandler: (data) ->
     @projectView.pageView.model.addElement data
 
   showError: (e) ->
-    Dialog.dialog messages[e.type]
+    Dialog.message messages['error title'], messages[e.type]
 
   closeElementPaletteHandler: ->
     @model.hideElementPalette()

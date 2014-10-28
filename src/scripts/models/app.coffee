@@ -48,16 +48,17 @@ class App extends Backbone.Model
     pageModels = projectModel.get 'pages'
 
     for page in pages
-      pageModel = new Page()
-      if 'slug' of page
-        pageModel.set 'slug', page.slug
-      if 'title' of page
-        pageModel.set 'title', page.title
-      pageModels.add pageModel
+      if typeof page == 'object'
+        pageModel = new Page()
+        if 'slug' of page
+          pageModel.set 'slug', page.slug
+        if 'title' of page
+          pageModel.set 'title', page.title
+        pageModels.add pageModel
 
-      elements = page.elements
-      for data in elements
-        pageModel.addElement data
+        elements = page.elements
+        for data in elements
+          pageModel.addElement data
 
     if ("css" of attributes)
       $("#cssLink").attr "href", path.dirname(filename)+ '/' + attributes.css
@@ -73,6 +74,7 @@ class App extends Backbone.Model
           for element in page.elements
             delete element.id
     fs.writeFile(filename, JSON.stringify(projectObj, null, "\t"))
+    @trigger 'savedProject'
 
   showElementPalette: ->
     @get('settings').set 'elementPalette', true

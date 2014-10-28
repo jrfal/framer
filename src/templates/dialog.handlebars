@@ -1,9 +1,11 @@
 <div class="bbm-modal__topbar">
-  <h3 class="bbm-modal__title">Backbone.Modal</h3>
+  <h3 class="bbm-modal__title">{{title}}</h3>
 </div>
 <div class="bbm-modal__section">
   <span class="dialog-message">{{message}}</span>
 </div>
 <div class="bbm-modal__bottombar">
-  <a href="#" class="bbm-button">Close</a>
+  {{#each actions}}
+  <a href="#" class="bbm-button {{class}}">{{label}}</a>
+  {{/each}}
 </div>

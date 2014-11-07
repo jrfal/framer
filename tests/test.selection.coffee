@@ -88,6 +88,8 @@ describe 'Multi-Selecting', ->
       e.clientY = 2
       $(document).trigger e
       e = $.Event 'mouseup'
+      e.clientX = 2
+      e.clientY = 2
       $(document).trigger e
 
       assert.equal framer.app_view.getSelected().length, 0
@@ -137,6 +139,18 @@ describe 'Multi-Selecting', ->
     it 'should have only the second one selected', ->
       assert.equal framer.app_view.getSelected().first().get('id'), $('.control-box:last').data('element')
 
+  describe 'deselect by clicking background', ->
+    it 'should have no selected', ->
+      e = $.Event 'mousedown'
+      e.clientX = 0
+      e.clientY = 0
+      $("#framer_controls").trigger e
+      e = $.Event 'mouseup'
+      e.clientX = 0
+      e.clientY = 0
+      $("#framer_controls").trigger e
+      assert.equal framer.app_view.getSelected().length, 0
+
 describe 'Selecting Auto-Dimensioned Elements', ->
   before ->
     framer.app.loadFile './testData/basicElements.json'
@@ -154,5 +168,7 @@ describe 'Selecting Auto-Dimensioned Elements', ->
       e.clientY = 2
       $(document).trigger e
       e = $.Event 'mouseup'
+      e.clientX = 2
+      e.clientY = 2
       $(document).trigger e
       assert.equal framer.app_view.getSelected().length, 1

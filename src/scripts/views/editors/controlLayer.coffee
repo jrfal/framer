@@ -77,7 +77,8 @@ class ControlLayer extends PageView
     else
       @editor.selectOnlyElements @elementsInFrame(@selectingFrame)
 
-  stopDragHandler: ->
+  stopDragHandler: (e) ->
+    @moveDragHandler(e)
     $(document).off 'mousemove', @moveDragHandler
     $(document).off 'mouseup', @stopDragHandler
     @hideSelectingFrame()
@@ -97,7 +98,6 @@ class ControlLayer extends PageView
     else if @propertyPanel?
       @propertyPanel.slideOut()
       @propertyPanel = null
-
 
   elementsInFrame: (frame) ->
     frame = @usableFrame frame
@@ -125,7 +125,6 @@ class ControlLayer extends PageView
     return elements
 
   events:
-    # "click"                     : "deselectHandler"
     "mousedown" : "startDragHandler"
 
 
@@ -170,6 +169,7 @@ class ControlBox extends BaseView
     @render()
 
   selectHandler: (e) ->
+    e.stopPropagation()
     if e.shiftKey or e.metaKey
       if @editor.isSelected @model
         @editor.deselectElement @model
@@ -205,6 +205,7 @@ class ControlBox extends BaseView
     $(document).on 'mouseup', @stopMoveHandler
 
   moveHandler: (e) ->
+    e.stopPropagation()
     if not @editor.isSelected @model
       @editor.selectOnlyElement @model
     dx =  e.clientX - @grab.x - @model.get 'x'
@@ -213,6 +214,7 @@ class ControlBox extends BaseView
     # @model.set({'x': x, 'y': y})
 
   stopMoveHandler: (e) ->
+    e.stopPropagation()
     $(document).off 'mousemove', @moveHandler
     $(document).off 'mouseup', @stopMoveHandler
 
@@ -400,6 +402,7 @@ class TransformBox extends BaseView
         model.set change
 
   stopResizeHandler: (e) ->
+    e.stopPropagation()
     $(document).off 'mousemove', @resizeHandler
     $(document).off 'mouseup', @stopResizeHandler
 
@@ -466,9 +469,9 @@ class PropertyPanel extends BaseView
     $(@el).animate({marginLeft: $(document).width() + "px"}, 400, @remove)
 
   startDragHandler: (e) ->
+    e.stopPropagation()
     $(document).on 'mousemove', @dragHandler
     $(document).on 'mouseup', @stopDragHandler
-    e.stopPropagation()
     @grab = {x: e.clientX - $(@el).position().left, y: e.clientY - $(@el).position().top}
 
   dragHandler: (e) ->
@@ -479,6 +482,7 @@ class PropertyPanel extends BaseView
     $(@el).css "top", y
 
   stopDragHandler: (e) ->
+    e.stopPropagation()
     $(document).off 'mousemove', @dragHandler
     $(document).off 'mouseup', @stopDragHandler
 

@@ -30,8 +30,8 @@ describe 'Manipulating', ->
     $(".property-panel[data-element=#{el_id}] .save").trigger "click"
 
     # edit grid
-    $('#framer_controls .control-box:last').prev('.control-box').trigger "click"
-    el_id = $('#framer_controls .control-box:last').prev('.control-box').data('element')
+    el_id = $("#framer_pages .framer-element:last").prev(".framer-element").data("element")
+    $("#framer_controls .control-box[data-element=#{el_id}]").trigger "click"
     $(".property-panel[data-element=#{el_id}] [data-property=text]").val("one\ntwo\nthree")
     $(".property-panel[data-element=#{el_id}] [data-property=evenColor]").val("red")
     $(".property-panel[data-element=#{el_id}] [data-property=oddColor]").val("yellow")
@@ -87,18 +87,22 @@ describe 'Resizing', ->
     framer.app.loadFile './testData/resizing.json'
 
     doResize = (number, edge, dropX, dropY) ->
-      controlBox = $('#framer_controls .control-box:nth-child('+number+')')
-      rectangle = $('#framer_pages #first .framer-drawn-element:nth-child('+number+')')
-      handle = controlBox.find('.resize-handle-'+edge)
+      id = $('#framer_pages .framer-element:nth-child('+number+')').data("element")
+      controlBox = $("#framer_controls .control-box[data-element=#{id}]")
+      controlBox.trigger "click"
+      transformBox = $('#framer_controls .transform-box')
+      elel = $(".framer-page [data-element=#{id}]")
+      # rectangle = $('#framer_pages #first .framer-drawn-element:nth-child('+number+')')
+      handle = transformBox.find('.resize-handle-'+edge)
       e = $.Event 'mousedown'
       if edge in ['tl', 'l', 'bl']
-        e.clientX = handle.position().x + handle.width()
+        e.clientX = elel.position().left
       else
-        e.clientX = handle.position().x
+        e.clientX = elel.position().left + elel.width()
       if edge in ['tl', 't', 'tr']
-        e.clientX = handle.position().y + handle.height()
+        e.clientY = elel.position().top
       else
-        e.clientX = handle.position().y
+        e.clientY = elel.position().top + elel.height()
       handle.trigger e
 
       e = $.Event 'mousemove'
@@ -132,3 +136,42 @@ describe 'Resizing', ->
       checkRectangle 6, 30,  18,  387, 421
       checkRectangle 7, 87,  170, 423, 250
       checkRectangle 8, 292, 569, 908, 1281
+
+describe 'Resizing Multiple', ->
+  before ->
+    framer.app.loadFile './testData/resizing.json'
+
+    editor = framer.app_view.projectView.pageView.controlLayer.editor
+    elements = framer.app.get('project').get('pages').first().get('elements')
+    for element in elements.models
+      editor.selectElement(element)
+
+    transformBox = $('#framer_controls .transform-box')
+    handle = transformBox.find('.resize-handle-br')
+    e = $.Event 'mousedown'
+    e.clientX = handle.position().left
+    e.clientY = handle.position().top
+    handle.trigger e
+
+    e = $.Event 'mousemove'
+    e.clientX = handle.position().left + 100
+    e.clientY = handle.position().top + 100
+    $(document).trigger e
+    $(document).trigger 'mouseup'
+
+  describe 'resizing', ->
+    it 'should have 8 resized rectangles', ->
+      checkRectangle = (number, x, y, width, height) ->
+        rectangle = $ '#framer_pages #first .framer-drawn-element:nth-child('+number+')'
+        assert.equal rectangle.offset().left, x
+        assert.equal rectangle.offset().top, y
+        assert.equal rectangle.width(), width
+        assert.equal rectangle.height(), height
+      checkRectangle 1, 86.890625,  103.71875,  217, 358
+      checkRectangle 2, 46.8125,    102.671875, 652, 337
+      checkRectangle 3, 2.40625,    18.3125,    315, 433
+      checkRectangle 4, 227.703125, 32.03125,   195, 264
+      checkRectangle 5, 823.421875, 12,         33,  577
+      checkRectangle 6, -3,         18.3125,    455, 549
+      checkRectangle 7, 119.390625, 178.59375,  434, 263
+      checkRectangle 8, 325.171875, 631.984375, 975, 1318

@@ -2,7 +2,6 @@ $ = require 'jquery'
 Backbone = require 'backbone'
 Backbone.$ = $
 _ = require 'underscore'
-Page = require './page.coffee'
 Element = require './element.coffee'
 
 class Editor extends Backbone.Model

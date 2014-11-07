@@ -25,15 +25,21 @@ $control-box-border-offset: $resize-handle-size;
   right: 0;
   bottom: 0;
 
-  .control-box {
-    // display: none;
-    min-height: 20px;
-    min-width: 20px;
+  .control-box, .transform-box {
     position: absolute;
     margin: 0;
-    margin-left: -1 * $resize-handle-size;
-    margin-top: -1 * $resize-handle-size;
-    padding: $resize-handle-size + 1px;
+    padding: 0;
+
+    &.control-box.selected {
+      z-index: 2;
+    }
+
+    &.transform-box {
+      margin-left: -1 * $resize-handle-size;
+      margin-top: -1 * $resize-handle-size;
+      padding: $resize-handle-size + 1px;
+      z-index: 1;
+    }
 
     &.dragging {
       border-color: #0f0;
@@ -43,14 +49,13 @@ $control-box-border-offset: $resize-handle-size;
       visibility: hidden;
       border: 1px solid $highlight-color;
       position: absolute;
-      top: $control-box-border-offset;
-      right: $control-box-border-offset;
-      left: $control-box-border-offset;
-      bottom: $control-box-border-offset;
+      top: 0;
+      right: 0;
+      left: 0;
+      bottom: 0;
     }
 
     .resize-handle {
-      visibility: hidden;
       border: 1px solid $highlight-color;
       position: absolute;
       width: $resize-handle-size;
@@ -107,6 +112,7 @@ $control-box-border-offset: $resize-handle-size;
   top: 100px;
   padding: 10px;
   width: 300px;
+  z-index: 3;
 }
 
 #framer_elementPalette {

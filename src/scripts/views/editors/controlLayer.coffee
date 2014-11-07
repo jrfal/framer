@@ -16,6 +16,7 @@ class ControlLayer extends PageView
   cmdKey: false
   toggling: null
   propertyPanel: null
+  transformBox: null
 
   initialize: ->
     _.bindAll @, 'startDragHandler', 'moveDragHandler', 'stopDragHandler', 'selectionChange'
@@ -25,11 +26,13 @@ class ControlLayer extends PageView
     @selectingFrameEl = $(uiTemplates.selectingFrame())
     $(@selectingFrameEl).hide()
     $(@el).append @selectingFrameEl
+    @transformBox = new TransformBox {collection:@editor.get('selection')}
     super()
 
   render: ->
     super()
     $(@selectingFrameEl).hide()
+    $(@el).append @transformBox.el
     $(@el).append @selectingFrameEl
 
   newElementView: (model) ->
@@ -133,8 +136,7 @@ class ControlBox extends BaseView
 
   initialize: (options) ->
     _.bindAll @, 'render', 'selectHandler', 'checkSelected', 'startMoveHandler',
-      'moveHandler', 'stopMoveHandler', 'startResizeHandler', 'resizeHandler',
-      'stopResizeHandler'
+      'moveHandler', 'stopMoveHandler'
     @model.on "change", @render
     if 'editor' of options
       @editor = options.editor
@@ -150,8 +152,10 @@ class ControlBox extends BaseView
       if elel.length > 0
         viewAttributes.x = elel.position().left
         viewAttributes.y = elel.position().top
-        viewAttributes.w = elel.width()
-        viewAttributes.h = elel.height()
+        viewAttributes.w = elel.outerWidth()
+        viewAttributes.h = elel.outerHeight()
+        # viewAttributes.w = elel.width() + parseInt(elel.css("border-left-width")) + parseInt(elel.css("border-right-width"))
+        # viewAttributes.h = elel.height() + parseInt(elel.css("border-top-width")) + parseInt(elel.css("border-bottom-width"))
       @setElement $(@template(_.extend(viewAttributes, {selected: @selected})))
       $(oldEl).replaceWith $(@el)
 
@@ -212,52 +216,194 @@ class ControlBox extends BaseView
     $(document).off 'mousemove', @moveHandler
     $(document).off 'mouseup', @stopMoveHandler
 
+  events:
+    "click"                     : "selectHandler"
+    "mousedown .control-border" : "startMoveHandler"
+
+class TransformBox extends BaseView
+  template: uiTemplates.transformBox
+  editor: null
+  box: {}
+
+  initialize: (options) ->
+    _.bindAll @, 'render', 'startResizeHandler', 'resizeHandler', 'stopResizeHandler',
+      'changeSelection'
+    if 'editor' of options
+      @editor = options.editor
+      @editor.get('selection').on "add remove reset", @checkSelected if @editor?
+    if @collection?
+      @setCollection @collection
+
+  modelBoundaries: ->
+    modelBoundaries = {}
+    if @collection?
+      for model in @collection.models
+        if model.has 'x'
+          modelBoundaries.left = model.get('x') if not modelBoundaries.left?
+          modelBoundaries.left = _.min [model.get('x'), modelBoundaries.left]
+          if model.has 'w'
+            modelBoundaries.right = model.get('x') + model.get('w') if not modelBoundaries.right?
+            modelBoundaries.right = _.max [model.get('x') + model.get('w'), modelBoundaries.right]
+        if model.has 'y'
+          modelBoundaries.top = model.get('y') if not modelBoundaries.top?
+          modelBoundaries.top = _.min [model.get('y'), modelBoundaries.top]
+          if model.has 'h'
+            modelBoundaries.bottom = model.get('y') + model.get('h') if not modelBoundaries.bottom?
+            modelBoundaries.bottom = _.max [model.get('y') + model.get('h'), modelBoundaries.bottom]
+    return modelBoundaries
+
+  visibleBoundaries: ->
+    boundaries = {}
+    if @collection?
+      for model in @collection.models
+        visible = true
+        el_id = model.get('id')
+        elel = $(".framer-page [data-element=#{el_id}]")
+        if elel.length > 0
+
+          boundaries.left = elel.position().left if not boundaries.left?
+          boundaries.top = elel.position().top if not boundaries.top?
+          boundaries.right = elel.width() + elel.position().left if not boundaries.right?
+          boundaries.bottom = elel.height() + elel.position().top if not boundaries.bottom?
+
+          boundaries.left = _.min([elel.position().left, boundaries.left])
+          boundaries.top = _.min([elel.position().top, boundaries.top])
+          boundaries.right = _.max([elel.width() + elel.position().left, boundaries.right])
+          boundaries.bottom = _.max([elel.height() + elel.position().top, boundaries.bottom])
+    return boundaries
+
+  render: ->
+    oldEl = @el
+    visible = false
+    viewAttributes =
+      x: 0
+      y: 0
+      w: 0
+      h: 0
+    if @collection?
+      @box = @visibleBoundaries()
+      if @box.left?
+        visible = true
+        viewAttributes =
+          x: @box.left
+          y: @box.top
+          w: @box.right - @box.left
+          h: @box.bottom - @box.top
+    @setElement $(@template(viewAttributes))
+    if visible
+      $(@el).show()
+    else
+      $(@el).hide()
+    $(oldEl).replaceWith $(@el)
+
+  makeStartState: ->
+    @startState = {}
+    @startState.box = @visibleBoundaries()
+    @startState.corner = {}
+    @startState.elements = {}
+    if @collection?
+      for model in @collection.models
+        data = {id: model.get 'id'}
+        data.x = model.get 'x' if model.has 'x'
+        data.y = model.get 'y' if model.has 'y'
+        data.w = model.get 'w' if model.has 'w'
+        data.h = model.get 'h' if model.has 'h'
+        @startState.elements[model.get('id')] = data
+
+        if data.x?
+          if !@startState.corner.x?
+            @startState.corner.x = data.x
+          else
+            if data.x < @startState.corner.x
+              @startState.corner.x = data.x
+        if data.y?
+          if !@startState.corner.y?
+            @startState.corner.y = data.y
+          else
+            if data.y < @startState.corner.y
+              @startState.corner.y = data.y
+
+  changeSelection: ->
+    @render()
+
+  setCollection: (collection) ->
+    @collection = collection
+    @collection.on 'add remove change', @changeSelection
+    @render()
+
   startResizeHandler: (e) ->
     e.stopPropagation()
-    @grab = {x: e.clientX, y: e.clientY - @model.get('y')}
+    @makeStartState()
+    @grab = {x: e.clientX, y: e.clientY}
     @resizeEdge = $(e.target).data 'edge'
     if @resizeEdge in ['tl', 't', 'tr']
-      @grab.y =  @model.get('y') - @grab.y
+      @grab.y =  @box.top - @grab.y
     if @resizeEdge in ['tr', 'r', 'br']
-      @grab.x =  @model.get('x') + @model.get('w') - @grab.x
+      @grab.x = @box.right - @grab.x
     if @resizeEdge in ['bl', 'b', 'br']
-      @grab.y =  @model.get('y') + @model.get('h') - @grab.y
+      @grab.y =  @box.bottom - @grab.y
     if @resizeEdge in ['tl', 'l', 'bl']
-      @grab.x =  @model.get('x') - @grab.x
-    @grab = {x: 0, y: 0}
+      @grab.x =  @box.left - @grab.x
     $(document).on 'mousemove', @resizeHandler
     $(document).on 'mouseup', @stopResizeHandler
 
   resizeHandler: (e) ->
-    top = @model.get('y')
-    left = @model.get('x')
-    right = left + @model.get('w')
-    bottom = top + @model.get('h')
+    e.stopPropagation()
+    modified = _.clone @startState.box
     if @resizeEdge in ['tl', 't', 'tr']
-      top = e.clientY + @grab.y
+      modified.top = e.clientY + @grab.y
+      if modified.top > modified.bottom
+        @grab.y = @grab.y - (modified.top - modified.bottom)
+        modified.top = modified.bottom
+        @resizeEdge = 'bl' if @resizeEdge == 'tl'
+        @resizeEdge = 'b' if @resizeEdge == 't'
+        @resizeEdge = 'br' if @resizeEdge == 'tr'
     if @resizeEdge in ['tr', 'r', 'br']
-      right = e.clientX + @grab.x
+      modified.right = e.clientX + @grab.x
+      if modified.left > modified.right
+        @grab.x = @grab.x + (modified.left - modified.right)
+        modified.right = modified.left
+        @resizeEdge = 'tl' if @resizeEdge == 'tr'
+        @resizeEdge = 'l' if @resizeEdge == 'r'
+        @resizeEdge = 'bl' if @resizeEdge == 'br'
     if @resizeEdge in ['bl', 'b', 'br']
-      bottom = e.clientY + @grab.y
+      modified.bottom = e.clientY + @grab.y
+      if modified.top > modified.bottom
+        @grab.y = @grab.y + (modified.top - modified.bottom)
+        modified.top = modified.bottom
+        @resizeEdge = 'tl' if @resizeEdge == 'bl'
+        @resizeEdge = 't' if @resizeEdge == 'b'
+        @resizeEdge = 'tr' if @resizeEdge == 'br'
     if @resizeEdge in ['tl', 'l', 'bl']
-      left = e.clientX + @grab.x
-    if (left > right)
-      swap = left
-      left = right
-      right = swap
-    if (top > bottom)
-      swap = top
-      top = bottom
-      bottom = swap
-    @model.set({'x': left, 'y': top, 'w': right - left, 'h': bottom - top})
+      modified.left = e.clientX + @grab.x
+      if modified.left > modified.right
+        @grab.x = @grab.x - (modified.left - modified.right)
+        modified.left = modified.right
+        @resizeEdge = 'tr' if @resizeEdge == 'tl'
+        @resizeEdge = 'r' if @resizeEdge == 'l'
+        @resizeEdge = 'br' if @resizeEdge == 'bl'
+
+    scaleX = (modified.right - modified.left) / (@startState.box.right - @startState.box.left)
+    scaleY = (modified.bottom - modified.top) / (@startState.box.bottom - @startState.box.top)
+
+    newPosition =
+      x: @startState.corner.x + modified.left - @startState.box.left
+      y: @startState.corner.y + modified.top - @startState.box.top
+    for model in @collection.models
+      mine = @startState.elements[model.get 'id']
+      if mine?
+        change =
+          x: ((mine.x - @startState.corner.x) * scaleX) + newPosition.x
+          y: ((mine.y - @startState.corner.y) * scaleY) + newPosition.y
+          w: mine.w * scaleX
+          h: mine.h * scaleY
+        model.set change
 
   stopResizeHandler: (e) ->
     $(document).off 'mousemove', @resizeHandler
     $(document).off 'mouseup', @stopResizeHandler
 
   events:
-    "click"                     : "selectHandler"
-    "mousedown .control-border" : "startMoveHandler"
     "mousedown .resize-handle"  : "startResizeHandler"
 
 class PropertyPanel extends BaseView
@@ -326,6 +472,7 @@ class PropertyPanel extends BaseView
     @grab = {x: e.clientX - $(@el).position().left, y: e.clientY - $(@el).position().top}
 
   dragHandler: (e) ->
+    e.stopPropagation()
     x =  e.clientX - @grab.x
     y =  e.clientY - @grab.y
     $(@el).css "left", x

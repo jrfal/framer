@@ -1,18 +1,20 @@
 assert = require 'assert'
 framer = require '../src/scripts/framer.coffee'
 $ = require 'jquery'
+cbox = null
 
 describe 'Selecting', ->
   before ->
     framer.app.loadFile './testData/test.json'
-    $('.control-box:first-child').trigger 'click'
+    cbox = $('.control-box:first-child')
+    cbox.trigger 'click'
 
   describe 'clicking selects', ->
     it 'should show the edit panel for this object', ->
       assert.equal $('.property-panel').length, 1
     it 'should contain the correct id', ->
       elementID = $('.property-panel').data('element')
-      assert.equal $('.property-panel').data('element'), $('.control-box:first-child').data('element')
+      assert.equal $('.property-panel').data('element'), cbox.data('element')
     it 'should be able to move the edit panel', ->
       position = $('.property-panel').position()
       e = $.Event 'mousedown'
@@ -30,7 +32,7 @@ describe 'Selecting', ->
 
     it 'should show the resize handles', ->
       count = 0
-      $('.control-box:first-child .resize-handle').each (i, item) ->
+      $('.transform-box .resize-handle').each (i, item) ->
         if $(item).css('visibility') == 'visible'
           count++
       assert.equal count, 8

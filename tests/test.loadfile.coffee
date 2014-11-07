@@ -21,16 +21,13 @@ describe 'Loading', ->
     it 'should match all the control box sizes and positions to their elements', ->
       page = framer.app.get('project').get('pages').first()
       $("#framer_controls .control-box").each ->
-        element = page.getElementByID $(this).data('element')
+        id = $(this).data('element')
+        drawnElement = $("#framer_pages [data-element=#{id}]")
         position = $(this).position()
-        if element.has 'x'
-          assert.equal element.get('x'), position.left
-        if element.has 'y'
-          assert.equal element.get('y'), position.top
-        if element.has 'w'
-          assert.equal element.get('w'), $(this).width()
-        if element.has 'h'
-          assert.equal element.get('h'), $(this).height()
+        assert.equal drawnElement.position().left, position.left
+        assert.equal drawnElement.position().top, position.top
+        assert.equal drawnElement.outerWidth(), $(this).outerWidth()
+        assert.equal drawnElement.outerHeight(), $(this).outerHeight()
 
   describe 'simple save', ->
     it 'should have all the same properties', ->

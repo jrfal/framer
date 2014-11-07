@@ -24,11 +24,13 @@ $control-box-border-offset: $resize-handle-size;
   top: 0;
   right: 0;
   bottom: 0;
+  cursor: default;
 
   .control-box, .transform-box {
     position: absolute;
     margin: 0;
     padding: 0;
+    cursor: default;
 
     &.control-box.selected {
       z-index: 2;

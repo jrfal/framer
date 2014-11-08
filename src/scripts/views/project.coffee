@@ -19,6 +19,10 @@ class ProjectView extends BaseView
   newPageView: ->
     return new PageView()
 
+  showPage: (slug) ->
+    @currentPage = @model.get('pages').findWhere {slug: slug}
+    @render()
+
   render: ->
     if not @model?
       return

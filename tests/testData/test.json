@@ -21,6 +21,10 @@
           "href": "#second"
         },
         {
+          "component": "checkbox",
+          "text": "test"
+        },
+        {
           "component": "grid",
           "text": "test, test"
         },

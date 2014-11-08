@@ -444,12 +444,18 @@ class PropertyPanel extends BaseView
           for property in propsFromComponent(component)
             if property.type == 'paragraph'
               prop_el = $ "<textarea></textarea>"
+            else if property.type == 'boolean'
+              prop_el = $ '<input type="checkbox" value="true" />'
             else
               prop_el = $ "<input type=\"text\" />"
             prop_el.attr "data-element", @model.get('id')
             prop_el.attr "data-property", property.property
             prop_el.attr "placeholder", property.property
-            prop_el.val @model.get(property.property)
+            if property.type == "boolean"
+              if @model.get property.property
+                prop_el.attr "checked", "checked"
+            else
+              prop_el.val @model.get(property.property)
             $(@el).find('.framer-fields').append prop_el
 
       $(oldEl).replaceWith $(@el)
@@ -461,7 +467,13 @@ class PropertyPanel extends BaseView
     updates = {}
     fields = $(@el).find(".framer-fields > *")
     for field in fields
-      updates[$(field).data("property")] = $(field).val()
+      if $(field).is("[type=checkbox]")
+        if $(field).is(":checked")
+          updates[$(field).data("property")] = true
+        else
+          updates[$(field).data("property")] = false
+      else
+        updates[$(field).data("property")] = $(field).val()
     @model.set updates
 
   slideIn: ->

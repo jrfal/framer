@@ -37,6 +37,13 @@ describe 'Manipulating', ->
     $(".property-panel[data-element=#{el_id}] [data-property=oddColor]").val("yellow")
     $(".property-panel[data-element=#{el_id}] .save").trigger "click"
 
+    # edit check box
+    el_id = $("#framer_pages .framer-element:last").prev(".framer-element").prev(".framer-element").data("element")
+    $("#framer_controls .control-box[data-element=#{el_id}]").trigger "click"
+    $(".property-panel[data-element=#{el_id}] [data-property=text]").val("helllo")
+    $(".property-panel[data-element=#{el_id}] [data-property=selected]").attr("checked", "checked")
+    $(".property-panel[data-element=#{el_id}] .save").trigger "click"
+
   describe 'moving', ->
     it 'should have moved the rectangle to 160,5', ->
       rectangle = $ '#framer_pages #first .framer-drawn-element'
@@ -81,6 +88,13 @@ describe 'Manipulating', ->
       rows = grid.find 'tr'
       assert.equal $(rows[0]).css("background-color"), "rgb(255, 0, 0)"
       assert.equal $(rows[1]).css("background-color"), "rgb(255, 255, 0)"
+  describe 'checkbox label edit', ->
+    it 'should have the label "helllo"', ->
+      checkboxLabel = $('#framer_pages #first input[type=checkbox]').parent().find('label')
+      assert.equal checkboxLabel.html(), "helllo"
+    it 'should be checked', ->
+      checkbox = $('#framer_pages #first input[type=checkbox]')
+      assert.ok checkbox.is(":checked")
 
 describe 'Resizing', ->
   before ->

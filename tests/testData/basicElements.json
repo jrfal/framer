@@ -9,6 +9,17 @@
           "text": "First, Last\nJeff, Fal\nDarth, Vader\nSpider, Man"
         }
       ]
+    },
+    {
+      "slug": "checkbox",
+      "title": "checkbox page",
+      "elements": [
+        {
+          "component": "checkbox",
+          "text": "Test checkbox",
+          "selected": true
+        }
+      ]
     }
   ]
 }

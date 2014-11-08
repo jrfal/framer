@@ -14,3 +14,11 @@ describe 'Basic Elements', ->
       assert.equal table.length, 1
       assert.equal rows.length, 4
       assert.equal cells.length, 8
+
+  describe 'checkbox', ->
+    it 'should be a checkbox that is checked', ->
+      framer.app_view.projectView.showPage('checkbox')
+      checkbox = $ '#framer_pages #checkbox .framer-element input'
+      assert.equal checkbox.length, 1
+      assert.equal checkbox.attr("type"), "checkbox"
+      assert.ok checkbox.is(":checked")

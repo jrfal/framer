@@ -15,6 +15,10 @@ describe 'Creating', ->
       page.addElement component
     framer.app.set 'project', project
 
+  describe 'label', ->
+    it 'should be a label', ->
+      assert.equal 1, framer.app.get('project').get('pages').first().get('elements').where({'component': 'label'}).length
+
   describe 'rectangle', ->
     it 'should be a rectangle', ->
       assert.equal 1, framer.app.get('project').get('pages').first().get('elements').where({'component': 'rectangle'}).length
@@ -30,6 +34,10 @@ describe 'Creating', ->
   describe 'link', ->
     it 'should be an link', ->
       assert.equal 1, framer.app.get('project').get('pages').first().get('elements').where({'component': 'link'}).length
+
+  describe 'checkbox', ->
+    it 'should be a checkbox', ->
+      assert.equal 1, framer.app.get('project').get('pages').first().get('elements').where({'component': 'checkbox'}).length
 
 describe 'Creating from Palette', ->
   before ->
@@ -42,6 +50,10 @@ describe 'Creating from Palette', ->
       paletteLink = $("#framer_element_palette a[data-template=#{component.component}]")
       paletteLink.trigger "click"
 
+  describe 'label', ->
+    it 'should be a label', ->
+      assert.equal 1, framer.app.get('project').get('pages').first().get('elements').where({'component': 'label'}).length
+
   describe 'rectangle', ->
     it 'should be a rectangle', ->
       assert.equal 1, framer.app.get('project').get('pages').first().get('elements').where({'component': 'rectangle'}).length
@@ -57,3 +69,7 @@ describe 'Creating from Palette', ->
   describe 'link', ->
     it 'should be an link', ->
       assert.equal 1, framer.app.get('project').get('pages').first().get('elements').where({'component': 'link'}).length
+
+  describe 'checkbox', ->
+    it 'should be a checkbox', ->
+      assert.equal 1, framer.app.get('project').get('pages').first().get('elements').where({'component': 'checkbox'}).length

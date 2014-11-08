@@ -1,5 +1,16 @@
 [
   {
+    "title": "Label",
+    "component": "label",
+    "text": "Label",
+    "properties": [
+      {"property": "text", "type": "paragraph"},
+      {"property": "fontSize", "type": "number"},
+      {"property": "fontFamily", "type": "text"},
+      {"property": "fontColor", "type": "color"}
+    ]
+  },
+  {
     "title": "Link",
     "component": "link",
     "label": "page 1",
@@ -24,10 +35,7 @@
     "w": 300,
     "h": 200,
     "properties": [
-      {"property": "text", "type": "paragraph"},
-      {"property": "fontSize", "type": "number"},
-      {"property": "fontFamily", "type": "text"},
-      {"property": "fontColor", "type": "color"},
+      {"inherit": "label"},
       {"property": "borderColor", "type": "color"},
       {"property": "borderWidth", "type": "color"},
       {"property": "fillColor", "type": "color"}
@@ -45,6 +53,15 @@
       {"inherit": "rectangle"},
       {"property": "oddColor", "type": "color"},
       {"property": "evenColor", "type": "color"}
+    ]
+  },
+  {
+    "title": "Checkbox",
+    "component": "checkbox",
+    "text": "Checkbox",
+    "properties": [
+      {"inherit": "label"},
+      {"property": "selected", "type": "boolean"}
     ]
   }
 ]

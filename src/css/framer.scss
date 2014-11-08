@@ -16,6 +16,8 @@ $control-box-border-offset: $resize-handle-size;
 #framer_controls, #framer_pages {
   position:absolute;
   top: 0;
+  right: 0;
+  bottom: 0;
   left: 0;
 }
 

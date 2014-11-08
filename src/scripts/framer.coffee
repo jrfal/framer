@@ -13,7 +13,7 @@ app_view = new AppView {model: app}
 makeMenu = ->
   main_menu = new global.gui.Menu({ type: 'menubar'})
   try
-    main_menu.createMacBuiltin("framer");
+    main_menu.createMacBuiltin "framer", {hideEdit:true}
 
   file_menu = new global.gui.Menu()
   file_menu.append new gui.MenuItem({
@@ -46,6 +46,15 @@ makeMenu = ->
       $("#cssFile").click()
   })
 
+  edit_menu = new global.gui.Menu()
+  edit_menu.append new gui.MenuItem({
+    label: "Select All",
+    click: ->
+      selectAllHandler()
+    key: "a",
+    modifiers: "cmd"
+  })
+
   view_menu = new global.gui.Menu()
   view_menu.append new gui.MenuItem({
     label: "Next Page",
@@ -61,6 +70,10 @@ makeMenu = ->
   sub_menu = new global.gui.MenuItem({label: 'File'})
   sub_menu.submenu = file_menu
   main_menu.insert(sub_menu, 1)
+
+  sub_menu = new global.gui.MenuItem({label: 'Edit'})
+  sub_menu.submenu = edit_menu
+  main_menu.insert(sub_menu, 2)
 
   sub_menu = new global.gui.MenuItem({label: 'View'})
   sub_menu.submenu = view_menu
@@ -83,6 +96,9 @@ nextPageHandler = ->
 
 showElementPaletteHandler = ->
   app.showElementPalette()
+
+selectAllHandler = ->
+  app_view.projectView.pageView.controlLayer.selectAll()
 
 localLinkHandler = (href) ->
   targetPage = $("#{href}")

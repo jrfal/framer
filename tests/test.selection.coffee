@@ -172,3 +172,15 @@ describe 'Selecting Auto-Dimensioned Elements', ->
       e.clientY = 2
       $(document).trigger e
       assert.equal framer.app_view.getSelected().length, 1
+
+describe 'Select All', ->
+  before ->
+    framer.app.loadFile './testData/basicElements.json'
+    framer.app_view.projectView.pageView.controlLayer.selectAll()
+
+  describe 'select all elements on the page', ->
+    it 'should have no elements unselected', ->
+      elements = framer.app.get('project').get('pages').first().get('elements')
+      editor = framer.app_view.projectView.pageView.controlLayer.editor
+      for element in elements.models
+        assert.ok editor.isSelected(element)

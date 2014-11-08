@@ -99,6 +99,10 @@ class ControlLayer extends PageView
       @propertyPanel.slideOut()
       @propertyPanel = null
 
+  selectAll: ->
+    elements = @model.get 'elements'
+    @editor.selectElements(elements.models)
+
   elementsInFrame: (frame) ->
     frame = @usableFrame frame
 

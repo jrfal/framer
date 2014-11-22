@@ -22,3 +22,13 @@ describe 'Basic Elements', ->
       assert.equal checkbox.length, 1
       assert.equal checkbox.attr("type"), "checkbox"
       assert.ok checkbox.is(":checked")
+
+  describe 'checkbox group', ->
+    it 'should be a checkbox list with one that is checked and one that is not', ->
+      framer.app_view.projectView.showPage('checkboxList')
+      checkboxes = $ '#framer_pages #checkboxList .framer-element input'
+      assert.equal checkboxes.length, 2
+      assert.equal $(checkboxes[0]).attr("type"), "checkbox"
+      assert.equal $(checkboxes[1]).attr("type"), "checkbox"
+      assert.ok $(checkboxes[1]).is(":checked")
+      assert.ok !($(checkboxes[0]).is(":checked"))

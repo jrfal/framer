@@ -9,6 +9,8 @@ $ = require 'jquery'
 app = new App()
 app_view = new AppView {model: app}
 
+global.plugins = require './plugins.coffee'
+
 # build main menu
 makeMenu = ->
   main_menu = new global.gui.Menu({ type: 'menubar'})

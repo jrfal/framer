@@ -6,7 +6,7 @@
     "properties": [
       {"property": "text", "type": "paragraph"},
       {"property": "fontSize", "type": "number"},
-      {"property": "fontFamily", "type": "text"},
+      {"property": "fontFamily", "type": "string"},
       {"property": "fontColor", "type": "color"}
     ]
   },
@@ -45,8 +45,8 @@
     "title": "Grid",
     "component": "grid",
     "transformations": [
-      ["comma-delimited", "text", "table"],
-      ["table-meta", "table", "tableMeta"]
+      ["comma-delimited", "/text", "/table"],
+      ["table-meta", "/table", "/tableMeta"]
     ],
     "text": "First, Last\nJeff, Fal\nDarth, Vader\nSpider, Man",
     "properties": [
@@ -62,6 +62,18 @@
     "properties": [
       {"inherit": "label"},
       {"property": "selected", "type": "boolean"}
+    ]
+  },
+  {
+    "title": "Checkbox List",
+    "component": "checkboxList",
+    "text": "[] Unselected\n[x] Selected\nNo box",
+    "transformations": [
+      ["line-list", "/text", "/list"],
+      ["form-elements", "/list[*]", "/htmlList", "array"]
+    ],
+    "properties": [
+      {"inherit": "label"}
     ]
   }
 ]

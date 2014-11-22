@@ -83,7 +83,8 @@ class App extends Backbone.Model
     @get('settings').set 'elementPalette', false
 
   saveSettings: ->
-    fs.writeFile(global.cfg.settings, JSON.stringify(@get('settings').attributes))
+    content = JSON.stringify(@get('settings').attributes)
+    fs.writeFile(global.cfg.settings, content)
 
   loadSettings: (filename) ->
     if not filename?

@@ -145,7 +145,7 @@ describe 'Resizing', ->
       checkRectangle 1, 80,  69,  200, 370
       checkRectangle 2, 43,  87,  627, 331
       checkRectangle 3, 2,   18,  308, 410
-      checkRectangle 4, 210, 31,  187, 352
+      checkRectangle 4, 210, 31,  187, 351
       checkRectangle 5, 760, 12,  30,  560
       checkRectangle 6, 30,  18,  387, 421
       checkRectangle 7, 87,  170, 423, 250
@@ -181,11 +181,11 @@ describe 'Resizing Multiple', ->
         assert.equal rectangle.offset().top, y
         assert.equal rectangle.width(), width
         assert.equal rectangle.height(), height
-      checkRectangle 1, 86.890625,  103.71875,  217, 358
+      checkRectangle 1, 86.875,     103.71875,  216, 358
       checkRectangle 2, 46.8125,    102.671875, 652, 337
-      checkRectangle 3, 2.40625,    18.3125,    315, 433
-      checkRectangle 4, 227.703125, 32.03125,   195, 264
-      checkRectangle 5, 823.421875, 12,         33,  577
+      checkRectangle 3, 2.40625,    18.3125,    314, 433
+      checkRectangle 4, 227.671875, 32.03125,   195, 264
+      checkRectangle 5, 823.3125,   12,         33,  577
       checkRectangle 6, -3,         18.3125,    455, 549
-      checkRectangle 7, 119.390625, 178.59375,  434, 263
-      checkRectangle 8, 325.171875, 631.984375, 975, 1318
+      checkRectangle 7, 119.375,    178.578125, 434, 263
+      checkRectangle 8, 325.140625, 631.953125, 975, 1318

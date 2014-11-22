@@ -20,6 +20,16 @@
           "selected": true
         }
       ]
+    },
+    {
+      "slug": "checkboxList",
+      "title": "checkbox list page",
+      "elements": [
+        {
+          "component": "checkboxList",
+          "text": "[] unchecked\n[x] checked\nhello"
+        }
+      ]
     }
   ]
 }

@@ -7,6 +7,14 @@ _ = require 'underscore'
 Editor = require './../../models/editor.coffee'
 components = require './../../../components/components.json'
 
+elBoundaries = (el) ->
+  thisBox =
+    "left":   parseInt(el.css("margin-left")) + el.position().left
+    "top":    parseInt(el.css("margin-top")) + el.position().top
+    "right":  el.position().left + el.outerWidth() + parseInt(el.css("margin-right"))
+    "bottom": el.position().top + el.outerHeight() + parseInt(el.css("margin-bottom"))
+  return thisBox
+
 class ControlLayer extends PageView
   className: 'framer-control-layer'
   editor: null
@@ -153,10 +161,11 @@ class ControlBox extends BaseView
       el_id = @model.get('id')
       elel = $(".framer-page [data-element=#{el_id}]")
       if elel.length > 0
-        viewAttributes.x = elel.position().left
-        viewAttributes.y = elel.position().top
-        viewAttributes.w = elel.outerWidth()
-        viewAttributes.h = elel.outerHeight()
+        thisBox = elBoundaries elel
+        viewAttributes.x = thisBox.left
+        viewAttributes.y = thisBox.top
+        viewAttributes.w = thisBox.right - thisBox.left
+        viewAttributes.h = thisBox.bottom - thisBox.top
         # viewAttributes.w = elel.width() + parseInt(elel.css("border-left-width")) + parseInt(elel.css("border-right-width"))
         # viewAttributes.h = elel.height() + parseInt(elel.css("border-top-width")) + parseInt(elel.css("border-bottom-width"))
       @setElement $(@template(_.extend(viewAttributes, {selected: @selected})))
@@ -266,16 +275,17 @@ class TransformBox extends BaseView
         el_id = model.get('id')
         elel = $(".framer-page [data-element=#{el_id}]")
         if elel.length > 0
+          thisBox = elBoundaries elel
 
-          boundaries.left = elel.position().left if not boundaries.left?
-          boundaries.top = elel.position().top if not boundaries.top?
-          boundaries.right = elel.width() + elel.position().left if not boundaries.right?
-          boundaries.bottom = elel.height() + elel.position().top if not boundaries.bottom?
+          boundaries.left = thisBox.left if not boundaries.left?
+          boundaries.top = thisBox.top if not boundaries.top?
+          boundaries.right = thisBox.right if not boundaries.right?
+          boundaries.bottom = thisBox.bottom if not boundaries.bottom?
 
-          boundaries.left = _.min([elel.position().left, boundaries.left])
-          boundaries.top = _.min([elel.position().top, boundaries.top])
-          boundaries.right = _.max([elel.width() + elel.position().left, boundaries.right])
-          boundaries.bottom = _.max([elel.height() + elel.position().top, boundaries.bottom])
+          boundaries.left = _.min([thisBox.left, boundaries.left])
+          boundaries.top = _.min([thisBox.top, boundaries.top])
+          boundaries.right = _.max([thisBox.right, boundaries.right])
+          boundaries.bottom = _.max([thisBox.bottom, boundaries.bottom])
     return boundaries
 
   render: ->
@@ -293,8 +303,8 @@ class TransformBox extends BaseView
         viewAttributes =
           x: @box.left
           y: @box.top
-          w: @box.right - @box.left
-          h: @box.bottom - @box.top
+          w: @box.right - @box.left - 2
+          h: @box.bottom - @box.top - 2
     @setElement $(@template(viewAttributes))
     if visible
       $(@el).show()

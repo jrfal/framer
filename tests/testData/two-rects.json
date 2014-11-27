@@ -6,6 +6,9 @@
       "elements": [
         {
           "component": "rectangle",
+          "text": "one",
+          "fontSize": 20,
+          "fontFamily": "arial",
           "x": 50,
           "y": 50,
           "w": 100,
@@ -13,6 +16,9 @@
         },
         {
           "component": "rectangle",
+          "text": "two",
+          "fontSize": 20,
+          "fontFamily": "times",
           "x": 100,
           "y": 100,
           "w": 100,

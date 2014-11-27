@@ -1,6 +1,7 @@
 assert = require 'assert'
 framer = require '../src/scripts/framer.coffee'
 $ = require 'jquery'
+_ = require 'underscore'
 cbox = null
 
 describe 'Selecting', ->
@@ -12,9 +13,9 @@ describe 'Selecting', ->
   describe 'clicking selects', ->
     it 'should show the edit panel for this object', ->
       assert.equal $('.property-panel').length, 1
-    it 'should contain the correct id', ->
-      elementID = $('.property-panel').data('element')
-      assert.equal $('.property-panel').data('element'), cbox.data('element')
+    it 'should contain the correct id in the selection', ->
+      elementID = cbox.data 'element'
+      assert.ok framer.app_view.projectView.pageView.controlLayer.editor.isSelectedID(elementID)
     it 'should be able to move the edit panel', ->
       position = $('.property-panel').position()
       e = $.Event 'mousedown'
@@ -48,6 +49,10 @@ describe 'Multi-Selecting', ->
       e.metaKey = true
       $('.control-box:last').trigger e
       assert.equal framer.app_view.getSelected().length, 2
+    it 'should have no text in the property panel', ->
+      assert.equal $('.property-panel.showing [data-property=text]').val(), ""
+    it 'should have 20 font size in the property panel', ->
+      assert.equal $('.property-panel.showing [data-property=fontSize]').val(), 20
 
   describe 'move one, and it should move both', ->
     it 'should have updated the positions to 75,70 and 125,120', ->

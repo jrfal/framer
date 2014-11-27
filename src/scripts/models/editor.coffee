@@ -87,6 +87,13 @@ class Editor extends Backbone.Model
   isSelected: (element) ->
     return @get('selection').contains element
 
+  isSelectedID: (id) ->
+    element = @get('selection').findWhere {id: id}
+    if element?
+      return true
+    else
+      return false
+
   moveSelectedBy: (dx, dy) ->
     selected = @get 'selection'
     selected.each (element) ->

@@ -1,0 +1,22 @@
+{
+  "paragraph": {
+    "validation": "string",
+    "input": "textarea"
+  },
+  "number": {
+    "validation": "number",
+    "input": "text"
+  },
+  "string": {
+    "validation": "string",
+    "input": "text"
+  },
+  "color": {
+    "validation": "string",
+    "input": "text"
+  },
+  "boolean": {
+    "validation": "boolean",
+    "input": "checkbox"
+  }
+}

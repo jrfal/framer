@@ -6,6 +6,8 @@ uiTemplates = require './../../uiTemplates.coffee'
 _ = require 'underscore'
 Editor = require './../../models/editor.coffee'
 components = require './../../../components/components.json'
+Element = require './../../models/element.coffee'
+plugins = require './../../plugins.coffee'
 
 elBoundaries = (el) ->
   thisBox =
@@ -94,13 +96,17 @@ class ControlLayer extends PageView
   selectionChange: ->
     selected = @editor.get 'selection'
     if selected.length > 0
-      element = selected.first()
       if @propertyPanel?
-        if element != @propertyPanel.model
+        overlap = 0
+        if selected.size() == @propertyPanel.collection.size()
+          overlap = _.intersection(selected.models, @propertyPanel.collection.models).length
+        if overlap <= 0 or overlap < selected.length
           @propertyPanel.slideOut()
           @propertyPanel = null
       if not @propertyPanel?
-        @propertyPanel = new PropertyPanel {model: element}
+        collection = new Backbone.Collection [], {model: Element}
+        collection.add selected.models
+        @propertyPanel = new PropertyPanel {collection: collection}
         $("#framer_controls").append @propertyPanel.el
         @propertyPanel.slideIn()
     else if @propertyPanel?
@@ -427,64 +433,76 @@ class PropertyPanel extends BaseView
   template: uiTemplates.propertyPanel
 
   initialize: ->
-    _.bindAll @, 'render', 'textEditCancelHandler', 'textEditSaveHandler', 'remove',
+    _.bindAll @, 'render', 'cancelHandler', 'saveHandler', 'remove',
       'startDragHandler', 'dragHandler', 'stopDragHandler'
+    @previous = {}
     @render()
 
   render: ->
-    if @model?
+    getPropEl = (property, modelProperty) ->
+      input = plugins.propertyTypes[property.type].input
+      if input == 'textarea'
+        prop_el = $ "<textarea></textarea>"
+      else if input == 'checkbox'
+        prop_el = $ '<input type="checkbox" value="true" />'
+      else
+        prop_el = $ "<input type=\"text\" />"
+      prop_el.attr "data-property", property.property
+      prop_el.attr "placeholder", property.property
+      if property.type == "boolean"
+        if modelProperty
+          prop_el.attr "checked", "checked"
+      else
+        prop_el.val modelProperty
+      return prop_el
+
+    if @collection?
       oldEl = @el
-      propsFromComponent = (component) ->
-        properties = []
-        if component.properties?
-          for property in component.properties
-            if property.inherit?
-              inherit = _.findWhere components, {component: property.inherit}
-              if inherit?
-                properties = _.union properties, propsFromComponent(inherit)
-            else
-              properties.push property
-        return properties
+      properties = []
 
-      @setElement $(@template(@model.attributes))
+      for model in @collection.models
+        if model.get('component')?
+          component = _.findWhere components, {component: model.get('component')}
+          if component?
+            for property in model.allProperties()
+              previous = _.findWhere properties, {propName: property.property}
+              if previous?
+                if previous.value != model.get(property.property)
+                  previous.value = ''
+              else
+                value = model.get property.property
+                value = '' if not value?
+                properties.push {propName: property.property, property: property, value: value}
 
-      if @model.get('component')?
-        component = _.findWhere components, {component: @model.get('component')}
-        if component?
-          for property in propsFromComponent(component)
-            if property.type == 'paragraph'
-              prop_el = $ "<textarea></textarea>"
-            else if property.type == 'boolean'
-              prop_el = $ '<input type="checkbox" value="true" />'
-            else
-              prop_el = $ "<input type=\"text\" />"
-            prop_el.attr "data-element", @model.get('id')
-            prop_el.attr "data-property", property.property
-            prop_el.attr "placeholder", property.property
-            if property.type == "boolean"
-              if @model.get property.property
-                prop_el.attr "checked", "checked"
-            else
-              prop_el.val @model.get(property.property)
-            $(@el).find('.framer-fields').append prop_el
+      @setElement $(@template())
+      @previous = {}
+      for property in properties
+        @previous[property.property.property] = property.value
+        $(@el).find('.framer-fields').append getPropEl(property.property, property.value)
 
       $(oldEl).replaceWith $(@el)
 
-  textEditCancelHandler: ->
+  cancelHandler: ->
     @slideOut()
 
-  textEditSaveHandler: ->
-    updates = {}
+  saveHandler: ->
     fields = $(@el).find(".framer-fields > *")
+    updates = {}
     for field in fields
+      newValue = null
+      property = $(field).data "property"
       if $(field).is("[type=checkbox]")
         if $(field).is(":checked")
-          updates[$(field).data("property")] = true
+          newValue = true
         else
-          updates[$(field).data("property")] = false
+          newValue = false
       else
-        updates[$(field).data("property")] = $(field).val()
-    @model.set updates
+        newValue = $(field).val()
+      if newValue != @previous[property]
+        updates[property] = newValue
+    for model in @collection.models
+      modelUpdates = model.validateProperties updates
+      model.set modelUpdates
 
   slideIn: ->
     $(@el).css("margin-left", $(document).width() + "px")
@@ -513,8 +531,8 @@ class PropertyPanel extends BaseView
     $(document).off 'mouseup', @stopDragHandler
 
   events:
-    "click .cancel" : "textEditCancelHandler"
-    "click .save"   : "textEditSaveHandler"
+    "click .cancel" : "cancelHandler"
+    "click .save"   : "saveHandler"
     "mousedown"     : "startDragHandler"
 
 module.exports = ControlLayer

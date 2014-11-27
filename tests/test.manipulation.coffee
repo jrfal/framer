@@ -19,30 +19,30 @@ describe 'Manipulating', ->
     $(document).trigger e
 
     # edit text, font, size
-    $('#framer_controls .control-box:last').trigger "click"
-    el_id = $('#framer_controls .control-box:last').data('element')
-    $(".property-panel[data-element=#{el_id}] [data-property=text]").val("so what is up?")
-    $(".property-panel[data-element=#{el_id}] [data-property=fontFamily]").val("sans-serif")
-    $(".property-panel[data-element=#{el_id}] [data-property=fontSize]").val("19px")
-    $(".property-panel[data-element=#{el_id}] [data-property=borderColor]").val("#f00")
-    $(".property-panel[data-element=#{el_id}] [data-property=borderWidth]").val("4")
-    $(".property-panel[data-element=#{el_id}] [data-property=fillColor]").val("#00f")
-    $(".property-panel[data-element=#{el_id}] .save").trigger "click"
+    el_id = $("#framer_pages .framer-element:last").data("element")
+    $("#framer_controls .control-box[data-element=#{el_id}]").trigger "click"
+    $(".property-panel.showing [data-property=text]").val("so what is up?")
+    $(".property-panel.showing [data-property=fontFamily]").val("sans-serif")
+    $(".property-panel.showing [data-property=fontSize]").val("19")
+    $(".property-panel.showing [data-property=borderColor]").val("#f00")
+    $(".property-panel.showing [data-property=borderWidth]").val("4")
+    $(".property-panel.showing [data-property=fillColor]").val("#00f")
+    $(".property-panel.showing .save").trigger "click"
 
     # edit grid
     el_id = $("#framer_pages .framer-element:last").prev(".framer-element").data("element")
     $("#framer_controls .control-box[data-element=#{el_id}]").trigger "click"
-    $(".property-panel[data-element=#{el_id}] [data-property=text]").val("one\ntwo\nthree")
-    $(".property-panel[data-element=#{el_id}] [data-property=evenColor]").val("red")
-    $(".property-panel[data-element=#{el_id}] [data-property=oddColor]").val("yellow")
-    $(".property-panel[data-element=#{el_id}] .save").trigger "click"
+    $(".property-panel.showing [data-property=text]").val("one\ntwo\nthree")
+    $(".property-panel.showing [data-property=evenColor]").val("red")
+    $(".property-panel.showing [data-property=oddColor]").val("yellow")
+    $(".property-panel.showing .save").trigger "click"
 
     # edit check box
     el_id = $("#framer_pages .framer-element:last").prev(".framer-element").prev(".framer-element").data("element")
     $("#framer_controls .control-box[data-element=#{el_id}]").trigger "click"
-    $(".property-panel[data-element=#{el_id}] [data-property=text]").val("helllo")
-    $(".property-panel[data-element=#{el_id}] [data-property=selected]").attr("checked", "checked")
-    $(".property-panel[data-element=#{el_id}] .save").trigger "click"
+    $(".property-panel.showing [data-property=text]").val("helllo")
+    $(".property-panel.showing [data-property=selected]").attr("checked", "checked")
+    $(".property-panel.showing .save").trigger "click"
 
   describe 'moving', ->
     it 'should have moved the rectangle to 160,5', ->
@@ -189,3 +189,23 @@ describe 'Resizing Multiple', ->
       checkRectangle 6, -3,         18.3125,    455, 549
       checkRectangle 7, 119.375,    178.578125, 434, 263
       checkRectangle 8, 325.140625, 631.953125, 975, 1318
+
+describe 'Editing Multiple', ->
+  before ->
+    framer.app.loadFile './testData/two-rects.json'
+    $('.control-box:first-child').trigger 'click'
+    e = $.Event 'click'
+    e.metaKey = true
+    $('.control-box:last').trigger e
+
+    $(".property-panel.showing [data-property=fontFamily]").val("sans-serif")
+    $(".property-panel.showing .save").trigger "click"
+
+  describe 'select a second element with cmd-click', ->
+    it 'should have the same text values', ->
+      assert.equal "one", framer.app.get('project').get('pages').first().get('elements').first().get('text')
+      assert.equal "two", framer.app.get('project').get('pages').first().get('elements').last().get('text')
+
+    it 'should have sans-serif as the font family', ->
+      assert.equal "sans-serif", framer.app.get('project').get('pages').first().get('elements').first().get('fontFamily')
+      assert.equal "sans-serif", framer.app.get('project').get('pages').first().get('elements').last().get('fontFamily')

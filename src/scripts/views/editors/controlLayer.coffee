@@ -8,6 +8,7 @@ Editor = require './../../models/editor.coffee'
 components = require './../../../components/components.json'
 Element = require './../../models/element.coffee'
 plugins = require './../../plugins.coffee'
+PropertyPanel = require './propertyPanel.coffee'
 
 elBoundaries = (el) ->
   thisBox =
@@ -431,112 +432,5 @@ class TransformBox extends BaseView
 
   events:
     "mousedown .resize-handle"  : "startResizeHandler"
-
-class PropertyPanel extends BaseView
-  template: uiTemplates.propertyPanel
-
-  initialize: ->
-    _.bindAll @, 'render', 'cancelHandler', 'saveHandler', 'remove',
-      'startDragHandler', 'dragHandler', 'stopDragHandler'
-    @previous = {}
-    @render()
-
-  render: ->
-    getPropEl = (property, modelProperty) ->
-      input = plugins.propertyTypes[property.type].input
-      if input == 'textarea'
-        prop_el = $ "<textarea></textarea>"
-      else if input == 'checkbox'
-        prop_el = $ '<input type="checkbox" value="true" />'
-      else
-        prop_el = $ "<input type=\"text\" />"
-      prop_el.attr "data-property", property.property
-      prop_el.attr "placeholder", property.property
-      if property.type == "boolean"
-        if modelProperty
-          prop_el.attr "checked", "checked"
-      else
-        prop_el.val modelProperty
-      return prop_el
-
-    if @collection?
-      oldEl = @el
-      properties = []
-
-      for model in @collection.models
-        if model.get('component')?
-          component = _.findWhere components, {component: model.get('component')}
-          if component?
-            for property in model.allProperties()
-              previous = _.findWhere properties, {propName: property.property}
-              if previous?
-                if previous.value != model.get(property.property)
-                  previous.value = ''
-              else
-                value = model.get property.property
-                value = '' if not value?
-                properties.push {propName: property.property, property: property, value: value}
-
-      @setElement $(@template())
-      @previous = {}
-      for property in properties
-        @previous[property.property.property] = property.value
-        $(@el).find('.framer-fields').append getPropEl(property.property, property.value)
-
-      $(oldEl).replaceWith $(@el)
-
-  cancelHandler: ->
-    @slideOut()
-
-  saveHandler: ->
-    fields = $(@el).find(".framer-fields > *")
-    updates = {}
-    for field in fields
-      newValue = null
-      property = $(field).data "property"
-      if $(field).is("[type=checkbox]")
-        if $(field).is(":checked")
-          newValue = true
-        else
-          newValue = false
-      else
-        newValue = $(field).val()
-      if newValue != @previous[property]
-        updates[property] = newValue
-    for model in @collection.models
-      modelUpdates = model.validateProperties updates
-      model.set modelUpdates
-
-  slideIn: ->
-    $(@el).css("margin-left", $(document).width() + "px")
-    $(@el).animate({marginLeft: 0}, 400)
-
-  slideOut: ->
-    $(@el).removeClass "showing"
-    $(@el).animate({marginLeft: $(document).width() + "px"}, 400, @remove)
-
-  startDragHandler: (e) ->
-    e.stopPropagation()
-    $(document).on 'mousemove', @dragHandler
-    $(document).on 'mouseup', @stopDragHandler
-    @grab = {x: e.clientX - $(@el).position().left, y: e.clientY - $(@el).position().top}
-
-  dragHandler: (e) ->
-    e.stopPropagation()
-    e.preventDefault()
-    x =  e.clientX - @grab.x
-    y =  e.clientY - @grab.y
-    $(@el).css "left", x
-    $(@el).css "top", y
-
-  stopDragHandler: (e) ->
-    e.stopPropagation()
-    $(document).off 'mousemove', @dragHandler
-    $(document).off 'mouseup', @stopDragHandler
-
-  events:
-    "click .cancel" : "cancelHandler"
-    "click .save"   : "saveHandler"
-    "mousedown"     : "startDragHandler"
 
 module.exports = ControlLayer

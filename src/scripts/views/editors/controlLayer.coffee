@@ -71,6 +71,7 @@ class ControlLayer extends PageView
     $(@selectingFrameEl).hide()
 
   startDragHandler: (e) ->
+    e.preventDefault()
     @shiftKey = e.shiftKey
     @metaKey = e.metaKey
     @selectingFrame = {x: e.clientX, y: e.clientY, w: 0, h: 0}
@@ -219,6 +220,7 @@ class ControlBox extends BaseView
 
   startMoveHandler: (e) ->
     e.stopPropagation()
+    e.preventDefault()
     @giveModelPosition()
     @grab = {x: e.clientX - @model.get('x'), y: e.clientY - @model.get('y')}
     $(document).on 'mousemove', @moveHandler
@@ -231,7 +233,6 @@ class ControlBox extends BaseView
     dx =  e.clientX - @grab.x - @model.get 'x'
     dy =  e.clientY - @grab.y - @model.get 'y'
     @editor.moveSelectedBy dx, dy
-    # @model.set({'x': x, 'y': y})
 
   stopMoveHandler: (e) ->
     e.stopPropagation()
@@ -356,6 +357,7 @@ class TransformBox extends BaseView
 
   startResizeHandler: (e) ->
     e.stopPropagation()
+    e.preventDefault()
     @makeStartState()
     @grab = {x: e.clientX, y: e.clientY}
     @resizeEdge = $(e.target).data 'edge'
@@ -521,6 +523,7 @@ class PropertyPanel extends BaseView
 
   dragHandler: (e) ->
     e.stopPropagation()
+    e.preventDefault()
     x =  e.clientX - @grab.x
     y =  e.clientY - @grab.y
     $(@el).css "left", x

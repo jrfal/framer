@@ -13,7 +13,9 @@ class Project extends Backbone.Model
 
   addPage: ->
     pages = @get 'pages'
-    pages.add(new Page())
+    newPage = new Page()
+    pages.add(newPage)
+    return newPage
 
   getPageBySlug: (slug) ->
     pages = @get 'pages'

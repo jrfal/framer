@@ -57,12 +57,21 @@ makeMenu = ->
     modifiers: "cmd"
   })
 
-  view_menu = new global.gui.Menu()
-  view_menu.append new gui.MenuItem({
+  pages_menu = new global.gui.Menu()
+  pages_menu.append new gui.MenuItem({
+    label: "Add New Page",
+    click: ->
+      newPageHandler()
+    key: "p",
+    modifiers: "cmd"
+  })
+  pages_menu.append new gui.MenuItem({
     label: "Next Page",
     click: ->
       nextPageHandler()
   })
+
+  view_menu = new global.gui.Menu()
   view_menu.append new gui.MenuItem({
     label: "Show Element Palette",
     click: ->
@@ -81,20 +90,23 @@ makeMenu = ->
   sub_menu.submenu = view_menu
   main_menu.append sub_menu
 
+  sub_menu = new global.gui.MenuItem({label: 'Pages'})
+  sub_menu.submenu = pages_menu
+  main_menu.append sub_menu
+
   global.gui.Window.get().menu = main_menu
 
 init = ->
   $("#framer_pages").on 'click', 'a[href^="#"]', ->
     localLinkHandler $(this).attr 'href'
 
+newPageHandler = ->
+  app_view.projectView.showPage app.get('project').addPage()
+
 nextPageHandler = ->
-  currentPage = $("#framer_pages .framer-page:visible")
-  nextPage = $(currentPage).next();
-  $("#framer_pages .framer-page").hide()
-  if nextPage.length > 0
-    $(nextPage).show()
-  else
-    $("#framer_pages .framer-page:first-child").show()
+  index = 1 + app.get('project').get('pages').models.indexOf(app_view.projectView.currentPage)
+  index = 0 if index >= app.get('project').get('pages').size()
+  app_view.projectView.showPage app.get('project').get('pages').at(index)
 
 showElementPaletteHandler = ->
   app.showElementPalette()

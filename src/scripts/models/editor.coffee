@@ -7,6 +7,7 @@ Element = require './element.coffee'
 class Editor extends Backbone.Model
   defaults:
     selection: null
+
   initialize: ->
     @set 'selection', new Backbone.Collection [], {model: Element}
 

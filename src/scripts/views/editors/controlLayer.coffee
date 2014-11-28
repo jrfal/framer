@@ -42,6 +42,7 @@ class ControlLayer extends PageView
   render: ->
     super()
     $(@selectingFrameEl).hide()
+    $(@transformBox.el).hide()
     $(@el).append @transformBox.el
     $(@el).append @selectingFrameEl
 

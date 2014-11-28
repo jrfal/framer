@@ -8,5 +8,7 @@
   "no-save label": "Don't Save",
   "save label":    "Save",
   "unsaved title": "Unsaved File",
-  "load while unsaved": "The current file isn't saved. Would you like to save it?"
+  "load while unsaved": "The current file isn't saved. Would you like to save it?",
+  "rename page header": "Rename Page",
+  "rename page submit": "Save"
 }

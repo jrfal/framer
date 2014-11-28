@@ -21,7 +21,7 @@ class AppView extends BaseView
   initialize: ->
     _.bindAll @, 'loadFile', 'saveFile', 'loadFileCmd', 'newProject', 'newProjectCmd', 'createElementHandler', 'showError',
       'closeElementPaletteHandler', 'showHideElementPalette', 'savedProject', 'saveAndLoad',
-      'saveAndNew', 'makeNewProject'
+      'saveAndNew', 'makeNewProject', 'renamePage', 'renamePageHandler'
     @model.on "change:project", @newProject
     @model.on "error", @showError
     @model.on "saved", @savedProject
@@ -120,6 +120,14 @@ class AppView extends BaseView
       $(@elementPalette.el).show()
     else
       $(@elementPalette.el).hide()
+
+  renamePage: ->
+    edit = Dialog.edit messages["rename page header"], @projectView.currentPage.get('slug'), messages["rename page submit"]
+    $(edit.el).find(".submit").on "click", @renamePageHandler
+
+  renamePageHandler: (e) ->
+    newPageName = $(e.target).closest('.bbm-modal').find('.edit-value').val()
+    @projectView.currentPage.set({'slug': newPageName})
 
   getSelected: ->
     return @projectView.pageView.controlLayer.editor.get 'selection'

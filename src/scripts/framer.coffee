@@ -70,6 +70,11 @@ makeMenu = ->
     click: ->
       nextPageHandler()
   })
+  pages_menu.append new gui.MenuItem({
+    label: "Rename Page",
+    click: ->
+      renamePageHandler()
+  })
 
   view_menu = new global.gui.Menu()
   view_menu.append new gui.MenuItem({
@@ -107,6 +112,9 @@ nextPageHandler = ->
   index = 1 + app.get('project').get('pages').models.indexOf(app_view.projectView.currentPage)
   index = 0 if index >= app.get('project').get('pages').size()
   app_view.projectView.showPage app.get('project').get('pages').at(index)
+
+renamePageHandler = ->
+  app_view.renamePage()
 
 showElementPaletteHandler = ->
   app.showElementPalette()

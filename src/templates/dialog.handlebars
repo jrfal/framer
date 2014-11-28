@@ -2,7 +2,8 @@
   <h3 class="bbm-modal__title">{{title}}</h3>
 </div>
 <div class="bbm-modal__section">
-  <span class="dialog-message">{{message}}</span>
+  {{#if message}}<span class="dialog-message">{{message}}</span>{{/if}}
+  {{#if editValue}}<input type="text" class="edit-value" value="{{editValue}}" />{{/if}}
 </div>
 <div class="bbm-modal__bottombar">
   {{#each actions}}

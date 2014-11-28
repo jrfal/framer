@@ -21,7 +21,7 @@ class ProjectView extends BaseView
 
   showPageSlug: (slug) ->
     @showPage @model.get('pages').findWhere {slug: slug}
-  
+
   showPage: (page) ->
     @currentPage = page
     @render()
@@ -35,6 +35,7 @@ class ProjectView extends BaseView
     else
       pages = @model.get('pages')
       page = pages.at(0)
+      @currentPage = page
 
     if page?
       @pageView.setModel page

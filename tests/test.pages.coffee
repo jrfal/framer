@@ -24,3 +24,17 @@ describe 'Change Pages', ->
     assert.equal framer.app_view.projectView.currentPage, framer.app.get('project').get('pages').last()
     assert.equal 0, $("#page").length
     assert.equal 0, $("[href=#url]").length
+
+describe 'Rename Page', ->
+  before ->
+    framer.app.loadFile './testData/test.json'
+
+  describe 'rename, rename with duplicate name', ->
+    it 'should be named testing', ->
+      framer.app_view.projectView.currentPage.set({slug: 'testing'})
+      assert.equal 'testing', framer.app.get('project').get('pages').first().get('slug')
+
+    it 'should not be named testing', ->
+      framer.app_view.projectView.showPage framer.app.get('project').get('pages').last()
+      framer.app_view.projectView.currentPage.set({slug: 'testing'})
+      assert.notEqual 'testing', framer.app.get('project').get('pages').last().get('slug')

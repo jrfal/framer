@@ -30,30 +30,33 @@ class ElementView extends Backbone.View
     @model.on "change", @render
     @render()
 
+  viewAttributes: ->
+    viewAttributes = _.clone @model.attributes
+    for transformation in @transformations
+      transform = plugins.transformations[transformation[0]]
+      path = jsonPath.create transformation[1]
+      query = path.resolve viewAttributes
+      dataType = "value"
+      if transformation[3]?
+        dataType = transformation[3]
+      for item in query
+        pointer = jsonPtr.create transformation[2]
+        if pointer?
+          if dataType == "array"
+            list = pointer.get viewAttributes
+            if not list?
+              list = []
+              pointer.set viewAttributes, list
+            list.push transform(item)
+          else
+            transformed = transform(item)
+            pointer.set viewAttributes, transformed
+    return viewAttributes
+
   render: ->
     if @model?
       oldEl = @el
-      viewAttributes = _.clone @model.attributes
-      for transformation in @transformations
-        transform = plugins.transformations[transformation[0]]
-        path = jsonPath.create transformation[1]
-        query = path.resolve viewAttributes
-        dataType = "value"
-        if transformation[3]?
-          dataType = transformation[3]
-        for item in query
-          pointer = jsonPtr.create transformation[2]
-          if pointer?
-            if dataType == "array"
-              list = pointer.get viewAttributes
-              if not list?
-                list = []
-                pointer.set viewAttributes, list
-              list.push transform(item)
-            else
-              transformed = transform(item)
-              pointer.set viewAttributes, transformed
-      @setElement $(@template(viewAttributes))
+      @setElement $(@template(@viewAttributes()))
       @$el.attr("data-element", @model.get('id'))
       $(oldEl).replaceWith $(@el)
 

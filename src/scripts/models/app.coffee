@@ -9,14 +9,19 @@ Project = require './project.coffee'
 Page = require './page.coffee'
 Element = require './element.coffee'
 
+Guide = require './guide.coffee'
+
 class App extends Backbone.Model
   initialize: ->
-    _.bindAll @, 'saveSettings'
-    settings = new Backbone.Model {elementPalette: true}
+    _.bindAll @, 'saveSettings', 'updateGrid'
+    settings = new Backbone.Model {elementPalette: true, gridLines: true, gridCellSize: 8, gridCellGroup: 10, snapping: true}
     @set 'settings', settings
     @loadSettings()
     settings.on "change", @saveSettings
     @newProject()
+
+    @grid = new Guide.Grid({cellSize: settings.get('gridCellSize'), cellGroup: settings.get('gridCellGroup')})
+    settings.on "change:gridCellSize change:gridCellGroup", @updateGrid
 
   newProject: ->
     newProject = new Project()
@@ -81,6 +86,19 @@ class App extends Backbone.Model
 
   hideElementPalette: ->
     @get('settings').set 'elementPalette', false
+
+  showGridLines: ->
+    @get('settings').set 'gridLines', true
+
+  hideGridLines: ->
+    @get('settings').set 'gridLines', false
+
+  setSnapping: (value) ->
+    @get('settings').set 'snapping', value
+
+  updateGrid: ->
+    settings = @get 'settings'
+    @grid.set {cellSize: settings.get('gridCellSize'), cellGroup: settings.get('gridCellGroup')}
 
   saveSettings: ->
     content = JSON.stringify(@get('settings').attributes)

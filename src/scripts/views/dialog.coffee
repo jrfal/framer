@@ -22,9 +22,9 @@ module.exports.question = (header, text, actions) ->
   $('#framer_overlay').append dialogView.render().el
   return dialogView
 
-module.exports.edit = (header, value, submitLabel) ->
+module.exports.edit = (header, values, submitLabel) ->
   actions = [{label: submitLabel, class: "submit"}]
   actions.push {label: messages["cancel label"], class: "cancel"}
-  dialogView = new Dialog({model: new Backbone.Model({title: header, editValue: value, actions: actions})})
+  dialogView = new Dialog({model: new Backbone.Model({title: header, editValues: values, actions: actions})})
   $('#framer_overlay').append dialogView.render().el
   return dialogView

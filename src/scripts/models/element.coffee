@@ -12,10 +12,31 @@ class Element extends Backbone.Model
     _.bindAll @, 'set'
     @set 'id', id++
 
+  addMoveUpdates: (updates, x, y) ->
+    updates.x = x
+    updates.y = y
+    return updates
+
   moveBy: (dx, dy) ->
-    updates = {}
-    updates.x = @get('x') + dx
-    updates.y = @get('y') + dy
+    updates = @addMoveUpdates {}, @get('x') + dx, @get('y') + dy
+    @set updates
+
+  moveTo: (x, y) ->
+    updates = @addMoveUpdates {}, x, y
+    @set updates
+
+  addScaleUpdates: (updates, dw, dh) ->
+    updates.w = @get('w') * dw
+    updates.h = @get('h') * dh
+    return updates
+
+  scaleBy: (dw, dh) ->
+    updates = @addScaleUpdates {}, dw, dh
+    @set updates
+
+  moveAndScaleBy: (x, y, dw, dh) ->
+    updates = @addScaleUpdates {}, dw, dh
+    updates = @addMoveUpdates updates, x, y
     @set updates
 
   allProperties: ->
@@ -47,5 +68,14 @@ class Element extends Backbone.Model
       if validated?
         returnProperties[key] = validated
     return returnProperties
+
+  getGeos: ->
+    geos = []
+    if @attributes.x? and @attributes.y?
+      geos.push {x: @attributes.x, y: @attributes.y}
+      if @attributes.w? and @attributes.h?
+        geos.push {x: @attributes.x + @attributes.w, y: @attributes.y + @attributes.h}
+
+    return geos
 
 module.exports = Element

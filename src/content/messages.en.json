@@ -1,14 +1,16 @@
 {
-  "error title":   "Error",
-  "no file":       "That file doesn't exist.",
-  "bad file":      "That file isn't formatted correctly.",
-  "file problem":  "There's a problem loading that file.",
-  "close label":   "Close",
-  "cancel label":  "Cancel",
-  "no-save label": "Don't Save",
-  "save label":    "Save",
-  "unsaved title": "Unsaved File",
+  "error title":        "Error",
+  "no file":            "That file doesn't exist.",
+  "bad file":           "That file isn't formatted correctly.",
+  "file problem":       "There's a problem loading that file.",
+  "close label":        "Close",
+  "cancel label":       "Cancel",
+  "no-save label":      "Don't Save",
+  "save label":         "Save",
+  "unsaved title":      "Unsaved File",
   "load while unsaved": "The current file isn't saved. Would you like to save it?",
   "rename page header": "Rename Page",
-  "rename page submit": "Save"
+  "rename page submit": "Save",
+  "edit grid header":   "Edit Grid",
+  "edit grid submit":   "Save"
 }

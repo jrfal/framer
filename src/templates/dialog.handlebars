@@ -3,7 +3,9 @@
 </div>
 <div class="bbm-modal__section">
   {{#if message}}<span class="dialog-message">{{message}}</span>{{/if}}
-  {{#if editValue}}<input type="text" class="edit-value" value="{{editValue}}" />{{/if}}
+  {{#each editValues}}
+    <input type="text" class="edit-value {{class}}" value="{{value}}" />
+  {{/each}}
 </div>
 <div class="bbm-modal__bottombar">
   {{#each actions}}

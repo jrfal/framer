@@ -20,7 +20,10 @@ class ProjectEditor extends ProjectView
     page.get('elements').on 'change add remove', @projectChanged
 
   newPageView: ->
-    return new PageEditor()
+    pageView = new PageEditor()
+    if @appData?
+      pageView.appData = @appData
+    return pageView
 
   projectChanged: ->
     @saved = false
@@ -33,5 +36,9 @@ class ProjectEditor extends ProjectView
     pages = @model.get 'pages'
     pages.each @checkNewPage
     pages.on 'add', @checkNewPage
+
+  setAppData: (appData) ->
+    @appData = appData
+    @pageView.setAppData appData
 
 module.exports = ProjectEditor

@@ -19,12 +19,12 @@ describe 'Selecting', ->
     it 'should be able to move the edit panel', ->
       position = $('.property-panel').position()
       e = $.Event 'mousedown'
-      e.clientX = 0
-      e.clientY = 0
+      e.screenX = 0
+      e.screenY = 0
       $('.property-panel').trigger e
       e = $.Event 'mousemove'
-      e.clientX = 50
-      e.clientY = 75
+      e.screenX = 50
+      e.screenY = 75
       $('.property-panel').trigger e
       e = $.Event 'mouseup'
       $('.property-panel').trigger e
@@ -40,6 +40,7 @@ describe 'Selecting', ->
 
 describe 'Multi-Selecting', ->
   before ->
+    framer.app.get('settings').set {snapping: false}
     framer.app.loadFile './testData/two-rects.json'
 
   describe 'select a second element with cmd-click', ->
@@ -58,12 +59,12 @@ describe 'Multi-Selecting', ->
     it 'should have updated the positions to 75,70 and 125,120', ->
       controlBox = $('#framer_controls .control-box:first')
       e = $.Event 'mousedown'
-      e.clientX = 50 + 9
-      e.clientY = 50 + 17
+      e.screenX = 50 + 9
+      e.screenY = 50 + 17
       $(controlBox).find('.control-border').trigger e
       e = $.Event 'mousemove'
-      e.clientX = 75 + 9
-      e.clientY = 70 + 17
+      e.screenX = 75 + 9
+      e.screenY = 70 + 17
       $(document).trigger e
       e = $.Event 'mouseup'
       $(document).trigger e
@@ -83,32 +84,32 @@ describe 'Multi-Selecting', ->
   describe 'select multiple objects by dragging', ->
     it 'should have none selected if we drag through none', ->
       e = $.Event 'mousedown'
-      e.clientX = 1
-      e.clientY = 1
+      e.screenX = 1
+      e.screenY = 1
       e.shiftKey = false
       e.metaKey = false
       $("#framer_controls").trigger e
       e = $.Event 'mousemove'
-      e.clientX = 2
-      e.clientY = 2
+      e.screenX = 2
+      e.screenY = 2
       $(document).trigger e
       e = $.Event 'mouseup'
-      e.clientX = 2
-      e.clientY = 2
+      e.screenX = 2
+      e.screenY = 2
       $(document).trigger e
 
       assert.equal framer.app_view.getSelected().length, 0
 
     it 'should have two selected if we drag through both', ->
       e = $.Event 'mousedown'
-      e.clientX = 125
-      e.clientY = 120
+      e.screenX = 125
+      e.screenY = 120
       e.shiftKey = false
       e.metaKey = false
       $("#framer_controls").trigger e
       e = $.Event 'mousemove'
-      e.clientX = 175
-      e.clientY = 170
+      e.screenX = 175
+      e.screenY = 170
       $(document).trigger e
       e = $.Event 'mouseup'
       $(document).trigger e
@@ -128,13 +129,13 @@ describe 'Multi-Selecting', ->
   describe 'toggle selection on both by cmd-dragging through them', ->
     it 'should have only one selected', ->
       e = $.Event 'mousedown'
-      e.clientX = 125
-      e.clientY = 120
+      e.screenX = 125
+      e.screenY = 120
       e.metaKey = true
       $("#framer_controls").trigger e
       e = $.Event 'mousemove'
-      e.clientX = 175
-      e.clientY = 170
+      e.screenX = 175
+      e.screenY = 170
       $(document).trigger e
       e = $.Event 'mouseup'
       $(document).trigger e
@@ -147,12 +148,12 @@ describe 'Multi-Selecting', ->
   describe 'deselect by clicking background', ->
     it 'should have no selected', ->
       e = $.Event 'mousedown'
-      e.clientX = 0
-      e.clientY = 0
+      e.screenX = 0
+      e.screenY = 0
       $("#framer_controls").trigger e
       e = $.Event 'mouseup'
-      e.clientX = 0
-      e.clientY = 0
+      e.screenX = 0
+      e.screenY = 0
       $("#framer_controls").trigger e
       assert.equal framer.app_view.getSelected().length, 0
 
@@ -163,18 +164,18 @@ describe 'Selecting Auto-Dimensioned Elements', ->
   describe 'select a grid by dragging', ->
     it 'should have one selected', ->
       e = $.Event 'mousedown'
-      e.clientX = 400
-      e.clientY = 400
+      e.screenX = 400
+      e.screenY = 400
       e.shiftKey = false
       e.metaKey = false
       $("#framer_controls").trigger e
       e = $.Event 'mousemove'
-      e.clientX = 2
-      e.clientY = 2
+      e.screenX = 2
+      e.screenY = 2
       $(document).trigger e
       e = $.Event 'mouseup'
-      e.clientX = 2
-      e.clientY = 2
+      e.screenX = 2
+      e.screenY = 2
       $(document).trigger e
       assert.equal framer.app_view.getSelected().length, 1
 

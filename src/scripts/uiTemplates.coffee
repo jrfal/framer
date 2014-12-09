@@ -8,6 +8,7 @@ Handlebars.registerPartial 'transformBox', fs.readFileSync(global.cfg.guiTemplat
 Handlebars.registerPartial 'dialog', fs.readFileSync(global.cfg.guiTemplateDir+'dialog.handleBars').toString()
 Handlebars.registerPartial 'elementPalette', fs.readFileSync(global.cfg.guiTemplateDir+'elementPalette.handleBars').toString()
 Handlebars.registerPartial 'selectingFrame', fs.readFileSync(global.cfg.guiTemplateDir+'selectingFrame.handleBars').toString()
+Handlebars.registerPartial 'gridLines', fs.readFileSync(global.cfg.guiTemplateDir+'gridLines.handleBars').toString()
 
 module.exports.propertyPanel = Handlebars.compile "{{> propertyPanel}}"
 module.exports.app = Handlebars.compile "{{> app}}"
@@ -16,3 +17,4 @@ module.exports.transformBox = Handlebars.compile "{{> transformBox}}"
 module.exports.dialog = Handlebars.compile "{{> dialog}}"
 module.exports.elementPalette = Handlebars.compile "{{> elementPalette}}"
 module.exports.selectingFrame = Handlebars.compile "{{> selectingFrame}}"
+module.exports.gridLines = Handlebars.compile "{{> gridLines}}"

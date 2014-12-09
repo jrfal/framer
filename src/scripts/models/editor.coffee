@@ -7,6 +7,9 @@ Element = require './element.coffee'
 class Editor extends Backbone.Model
   defaults:
     selection: null
+    translate: {x: 0, y: 0}
+    scale: {w: 1, h: 1}
+    anchor: null
 
   initialize: ->
     @set 'selection', new Backbone.Collection [], {model: Element}
@@ -95,9 +98,77 @@ class Editor extends Backbone.Model
     else
       return false
 
+  setTranslation: (dx, dy) ->
+    @translate = {x: dx, y: dy}
+    for model in @get('selection').models
+      model.trigger 'change'
+
+  setScale: (dw, dh, anchor) ->
+    @scale = {w: dw, h: dh}
+    @anchor = anchor
+    for model in @get('selection').models
+      model.trigger 'change'
+
+  resetMods: ->
+    @translate = {x: 0, y: 0}
+    @scale = {w: 1, h: 1}
+
+  applyMods: ->
+    translate = @translate
+    scale = @scale
+    @resetMods()
+    if scale.w != 1 or scale.h != 1
+      @scaleSelectedBy scale.w, scale.h, @anchor
+    if translate.x != 0 or translate.y != 0
+      @moveSelectedBy translate.x, translate.y
+
   moveSelectedBy: (dx, dy) ->
     selected = @get 'selection'
     selected.each (element) ->
       element.moveBy dx, dy
+
+  scaleSelectedBy: (dw, dh, anchor) ->
+    selected = @get 'selection'
+    selected.each (element) ->
+      where = {}
+      if anchor.x?
+        if element.has 'x'
+          where.x = (element.get('x') - anchor.x) * dw + anchor.x
+      else
+        where.x = element.get('x')
+      if anchor.y?
+        if element.has 'y'
+          where.y = (element.get('y') - anchor.y) * dh + anchor.y
+      else
+        where.y = element.get('y')
+      where.x = 0 if not where.x?
+      where.y = 0 if not where.y?
+
+      element.moveAndScaleBy where.x, where.y, dw, dh
+
+  getSelectedGeos: ->
+    geos = []
+    selected = @get 'selection'
+    for element in selected.models
+      for geo in element.getGeos()
+        geos.push geo
+    return geos
+
+  modifyViewAttributes: (element, viewAttributes) ->
+    if @isSelected element
+      if viewAttributes.x?
+        if @scale.w != 1
+          viewAttributes.x = (viewAttributes.x - @anchor.x) * @scale.w + @anchor.x
+        viewAttributes.x = viewAttributes.x + @translate.x
+      if viewAttributes.y?
+        if @scale.h != 1
+          viewAttributes.y = (viewAttributes.y - @anchor.y) * @scale.h + @anchor.y
+        viewAttributes.y = viewAttributes.y + @translate.y
+      if viewAttributes.w?
+        if @scale.w != 1
+          viewAttributes.w = viewAttributes.w * @scale.w
+      if viewAttributes.h?
+        if @scale.h != 1
+          viewAttributes.h = viewAttributes.h * @scale.h
 
 module.exports = Editor

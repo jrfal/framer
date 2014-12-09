@@ -94,13 +94,13 @@ class PropertyPanel extends BaseView
     e.stopPropagation()
     $(document).on 'mousemove', @dragHandler
     $(document).on 'mouseup', @stopDragHandler
-    @grab = {x: e.clientX - $(@el).position().left, y: e.clientY - $(@el).position().top}
+    @grab = {x: e.screenX - $(@el).position().left, y: e.screenY - $(@el).position().top}
 
   dragHandler: (e) ->
     e.stopPropagation()
     e.preventDefault()
-    x =  e.clientX - @grab.x
-    y =  e.clientY - @grab.y
+    x =  e.screenX - @grab.x
+    y =  e.screenY - @grab.y
     $(@el).css "left", x
     $(@el).css "top", y
 

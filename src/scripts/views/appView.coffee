@@ -10,6 +10,7 @@ BaseView = require './baseView.coffee'
 ElementPaletteView = require './elementPalette.coffee'
 Dialog = require './dialog.coffee'
 messages = require './../../content/messages.en.json'
+GuideView = require './guide.coffee'
 
 class AppView extends BaseView
   el: '#app'
@@ -17,19 +18,26 @@ class AppView extends BaseView
   projectView: null
   elementPalette: null
   afterSaving: null
+  gridView: null
 
   initialize: ->
     _.bindAll @, 'loadFile', 'saveFile', 'loadFileCmd', 'newProject', 'newProjectCmd', 'createElementHandler', 'showError',
       'closeElementPaletteHandler', 'showHideElementPalette', 'savedProject', 'saveAndLoad',
-      'saveAndNew', 'makeNewProject', 'renamePage', 'renamePageHandler'
+      'saveAndNew', 'makeNewProject', 'renamePage', 'renamePageHandler', 'showHideGridLines',
+      'editGridHandler'
     @model.on "change:project", @newProject
     @model.on "error", @showError
     @model.on "saved", @savedProject
-    @model.get('settings').on "change:elementPalette", @showHideElementPalette
+
+    settings = @model.get 'settings'
+    settings.on "change:elementPalette", @showHideElementPalette
+    settings.on "change:gridLines", @showHideGridLines
     @projectView = new ProjectEditor({model: @model.get 'project'})
+    @projectView.setAppData {settings: settings, grid: @model.grid}
     @elementPalette = new ElementPaletteView()
     @elementPalette.on 'createElement', @createElementHandler
     @elementPalette.on 'close', @closeElementPaletteHandler
+    @gridView = new GuideView {model: @model.grid}
 
     @render()
 
@@ -38,6 +46,8 @@ class AppView extends BaseView
     @assign @projectView, '#framer_pages'
     @assign @elementPalette, '#framer_elementPalette'
     @showHideElementPalette()
+    @assign @gridView, "#framer_grid"
+    @showHideGridLines()
 
     # trigger css file load
     $("#cssFile").change ->
@@ -115,6 +125,12 @@ class AppView extends BaseView
     @model.hideElementPalette()
     $(@elementPalette.el).hide()
 
+  showHideGridLines: ->
+    if @model.get('settings').get 'gridLines'
+      $(@gridView.el).show()
+    else
+      $(@gridView.el).hide()
+
   showHideElementPalette: ->
     if @model.get('settings').get 'elementPalette'
       $(@elementPalette.el).show()
@@ -122,12 +138,21 @@ class AppView extends BaseView
       $(@elementPalette.el).hide()
 
   renamePage: ->
-    edit = Dialog.edit messages["rename page header"], @projectView.currentPage.get('slug'), messages["rename page submit"]
+    edit = Dialog.edit messages["rename page header"], [{class: "rename-page", value: @projectView.currentPage.get('slug')}], messages["rename page submit"]
     $(edit.el).find(".submit").on "click", @renamePageHandler
 
   renamePageHandler: (e) ->
-    newPageName = $(e.target).closest('.bbm-modal').find('.edit-value').val()
+    newPageName = $(e.target).closest('.bbm-modal').find('.edit-value.rename-page').val()
     @projectView.currentPage.set({'slug': newPageName})
+
+  editGrid: ->
+    edit = Dialog.edit messages["edit grid header"], [{class: "grid-cell", value: @model.get('settings').get('gridCellSize')}, {class: "grid-group", value: @model.get('settings').get('gridCellGroup')}], messages["edit grid submit"]
+    $(edit.el).find(".submit").on "click", @editGridHandler
+
+  editGridHandler: (e) ->
+    newCellSize = $(e.target).closest('.bbm-modal').find('.edit-value.grid-cell').val()
+    newCellGroup = $(e.target).closest('.bbm-modal').find('.edit-value.grid-group').val()
+    @model.get('settings').set({gridCellSize: newCellSize, gridCellGroup: newCellGroup})
 
   getSelected: ->
     return @projectView.pageView.controlLayer.editor.get 'selection'

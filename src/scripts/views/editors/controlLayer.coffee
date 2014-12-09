@@ -9,6 +9,7 @@ components = require './../../../components/components.json'
 Element = require './../../models/element.coffee'
 plugins = require './../../plugins.coffee'
 PropertyPanel = require './propertyPanel.coffee'
+Snapper = require './../helpers/snapper.coffee'
 
 elBoundaries = (el) ->
   thisBox =
@@ -28,16 +29,23 @@ class ControlLayer extends PageView
   toggling: null
   propertyPanel: null
   transformBox: null
+  snapper: null
 
-  initialize: ->
-    _.bindAll @, 'startDragHandler', 'moveDragHandler', 'stopDragHandler', 'selectionChange'
-    @editor = new Editor()
+  initialize: (options) ->
+    _.bindAll @, 'startDragHandler', 'moveDragHandler', 'stopDragHandler', 'selectionChange',
+      'updateSnapping'
+    if options.editor?
+      @editor = options.editor
+    else
+      @editor = new Editor()
     @editor.on "change:selection", @selectionChange
     @editor.get('selection').on "add remove", @selectionChange
     @selectingFrameEl = $(uiTemplates.selectingFrame())
     $(@selectingFrameEl).hide()
     $(@el).append @selectingFrameEl
-    @transformBox = new TransformBox {collection:@editor.get('selection')}
+    @transformBox = new TransformBox {collection:@editor.get('selection'), editor: @editor}
+    @snapper = new Snapper()
+    @transformBox.snapper = @snapper
     super()
 
   render: ->
@@ -48,7 +56,9 @@ class ControlLayer extends PageView
     $(@el).append @selectingFrameEl
 
   newElementView: (model) ->
-    return new ControlBox {model: model, editor: @editor}
+    controlBox = new ControlBox {model: model, editor: @editor}
+    controlBox.snapper = @snapper
+    return controlBox
 
   usableFrame: (frame) ->
     frame = {x: frame.x, y: frame.y, w: frame.w, h: frame.h}
@@ -75,14 +85,14 @@ class ControlLayer extends PageView
     e.preventDefault()
     @shiftKey = e.shiftKey
     @metaKey = e.metaKey
-    @selectingFrame = {x: e.clientX, y: e.clientY, w: 0, h: 0}
+    @selectingFrame = {x: e.screenX, y: e.screenY, w: 0, h: 0}
     @toggling = []
     $(document).on 'mousemove', @moveDragHandler
     $(document).on 'mouseup', @stopDragHandler
 
   moveDragHandler: (e) ->
-    @selectingFrame.w = e.clientX - @selectingFrame.x
-    @selectingFrame.h = e.clientY - @selectingFrame.y
+    @selectingFrame.w = e.screenX - @selectingFrame.x
+    @selectingFrame.h = e.screenY - @selectingFrame.y
     @updateSelectingFrame @selectingFrame
 
     if @shiftKey or @metaKey
@@ -145,6 +155,16 @@ class ControlLayer extends PageView
 
     return elements
 
+  updateSnapping: ->
+    if @appData?
+      @snapper.active = @appData.settings.get('snapping')
+
+  setAppData: (appData) ->
+    @appData = appData
+    @updateSnapping()
+    @appData.settings.on 'change:snapping', @updateSnapping
+    @snapper.addGuide appData.grid
+
   events:
     "mousedown" : "startDragHandler"
 
@@ -153,6 +173,7 @@ class ControlBox extends BaseView
   template: uiTemplates.controlBox
   selected: false
   editor: null
+  snapper: null
 
   initialize: (options) ->
     _.bindAll @, 'render', 'selectHandler', 'checkSelected', 'startMoveHandler',
@@ -175,8 +196,6 @@ class ControlBox extends BaseView
         viewAttributes.y = thisBox.top
         viewAttributes.w = thisBox.right - thisBox.left
         viewAttributes.h = thisBox.bottom - thisBox.top
-        # viewAttributes.w = elel.width() + parseInt(elel.css("border-left-width")) + parseInt(elel.css("border-right-width"))
-        # viewAttributes.h = elel.height() + parseInt(elel.css("border-top-width")) + parseInt(elel.css("border-bottom-width"))
       @setElement $(@template(_.extend(viewAttributes, {selected: @selected})))
       $(oldEl).replaceWith $(@el)
 
@@ -222,21 +241,31 @@ class ControlBox extends BaseView
   startMoveHandler: (e) ->
     e.stopPropagation()
     e.preventDefault()
+    @editor.resetMods()
     @giveModelPosition()
-    @grab = {x: e.clientX - @model.get('x'), y: e.clientY - @model.get('y')}
+    @grab = {x: e.screenX, y: e.screenY}
+
+    if not @editor.isSelected @model
+      @editor.selectOnlyElement @model
+
     $(document).on 'mousemove', @moveHandler
     $(document).on 'mouseup', @stopMoveHandler
 
   moveHandler: (e) ->
     e.stopPropagation()
-    if not @editor.isSelected @model
-      @editor.selectOnlyElement @model
-    dx =  e.clientX - @grab.x - @model.get 'x'
-    dy =  e.clientY - @grab.y - @model.get 'y'
-    @editor.moveSelectedBy dx, dy
+    dx =  e.screenX - @grab.x
+    dy =  e.screenY - @grab.y
+
+    # let's do some snapping
+    geos = @editor.getSelectedGeos()
+    @snapper.moveGeos geos, dx, dy
+    snapped = @snapper.getSnap geos
+
+    @editor.setTranslation dx + snapped.x, dy + snapped.y
 
   stopMoveHandler: (e) ->
     e.stopPropagation()
+    @editor.applyMods()
     $(document).off 'mousemove', @moveHandler
     $(document).off 'mouseup', @stopMoveHandler
 
@@ -248,6 +277,7 @@ class TransformBox extends BaseView
   template: uiTemplates.transformBox
   editor: null
   box: {}
+  snapper: null
 
   initialize: (options) ->
     _.bindAll @, 'render', 'startResizeHandler', 'resizeHandler', 'stopResizeHandler',
@@ -321,33 +351,6 @@ class TransformBox extends BaseView
       $(@el).hide()
     $(oldEl).replaceWith $(@el)
 
-  makeStartState: ->
-    @startState = {}
-    @startState.box = @visibleBoundaries()
-    @startState.corner = {}
-    @startState.elements = {}
-    if @collection?
-      for model in @collection.models
-        data = {id: model.get 'id'}
-        data.x = model.get 'x' if model.has 'x'
-        data.y = model.get 'y' if model.has 'y'
-        data.w = model.get 'w' if model.has 'w'
-        data.h = model.get 'h' if model.has 'h'
-        @startState.elements[model.get('id')] = data
-
-        if data.x?
-          if !@startState.corner.x?
-            @startState.corner.x = data.x
-          else
-            if data.x < @startState.corner.x
-              @startState.corner.x = data.x
-        if data.y?
-          if !@startState.corner.y?
-            @startState.corner.y = data.y
-          else
-            if data.y < @startState.corner.y
-              @startState.corner.y = data.y
-
   changeSelection: ->
     @render()
 
@@ -359,74 +362,50 @@ class TransformBox extends BaseView
   startResizeHandler: (e) ->
     e.stopPropagation()
     e.preventDefault()
-    @makeStartState()
-    @grab = {x: e.clientX, y: e.clientY}
+    @grab = {x: e.screenX, y: e.screenY}
+    @offset = _.clone @grab
+    @anchor = {}
     @resizeEdge = $(e.target).data 'edge'
     if @resizeEdge in ['tl', 't', 'tr']
-      @grab.y =  @box.top - @grab.y
+      @offset.y =  @box.top - @grab.y
+      @anchor.y = @box.bottom
     if @resizeEdge in ['tr', 'r', 'br']
-      @grab.x = @box.right - @grab.x
+      @offset.x = @box.right - @grab.x
+      @anchor.x = @box.left
     if @resizeEdge in ['bl', 'b', 'br']
-      @grab.y =  @box.bottom - @grab.y
+      @offset.y =  @box.bottom - @grab.y
+      @anchor.y = @box.top
     if @resizeEdge in ['tl', 'l', 'bl']
-      @grab.x =  @box.left - @grab.x
+      @offset.x =  @box.left - @grab.x
+      @anchor.x = @box.right
     $(document).on 'mousemove', @resizeHandler
     $(document).on 'mouseup', @stopResizeHandler
 
   resizeHandler: (e) ->
     e.stopPropagation()
-    modified = _.clone @startState.box
-    if @resizeEdge in ['tl', 't', 'tr']
-      modified.top = e.clientY + @grab.y
-      if modified.top > modified.bottom
-        @grab.y = @grab.y - (modified.top - modified.bottom)
-        modified.top = modified.bottom
-        @resizeEdge = 'bl' if @resizeEdge == 'tl'
-        @resizeEdge = 'b' if @resizeEdge == 't'
-        @resizeEdge = 'br' if @resizeEdge == 'tr'
-    if @resizeEdge in ['tr', 'r', 'br']
-      modified.right = e.clientX + @grab.x
-      if modified.left > modified.right
-        @grab.x = @grab.x + (modified.left - modified.right)
-        modified.right = modified.left
-        @resizeEdge = 'tl' if @resizeEdge == 'tr'
-        @resizeEdge = 'l' if @resizeEdge == 'r'
-        @resizeEdge = 'bl' if @resizeEdge == 'br'
-    if @resizeEdge in ['bl', 'b', 'br']
-      modified.bottom = e.clientY + @grab.y
-      if modified.top > modified.bottom
-        @grab.y = @grab.y + (modified.top - modified.bottom)
-        modified.top = modified.bottom
-        @resizeEdge = 'tl' if @resizeEdge == 'bl'
-        @resizeEdge = 't' if @resizeEdge == 'b'
-        @resizeEdge = 'tr' if @resizeEdge == 'br'
-    if @resizeEdge in ['tl', 'l', 'bl']
-      modified.left = e.clientX + @grab.x
-      if modified.left > modified.right
-        @grab.x = @grab.x - (modified.left - modified.right)
-        modified.left = modified.right
-        @resizeEdge = 'tr' if @resizeEdge == 'tl'
-        @resizeEdge = 'r' if @resizeEdge == 'l'
-        @resizeEdge = 'br' if @resizeEdge == 'bl'
+    x = e.screenX + @offset.x
+    y = e.screenY + @offset.y
 
-    scaleX = (modified.right - modified.left) / (@startState.box.right - @startState.box.left)
-    scaleY = (modified.bottom - modified.top) / (@startState.box.bottom - @startState.box.top)
+    # let's do some snapping
+    geos = [{x:x, y:y}]
+    snapped = @snapper.getSnap geos
+    x = x + snapped.x
+    y = y + snapped.y
 
-    newPosition =
-      x: @startState.corner.x + modified.left - @startState.box.left
-      y: @startState.corner.y + modified.top - @startState.box.top
-    for model in @collection.models
-      mine = @startState.elements[model.get 'id']
-      if mine?
-        change =
-          x: ((mine.x - @startState.corner.x) * scaleX) + newPosition.x
-          y: ((mine.y - @startState.corner.y) * scaleY) + newPosition.y
-          w: mine.w * scaleX
-          h: mine.h * scaleY
-        model.set change
+    if @anchor.x?
+      w = (x - @anchor.x)/(@grab.x + @offset.x - @anchor.x)
+    else
+      w = 1
+    if @anchor.y?
+      h = (y - @anchor.y)/(@grab.y + @offset.y - @anchor.y)
+    else
+      h = 1
+
+    @editor.setScale w, h, @anchor
 
   stopResizeHandler: (e) ->
     e.stopPropagation()
+    @editor.applyMods()
     $(document).off 'mousemove', @resizeHandler
     $(document).off 'mouseup', @stopResizeHandler
 

@@ -5,15 +5,16 @@ $ = require 'jquery'
 describe 'Manipulating', ->
   before ->
     # move
+    framer.app.get('settings').set {snapping: false}
     framer.app.loadFile './testData/test.json'
     controlBox = $('#framer_controls .control-box:last')
     e = $.Event 'mousedown'
-    e.clientX = 100 + 11
-    e.clientY = 100 + 23
+    e.screenX = 100 + 11
+    e.screenY = 100 + 23
     $(controlBox).find('.control-border').trigger e
     e = $.Event 'mousemove'
-    e.clientX = 160 + 11
-    e.clientY = 5 + 23
+    e.screenX = 160 + 11
+    e.screenY = 5 + 23
     $(document).trigger e
     e = $.Event 'mouseup'
     $(document).trigger e
@@ -110,18 +111,18 @@ describe 'Resizing', ->
       handle = transformBox.find('.resize-handle-'+edge)
       e = $.Event 'mousedown'
       if edge in ['tl', 'l', 'bl']
-        e.clientX = elel.position().left
+        e.screenX = elel.position().left
       else
-        e.clientX = elel.position().left + elel.width()
+        e.screenX = elel.position().left + elel.width()
       if edge in ['tl', 't', 'tr']
-        e.clientY = elel.position().top
+        e.screenY = elel.position().top
       else
-        e.clientY = elel.position().top + elel.height()
+        e.screenY = elel.position().top + elel.height()
       handle.trigger e
 
       e = $.Event 'mousemove'
-      e.clientX = dropX
-      e.clientY = dropY
+      e.screenX = dropX
+      e.screenY = dropY
       $(document).trigger e
       $(document).trigger 'mouseup'
 
@@ -140,14 +141,14 @@ describe 'Resizing', ->
         rectangle = $ '#framer_pages #first .framer-drawn-element:nth-child('+number+')'
         assert.equal rectangle.offset().left, x
         assert.equal rectangle.offset().top, y
-        assert.equal rectangle.width(), width
-        assert.equal rectangle.height(), height
+        assert.equal rectangle.outerWidth(), width
+        assert.equal rectangle.outerHeight(), height
       checkRectangle 1, 80,  69,  200, 370
-      checkRectangle 2, 43,  87,  627, 331
-      checkRectangle 3, 2,   18,  308, 410
-      checkRectangle 4, 210, 31,  187, 351
-      checkRectangle 5, 760, 12,  30,  560
-      checkRectangle 6, 30,  18,  387, 421
+      checkRectangle 2, 43,  87,  629, 331
+      checkRectangle 3, 2,   18,  310, 410
+      checkRectangle 4, 210, 31,  189, 354
+      checkRectangle 5, 760, 12,  30,  562
+      checkRectangle 6, 30,  18,  387, 423
       checkRectangle 7, 87,  170, 423, 250
       checkRectangle 8, 292, 569, 908, 1281
 
@@ -163,13 +164,13 @@ describe 'Resizing Multiple', ->
     transformBox = $('#framer_controls .transform-box')
     handle = transformBox.find('.resize-handle-br')
     e = $.Event 'mousedown'
-    e.clientX = handle.position().left
-    e.clientY = handle.position().top
+    e.screenX = handle.position().left
+    e.screenY = handle.position().top
     handle.trigger e
 
     e = $.Event 'mousemove'
-    e.clientX = handle.position().left + 100
-    e.clientY = handle.position().top + 100
+    e.screenX = handle.position().left + 100
+    e.screenY = handle.position().top + 100
     $(document).trigger e
     $(document).trigger 'mouseup'
 
@@ -179,16 +180,16 @@ describe 'Resizing Multiple', ->
         rectangle = $ '#framer_pages #first .framer-drawn-element:nth-child('+number+')'
         assert.equal rectangle.offset().left, x
         assert.equal rectangle.offset().top, y
-        assert.equal rectangle.width(), width
-        assert.equal rectangle.height(), height
-      checkRectangle 1, 86.875,     103.71875,  216, 358
+        assert.equal rectangle.outerWidth(), width
+        assert.equal rectangle.outerHeight(), height
+      checkRectangle 1, 86.890625,  103.71875,  217, 358
       checkRectangle 2, 46.8125,    102.671875, 652, 337
-      checkRectangle 3, 2.40625,    18.3125,    314, 433
-      checkRectangle 4, 227.671875, 32.03125,   195, 264
-      checkRectangle 5, 823.3125,   12,         33,  577
+      checkRectangle 3, 2.40625,    18.3125,    315, 433
+      checkRectangle 4, 227.703125, 32.03125,   195, 264
+      checkRectangle 5, 823.421875, 12,         33,  577
       checkRectangle 6, -3,         18.3125,    455, 549
-      checkRectangle 7, 119.375,    178.578125, 434, 263
-      checkRectangle 8, 325.140625, 631.953125, 975, 1318
+      checkRectangle 7, 119.390625, 178.59375,  434, 263
+      checkRectangle 8, 325.171875, 631.984375, 975, 1318
 
 describe 'Editing Multiple', ->
   before ->
@@ -209,3 +210,48 @@ describe 'Editing Multiple', ->
     it 'should have sans-serif as the font family', ->
       assert.equal "sans-serif", framer.app.get('project').get('pages').first().get('elements').first().get('fontFamily')
       assert.equal "sans-serif", framer.app.get('project').get('pages').first().get('elements').last().get('fontFamily')
+
+describe 'Snapping', ->
+  before ->
+    framer.app.get('settings').set {snapping: true}
+    framer.app.get('settings').set {gridCellSize: 13}
+    framer.app.loadFile './testData/test.json'
+
+    # moving
+    controlBox = $('#framer_controls .control-box:last')
+    e = $.Event 'mousedown'
+    e.screenX = 100 + 11
+    e.screenY = 100 + 23
+    $(controlBox).find('.control-border').trigger e
+    e = $.Event 'mousemove'
+    e.screenX = 160 + 11
+    e.screenY = 5 + 23
+    $(document).trigger e
+    e = $.Event 'mouseup'
+    $(document).trigger e
+
+    #resizing
+    transformBox = $('#framer_controls .transform-box')
+    handle = transformBox.find('.resize-handle-br')
+    e = $.Event 'mousedown'
+    e.screenX = 559 + 3
+    e.screenY = 250 + 7
+    handle.trigger e
+    e = $.Event 'mousemove'
+    e.screenX = 569 + 3
+    e.screenY = 270 + 7
+    $(document).trigger e
+    $(document).trigger 'mouseup'
+
+  describe 'moving', ->
+    it 'should have moved the rectangle to 159,0', ->
+      rectangle = $ '#framer_pages #first .framer-drawn-element'
+      position = rectangle.position()
+      assert.equal position.left, 159
+      assert.equal position.top, 0
+
+  describe 'resizing', ->
+    it 'should have resized the rectangle to 572x273', ->
+      rectangle = $ '#framer_pages #first .framer-drawn-element'
+      assert.equal rectangle.outerWidth(), 413
+      assert.equal rectangle.outerHeight(), 273

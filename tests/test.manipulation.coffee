@@ -25,6 +25,7 @@ describe 'Manipulating', ->
     $(".property-panel.showing [data-property=text]").val("so what is up?")
     $(".property-panel.showing [data-property=fontFamily]").val("sans-serif")
     $(".property-panel.showing [data-property=fontSize]").val("19")
+    $(".property-panel.showing [data-property=fontColor]").val("#0f0")
     $(".property-panel.showing [data-property=borderColor]").val("#f00")
     $(".property-panel.showing [data-property=borderWidth]").val("4")
     $(".property-panel.showing [data-property=fillColor]").val("#00f")
@@ -64,6 +65,10 @@ describe 'Manipulating', ->
     it 'text size should be 19px', ->
       rectangleText = $ '#framer_pages #first .framer-drawn-element .framer-text'
       assert.equal rectangleText.css("font-size"), "19px"
+  describe 'font color edit', ->
+    it 'the font color should be #0f0', ->
+      rectangleText = $ '#framer_pages #first .framer-drawn-element .framer-text'
+      assert.equal rectangleText.css("color"), "rgb(0, 255, 0)"
   describe 'border color edit', ->
     it 'the border color should be #f00', ->
       rectangle = $ '#framer_pages #first .framer-drawn-element'

@@ -167,3 +167,40 @@ input, textarea {
   width: 8px;
   height: 8px;
 }
+
+@mixin framer-button () {
+  border: 1px solid $basic-color;
+  padding: 5px;
+  display: inline-block;
+}
+
+@mixin align-button () {
+  @include framer-button();
+  width: 24px;
+  height: 24px;
+}
+
+a.framer-align-top {
+  @include align-button();
+  background: url('../images/align_objects_top_48px.svg');
+}
+a.framer-align-right {
+  @include align-button();
+  background: url('../images/align_objects_right_48px.svg');
+}
+a.framer-align-bottom {
+  @include align-button();
+  background: url('../images/align_objects_bottom_48px.svg');
+}
+a.framer-align-left {
+  @include align-button();
+  background: url('../images/align_objects_left_48px.svg');
+}
+a.framer-align-center {
+  @include align-button();
+  background: url('../images/align_objects_center_48px.svg');
+}
+a.framer-align-middle {
+  @include align-button();
+  background: url('../images/align_objects_middle_48px.svg');
+}

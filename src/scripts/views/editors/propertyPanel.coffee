@@ -7,10 +7,13 @@ components = require './../../../components/components.json'
 class PropertyPanel extends BaseView
   template: uiTemplates.propertyPanel
 
-  initialize: ->
+  initialize: (options) ->
     _.bindAll @, 'render', 'cancelHandler', 'saveHandler', 'remove',
-      'startDragHandler', 'dragHandler', 'stopDragHandler'
+      'startDragHandler', 'dragHandler', 'stopDragHandler', 'alignTopHandler',
+      'alignRightHandler', 'alignBottomHandler', 'alignLeftHandler',
+      'alignCenterHandler', 'alignMiddleHandler'
     @previous = {}
+    @editor = options.editor if options.editor
     @render()
 
   render: ->
@@ -109,9 +112,39 @@ class PropertyPanel extends BaseView
     $(document).off 'mousemove', @dragHandler
     $(document).off 'mouseup', @stopDragHandler
 
+  alignTopHandler: (e) ->
+    e.preventDefault()
+    @editor.alignSelectedTop()
+
+  alignRightHandler: (e) ->
+    e.preventDefault()
+    @editor.alignSelectedRight()
+
+  alignBottomHandler: (e) ->
+    e.preventDefault()
+    @editor.alignSelectedBottom()
+
+  alignLeftHandler: (e) ->
+    e.preventDefault()
+    @editor.alignSelectedLeft()
+
+  alignCenterHandler: (e) ->
+    e.preventDefault()
+    @editor.alignSelectedCenter()
+
+  alignMiddleHandler: (e) ->
+    e.preventDefault()
+    @editor.alignSelectedMiddle()
+
   events:
     "click .cancel" : "cancelHandler"
     "click .save"   : "saveHandler"
     "mousedown"     : "startDragHandler"
+    "click .framer-align-top"     : "alignTopHandler"
+    "click .framer-align-right"   : "alignRightHandler"
+    "click .framer-align-bottom"  : "alignBottomHandler"
+    "click .framer-align-left"    : "alignLeftHandler"
+    "click .framer-align-center"  : "alignCenterHandler"
+    "click .framer-align-middle"  : "alignMiddleHandler"
 
 module.exports = PropertyPanel

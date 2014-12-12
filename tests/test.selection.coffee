@@ -84,18 +84,18 @@ describe 'Multi-Selecting', ->
   describe 'select multiple objects by dragging', ->
     it 'should have none selected if we drag through none', ->
       e = $.Event 'mousedown'
-      e.screenX = 1
-      e.screenY = 1
+      e.clientX = 1
+      e.clientY = 1
       e.shiftKey = false
       e.metaKey = false
       $("#framer_controls").trigger e
       e = $.Event 'mousemove'
-      e.screenX = 2
-      e.screenY = 2
+      e.clientX = 2
+      e.clientY = 2
       $(document).trigger e
       e = $.Event 'mouseup'
-      e.screenX = 2
-      e.screenY = 2
+      e.clientX = 2
+      e.clientY = 2
       $(document).trigger e
 
       assert.equal framer.app_view.getSelected().length, 0
@@ -148,12 +148,12 @@ describe 'Multi-Selecting', ->
   describe 'deselect by clicking background', ->
     it 'should have no selected', ->
       e = $.Event 'mousedown'
-      e.screenX = 0
-      e.screenY = 0
+      e.clientX = 0
+      e.clientY = 0
       $("#framer_controls").trigger e
       e = $.Event 'mouseup'
-      e.screenX = 0
-      e.screenY = 0
+      e.clientX = 0
+      e.clientY = 0
       $("#framer_controls").trigger e
       assert.equal framer.app_view.getSelected().length, 0
 

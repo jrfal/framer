@@ -85,14 +85,14 @@ class ControlLayer extends PageView
     e.preventDefault()
     @shiftKey = e.shiftKey
     @metaKey = e.metaKey
-    @selectingFrame = {x: e.screenX, y: e.screenY, w: 0, h: 0}
+    @selectingFrame = {x: e.clientX, y: e.clientY, w: 0, h: 0}
     @toggling = []
     $(document).on 'mousemove', @moveDragHandler
     $(document).on 'mouseup', @stopDragHandler
 
   moveDragHandler: (e) ->
-    @selectingFrame.w = e.screenX - @selectingFrame.x
-    @selectingFrame.h = e.screenY - @selectingFrame.y
+    @selectingFrame.w = e.clientX - @selectingFrame.x
+    @selectingFrame.h = e.clientY - @selectingFrame.y
     @updateSelectingFrame @selectingFrame
 
     if @shiftKey or @metaKey
@@ -119,7 +119,7 @@ class ControlLayer extends PageView
       if not @propertyPanel?
         collection = new Backbone.Collection [], {model: Element}
         collection.add selected.models
-        @propertyPanel = new PropertyPanel {collection: collection}
+        @propertyPanel = new PropertyPanel {collection: collection, editor: @editor}
         $("#framer_controls").append @propertyPanel.el
         @propertyPanel.slideIn()
     else if @propertyPanel?
@@ -245,9 +245,6 @@ class ControlBox extends BaseView
     @giveModelPosition()
     @grab = {x: e.screenX, y: e.screenY}
 
-    if not @editor.isSelected @model
-      @editor.selectOnlyElement @model
-
     $(document).on 'mousemove', @moveHandler
     $(document).on 'mouseup', @stopMoveHandler
 
@@ -255,6 +252,9 @@ class ControlBox extends BaseView
     e.stopPropagation()
     dx =  e.screenX - @grab.x
     dy =  e.screenY - @grab.y
+
+    if not @editor.isSelected @model
+      @editor.selectOnlyElement @model
 
     # let's do some snapping
     geos = @editor.getSelectedGeos()

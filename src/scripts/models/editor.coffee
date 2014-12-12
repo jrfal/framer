@@ -146,6 +146,99 @@ class Editor extends Backbone.Model
 
       element.moveAndScaleBy where.x, where.y, dw, dh
 
+  selectionTopBoundary: ->
+    return null if @get('selection').size() <= 0
+    topElement = @get('selection').min (element) ->
+      if element.has 'y'
+        return element.get 'y'
+      else
+        return null
+    if topElement?
+      console.log topElement
+      if topElement.has 'y'
+        return topElement.get 'y'
+    return null
+
+  alignSelectedTop: ->
+    top = @selectionTopBoundary()
+    if top?
+      for element in @get('selection').models
+        element.set {y: top}
+
+  selectionRightBoundary: ->
+    return null if @get('selection').size() <= 0
+    rightElement = @get('selection').max (element) ->
+      if element.has 'x'
+        if element.has 'w'
+          return element.get('x') + element.get('w')
+      return null
+    if rightElement?
+      if rightElement.has 'x'
+        if rightElement.has 'w'
+          return rightElement.get('x') + rightElement.get('w')
+    return null
+
+  alignSelectedRight: ->
+    right = @selectionRightBoundary()
+    if right?
+      for element in @get('selection').models
+        if element.has 'w'
+          element.set {x: right - element.get('w')}
+
+  selectionBottomBoundary: ->
+    return null if @get('selection').size() <= 0
+    bottomElement = @get('selection').max (element) ->
+      if element.has 'y'
+        if element.has 'h'
+          return element.get('y') + element.get('h')
+      return null
+    if bottomElement?
+      if bottomElement.has 'y'
+        if bottomElement.has 'h'
+          return bottomElement.get('y') + bottomElement.get('h')
+    return null
+
+  alignSelectedBottom: ->
+    bottom = @selectionBottomBoundary()
+    if bottom?
+      for element in @get('selection').models
+        if element.has 'h'
+          element.set {y: bottom - element.get('h')}
+
+  selectionLeftBoundary: ->
+    return null if @get('selection').size() <= 0
+    leftElement = @get('selection').min (element) ->
+      if element.has 'x'
+        return element.get 'x'
+      else
+        return null
+    if leftElement?
+      if leftElement.has 'x'
+        return leftElement.get 'x'
+    return null
+
+  alignSelectedLeft: ->
+    left = @selectionLeftBoundary()
+    if left?
+      for element in @get('selection').models
+        element.set {x: left}
+
+  alignSelectedCenter: ->
+    right = @selectionRightBoundary()
+    left = @selectionLeftBoundary()
+    if left? and right?
+      for element in @get('selection').models
+        if element.has 'w'
+          element.set {x: (left + right)/2 - element.get('w')/2}
+
+  alignSelectedMiddle: ->
+    bottom = @selectionBottomBoundary()
+    top = @selectionTopBoundary()
+    if top? and bottom?
+      for element in @get('selection').models
+        if element.has 'h'
+          element.set {y: (top + bottom)/2 - element.get('h')/2}
+
   getSelectedGeos: ->
     geos = []
     selected = @get 'selection'
@@ -156,19 +249,21 @@ class Editor extends Backbone.Model
 
   modifyViewAttributes: (element, viewAttributes) ->
     if @isSelected element
+      scale = @get 'scale'
+      translate = @get 'translate'
       if viewAttributes.x?
-        if @scale.w != 1
-          viewAttributes.x = (viewAttributes.x - @anchor.x) * @scale.w + @anchor.x
-        viewAttributes.x = viewAttributes.x + @translate.x
+        if scale.w != 1
+          viewAttributes.x = (viewAttributes.x - @anchor.x) * scale.w + @anchor.x
+        viewAttributes.x = viewAttributes.x + translate.x
       if viewAttributes.y?
-        if @scale.h != 1
-          viewAttributes.y = (viewAttributes.y - @anchor.y) * @scale.h + @anchor.y
-        viewAttributes.y = viewAttributes.y + @translate.y
+        if scale.h != 1
+          viewAttributes.y = (viewAttributes.y - @anchor.y) * scale.h + @anchor.y
+        viewAttributes.y = viewAttributes.y + translate.y
       if viewAttributes.w?
-        if @scale.w != 1
-          viewAttributes.w = viewAttributes.w * @scale.w
+        if scale.w != 1
+          viewAttributes.w = viewAttributes.w * scale.w
       if viewAttributes.h?
-        if @scale.h != 1
-          viewAttributes.h = viewAttributes.h * @scale.h
+        if scale.h != 1
+          viewAttributes.h = viewAttributes.h * scale.h
 
 module.exports = Editor

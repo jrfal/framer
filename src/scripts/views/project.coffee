@@ -39,8 +39,8 @@ class ProjectView extends BaseView
 
     if page?
       @pageView.setModel page
-      @pageView.render()
       $(@el).empty()
       $(@el).append(@pageView.el)
+      @pageView.render()
 
 module.exports = ProjectView

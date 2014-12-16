@@ -17,7 +17,7 @@ input, textarea {
 }
 
 
-#framer_backdrop {
+#framer_backdrop, #framer_grid {
   position: absolute;
   top: 0;
   right: 0;
@@ -162,12 +162,6 @@ input, textarea {
   }
 }
 
-#framer_grid #smallGrid
-{
-  width: 8px;
-  height: 8px;
-}
-
 @mixin framer-button () {
   border: 1px solid $basic-color;
   padding: 5px;
@@ -182,25 +176,50 @@ input, textarea {
 
 a.framer-align-top {
   @include align-button();
-  background: url('../images/align_objects_top_48px.svg');
+  background: url('../images/icon_align_top.svg');
 }
 a.framer-align-right {
   @include align-button();
-  background: url('../images/align_objects_right_48px.svg');
+  background: url('../images/icon_align_right.svg');
 }
 a.framer-align-bottom {
   @include align-button();
-  background: url('../images/align_objects_bottom_48px.svg');
+  background: url('../images/icon_align_bottom.svg');
 }
 a.framer-align-left {
   @include align-button();
-  background: url('../images/align_objects_left_48px.svg');
+  background: url('../images/icon_align_left.svg');
 }
 a.framer-align-center {
   @include align-button();
-  background: url('../images/align_objects_center_48px.svg');
+  background: url('../images/icon_align_center.svg');
 }
 a.framer-align-middle {
   @include align-button();
-  background: url('../images/align_objects_middle_48px.svg');
+  background: url('../images/icon_align_middle.svg');
+}
+
+a.framer-distribute-top {
+  @include align-button();
+  background: url('../images/icon_distribute_top.svg');
+}
+a.framer-distribute-right {
+  @include align-button();
+  background: url('../images/icon_distribute_right.svg');
+}
+a.framer-distribute-bottom {
+  @include align-button();
+  background: url('../images/icon_distribute_bottom.svg');
+}
+a.framer-distribute-left {
+  @include align-button();
+  background: url('../images/icon_distribute_left.svg');
+}
+a.framer-distribute-center {
+  @include align-button();
+  background: url('../images/icon_distribute_center.svg');
+}
+a.framer-distribute-middle {
+  @include align-button();
+  background: url('../images/icon_distribute_middle.svg');
 }

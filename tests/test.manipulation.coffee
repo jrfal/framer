@@ -7,7 +7,8 @@ describe 'Manipulating', ->
     # move
     framer.app.get('settings').set {snapping: false}
     framer.app.loadFile './testData/test.json'
-    controlBox = $('#framer_controls .control-box:last')
+    el_id = $("#framer_pages .framer-element:last").data("element")
+    controlBox = $("#framer_controls .control-box[data-element=#{el_id}]")
     e = $.Event 'mousedown'
     e.screenX = 100 + 11
     e.screenY = 100 + 23

@@ -78,4 +78,58 @@ class Element extends Backbone.Model
 
     return geos
 
+  top: (value) ->
+    if value?
+      @set 'y', value
+      return value
+    return @get 'y' if @has 'y'
+    return 0
+
+  right: (value) ->
+    if value?
+      if @has 'w'
+        @set 'x', value - @get('w')
+        return value
+      return @left value
+    return @get('x') + @get('w') if @has('x') and @has('w')
+    return @left()
+
+  bottom: (value) ->
+    if value?
+      if @has 'h'
+        @set 'y', value - @get('h')
+        return value
+      return @top value
+    return @get('y') + @get('h') if @has('y') and @has('h')
+    return @top()
+
+  left: (value) ->
+    if value?
+      @set 'x', value
+      return value
+    return @get 'x' if @has 'x'
+    return 0
+
+  center: (value) ->
+    if value?
+      if @has('x') and @has('w')
+        @set 'x', value - (@get('w')/2)
+        return value
+      else
+        return @left(value)
+    if @has('x') and @has('w')
+      return @get('x') + (@get('w')/2)
+    return @left()
+
+  middle: (value) ->
+    if value?
+      if @has('y') and @has('h')
+        @set 'y', value - (@get('h')/2)
+        return value
+      else
+        return @top(value)
+    if @has('y') and @has('h')
+      return @get('y') + (@get('h')/2)
+    return @top()
+
 module.exports = Element

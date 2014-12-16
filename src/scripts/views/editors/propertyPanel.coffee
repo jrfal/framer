@@ -136,6 +136,30 @@ class PropertyPanel extends BaseView
     e.preventDefault()
     @editor.alignSelectedMiddle()
 
+  distributeTopHandler: (e) ->
+    e.preventDefault()
+    @editor.distributeSelectedTop()
+
+  distributeRightHandler: (e) ->
+    e.preventDefault()
+    @editor.distributeSelectedRight()
+
+  distributeBottomHandler: (e) ->
+    e.preventDefault()
+    @editor.distributeSelectedBottom()
+
+  distributeLeftHandler: (e) ->
+    e.preventDefault()
+    @editor.distributeSelectedLeft()
+
+  distributeCenterHandler: (e) ->
+    e.preventDefault()
+    @editor.distributeSelectedCenter()
+
+  distributeMiddleHandler: (e) ->
+    e.preventDefault()
+    @editor.distributeSelectedMiddle()
+
   events:
     "click .cancel" : "cancelHandler"
     "click .save"   : "saveHandler"
@@ -146,5 +170,12 @@ class PropertyPanel extends BaseView
     "click .framer-align-left"    : "alignLeftHandler"
     "click .framer-align-center"  : "alignCenterHandler"
     "click .framer-align-middle"  : "alignMiddleHandler"
+
+    "click .framer-distribute-top"     : "distributeTopHandler"
+    "click .framer-distribute-right"   : "distributeRightHandler"
+    "click .framer-distribute-bottom"  : "distributeBottomHandler"
+    "click .framer-distribute-left"    : "distributeLeftHandler"
+    "click .framer-distribute-center"  : "distributeCenterHandler"
+    "click .framer-distribute-middle"  : "distributeMiddleHandler"
 
 module.exports = PropertyPanel

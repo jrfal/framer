@@ -99,26 +99,26 @@ class Editor extends Backbone.Model
       return false
 
   setTranslation: (dx, dy) ->
-    @translate = {x: dx, y: dy}
+    @set 'translate', {x: dx, y: dy}
     for model in @get('selection').models
       model.trigger 'change'
 
   setScale: (dw, dh, anchor) ->
-    @scale = {w: dw, h: dh}
-    @anchor = anchor
+    @set 'scale', {w: dw, h: dh}
+    @set 'anchor', anchor
     for model in @get('selection').models
       model.trigger 'change'
 
   resetMods: ->
-    @translate = {x: 0, y: 0}
-    @scale = {w: 1, h: 1}
+    @set 'translate', {x: 0, y: 0}
+    @set 'scale', {w: 1, h: 1}
 
   applyMods: ->
-    translate = @translate
-    scale = @scale
+    translate = @get 'translate'
+    scale = @get 'scale'
     @resetMods()
     if scale.w != 1 or scale.h != 1
-      @scaleSelectedBy scale.w, scale.h, @anchor
+      @scaleSelectedBy scale.w, scale.h, @get 'anchor'
     if translate.x != 0 or translate.y != 0
       @moveSelectedBy translate.x, translate.y
 
@@ -154,7 +154,6 @@ class Editor extends Backbone.Model
       else
         return null
     if topElement?
-      console.log topElement
       if topElement.has 'y'
         return topElement.get 'y'
     return null
@@ -239,6 +238,32 @@ class Editor extends Backbone.Model
         if element.has 'h'
           element.set {y: (top + bottom)/2 - element.get('h')/2}
 
+  distribute: (fn) ->
+    getFn = (element) -> element[fn]()
+    order = @get('selection').sortBy getFn
+    return null if order.length < 3
+
+    place = _.min(order, getFn)[fn]()
+    total = _.max(order, getFn)[fn]() - place
+    step = total/(order.length - 1)
+
+    for element in order
+      element[fn](place)
+      place = place + step
+
+  distributeSelectedTop: ->
+    return @distribute('top')
+  distributeSelectedRight: ->
+    return @distribute('right')
+  distributeSelectedBottom: ->
+    return @distribute('bottom')
+  distributeSelectedLeft: ->
+    return @distribute('left')
+  distributeSelectedCenter: ->
+    return @distribute('center')
+  distributeSelectedMiddle: ->
+    return @distribute('middle')
+
   getSelectedGeos: ->
     geos = []
     selected = @get 'selection'
@@ -251,13 +276,14 @@ class Editor extends Backbone.Model
     if @isSelected element
       scale = @get 'scale'
       translate = @get 'translate'
+      anchor = @get 'anchor'
       if viewAttributes.x?
         if scale.w != 1
-          viewAttributes.x = (viewAttributes.x - @anchor.x) * scale.w + @anchor.x
+          viewAttributes.x = (viewAttributes.x - anchor.x) * scale.w + anchor.x
         viewAttributes.x = viewAttributes.x + translate.x
       if viewAttributes.y?
         if scale.h != 1
-          viewAttributes.y = (viewAttributes.y - @anchor.y) * scale.h + @anchor.y
+          viewAttributes.y = (viewAttributes.y - anchor.y) * scale.h + anchor.y
         viewAttributes.y = viewAttributes.y + translate.y
       if viewAttributes.w?
         if scale.w != 1

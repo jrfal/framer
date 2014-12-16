@@ -20,7 +20,9 @@ describe 'Loading', ->
   describe 'check control boxes', ->
     it 'should match all the control box sizes and positions to their elements', ->
       page = framer.app.get('project').get('pages').first()
-      $("#framer_controls .control-box").each ->
+      boxes = $("#framer_controls .control-box")
+      assert.equal 6, boxes.length
+      boxes.each ->
         id = $(this).data('element')
         drawnElement = $("#framer_pages [data-element=#{id}]")
         position = $(this).position()

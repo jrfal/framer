@@ -5,8 +5,9 @@ Backbone.$ = $
 _ = require 'underscore'
 Page = require './../models/page.coffee'
 ElementView = require './element.coffee'
+BaseView = require './baseView.coffee'
 
-class PageView extends Backbone.View
+class PageView extends BaseView
   className: 'framer-page'
   model: null
 
@@ -31,6 +32,7 @@ class PageView extends Backbone.View
       for element in elements.models
         elementView = @getElementView(element)
         $(@el).append(elementView.el)
+        elementView.render()
 
   newElementView: (model) ->
     return new ElementView {model: model}
@@ -52,6 +54,7 @@ class PageView extends Backbone.View
 
   addElementHandler: (model, collection) ->
     elementView = @getElementView model
+    elementView.render()
     $(@el).append(elementView.el)
     if collection.last() != model
       @updateElementOrder()

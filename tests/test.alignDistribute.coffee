@@ -45,3 +45,45 @@ describe 'Aligning', ->
       framer.app_view.projectView.pageView.editor.alignSelectedMiddle()
       for element in framer.app.get('project').get('pages').first().get('elements').models
         assert.equal 100, element.get('y') + element.get('h')/2
+
+describe 'Distributing', ->
+  before ->
+    framer.app.loadFile './testData/three-shapes.json'
+    for element in framer.app.get('project').get('pages').first().get('elements').models
+      framer.app_view.projectView.pageView.editor.selectElement element
+
+  describe 'distribute top', ->
+    it 'should have ys of 50, 275, 500', ->
+      framer.app_view.projectView.pageView.editor.distributeSelectedTop()
+      for element in framer.app.get('project').get('pages').first().get('elements').models
+        assert.ok(element.get('y') in [50, 275, 500])
+
+  describe 'distribute bottom', ->
+    it 'should have ys of 50, 277.5, 500', ->
+      framer.app_view.projectView.pageView.editor.distributeSelectedBottom()
+      for element in framer.app.get('project').get('pages').first().get('elements').models
+        assert.ok(element.get('y') in [50, 277.5, 500])
+
+  describe 'distribute left', ->
+    it 'should have xs of 50, 525, 1000', ->
+      framer.app_view.projectView.pageView.editor.distributeSelectedLeft()
+      for element in framer.app.get('project').get('pages').first().get('elements').models
+        assert.ok(element.get('x') in [50, 525, 1000])
+
+  describe 'distribute right', ->
+    it 'should have xs of 50, 610, 1000', ->
+      framer.app_view.projectView.pageView.editor.distributeSelectedRight()
+      for element in framer.app.get('project').get('pages').first().get('elements').models
+        assert.ok(element.get('x') in [50, 610, 1000])
+
+  describe 'distribute horizontal center', ->
+    it 'should have xs of 50, 567.5, 1000', ->
+      framer.app_view.projectView.pageView.editor.distributeSelectedCenter()
+      for element in framer.app.get('project').get('pages').first().get('elements').models
+        assert.ok(element.get('x') in [50, 567.5, 1000])
+
+  describe 'distribute vertical middle', ->
+    it 'should have ys of 50, 276.25, 500', ->
+      framer.app_view.projectView.pageView.editor.distributeSelectedMiddle()
+      for element in framer.app.get('project').get('pages').first().get('elements').models
+        assert.ok(element.get('y') in [50, 276.25, 500])

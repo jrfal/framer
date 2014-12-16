@@ -182,21 +182,24 @@ class ControlBox extends BaseView
     if 'editor' of options
       @editor = options.editor
       @editor.get('selection').on "add remove reset", @checkSelected if @editor?
-    @render()
 
   render: ->
     if @model?
       oldEl = @el
       viewAttributes = _.clone @model.attributes
       el_id = @model.get('id')
+      # console.log "id: #{el_id}"
       elel = $(".framer-page [data-element=#{el_id}]")
+      # console.log elel.length
       if elel.length > 0
         thisBox = elBoundaries elel
         viewAttributes.x = thisBox.left
         viewAttributes.y = thisBox.top
         viewAttributes.w = thisBox.right - thisBox.left
         viewAttributes.h = thisBox.bottom - thisBox.top
+      # console.log viewAttributes
       @setElement $(@template(_.extend(viewAttributes, {selected: @selected})))
+      # console.log @el
       $(oldEl).replaceWith $(@el)
 
   select: ->

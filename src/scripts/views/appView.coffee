@@ -32,14 +32,18 @@ class AppView extends BaseView
     settings = @model.get 'settings'
     settings.on "change:elementPalette", @showHideElementPalette
     settings.on "change:gridLines", @showHideGridLines
-    @projectView = new ProjectEditor({model: @model.get 'project'})
-    @projectView.setAppData {settings: settings, grid: @model.grid}
     @elementPalette = new ElementPaletteView()
     @elementPalette.on 'createElement', @createElementHandler
     @elementPalette.on 'close', @closeElementPaletteHandler
     @gridView = new GuideView {model: @model.grid}
 
+    @createProjectView()
     @render()
+
+  createProjectView: ->
+    settings = @model.get 'settings'
+    @projectView = new ProjectEditor({model: @model.get 'project'})
+    @projectView.setAppData {settings: settings, grid: @model.grid}
 
   render: ->
     $(@el).html uiTemplates.app({})
@@ -107,10 +111,11 @@ class AppView extends BaseView
       @makeNewProject()
 
   newProject: ->
-    if @model?
-      @projectView.setModel @model.get 'project'
-      @projectView.currentPage = null
-      @projectView.render()
+    @createProjectView()
+    # if @model?
+    #   @projectView.setModel @model.get 'project'
+    #   @projectView.currentPage = null
+    @render()
 
   savedProject: ->
     @projectView.projectSaved()

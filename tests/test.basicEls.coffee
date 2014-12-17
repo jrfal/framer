@@ -32,3 +32,13 @@ describe 'Basic Elements', ->
       assert.equal $(checkboxes[1]).attr("type"), "checkbox"
       assert.ok $(checkboxes[1]).is(":checked")
       assert.ok !($(checkboxes[0]).is(":checked"))
+
+  describe 'link', ->
+    it 'should be a link with yellow text', ->
+      framer.app_view.projectView.showPageSlug('link')
+      link = $ '#framer_pages #link a.framer-element span'
+      assert.equal link.length, 1
+      assert.equal $(link).css("color"), "rgb(255, 255, 0)"
+    it 'should link to #checkboxList', ->
+      link = $ '#framer_pages #link a.framer-element'
+      assert.equal link.attr("href"), "#checkboxList"

@@ -13,8 +13,12 @@
   {
     "title": "Link",
     "component": "link",
-    "label": "page 1",
-    "href": "#first"
+    "text": "page 1",
+    "href": "#first",
+    "properties": [
+      {"inherit": "label"},
+      {"property": "href", "type": "string"}
+    ]
   },
   {
     "title": "Oval",

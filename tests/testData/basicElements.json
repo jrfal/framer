@@ -30,6 +30,18 @@
           "text": "[] unchecked\n[x] checked\nhello"
         }
       ]
+    },
+    {
+      "slug": "link",
+      "title": "link page",
+      "elements": [
+        {
+          "component": "link",
+          "text": "some text",
+          "fontColor": "#ff0",
+          "href": "#checkboxList"
+        }
+      ]
     }
   ]
 }

@@ -261,3 +261,53 @@ describe 'Snapping', ->
       rectangle = $ '#framer_pages #first .framer-drawn-element'
       assert.equal rectangle.outerWidth(), 413
       assert.equal rectangle.outerHeight(), 273
+
+describe 'Locked Moving and Resizing', ->
+  before ->
+    framer.app.get('settings').set {snapping: false}
+    framer.app.loadFile './testData/two-rects.json'
+
+    # move
+    el_id = $("#framer_pages .framer-element:first").data("element")
+    controlBox = $("#framer_controls .control-box[data-element=#{el_id}]")
+    e = $.Event 'mousedown'
+    e.screenX = 50 + 11
+    e.screenY = 50 + 23
+    $(controlBox).find('.control-border').trigger e
+    e = $.Event 'mousemove'
+    e.screenX = 160 + 11
+    e.screenY = 20 + 23
+    e.shiftKey = true
+    $(document).trigger e
+    e = $.Event 'mouseup'
+    $(document).trigger e
+
+    #resizing
+    el_id = $("#framer_pages .framer-element:last").data("element")
+    controlBox = $("#framer_controls .control-box[data-element=#{el_id}]")
+    controlBox.trigger 'click'
+    transformBox = $('#framer_controls .transform-box')
+    handle = transformBox.find('.resize-handle-br')
+    e = $.Event 'mousedown'
+    e.screenX = 200 + 3
+    e.screenY = 200 + 7
+    handle.trigger e
+    e = $.Event 'mousemove'
+    e.screenX = 300 + 3
+    e.screenY = 250 + 7
+    e.shiftKey = true
+    $(document).trigger e
+    $(document).trigger 'mouseup'
+
+  describe 'moving', ->
+    it 'should have moved the rectangle to 160,50', ->
+      rectangle = $ '#framer_pages .framer-element:first'
+      position = rectangle.position()
+      assert.equal position.left, 160
+      assert.equal position.top, 50
+
+  describe 'resizing', ->
+    it 'should have resized the rectangle to 175x175', ->
+      rectangle = $ '#framer_pages .framer-element:last'
+      assert.equal rectangle.outerWidth(), 175
+      assert.equal rectangle.outerHeight(), 175

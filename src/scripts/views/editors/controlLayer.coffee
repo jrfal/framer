@@ -264,7 +264,17 @@ class ControlBox extends BaseView
     @snapper.moveGeos geos, dx, dy
     snapped = @snapper.getSnap geos
 
-    @editor.setTranslation dx + snapped.x, dy + snapped.y
+    dx = dx + snapped.x
+    dy = dy + snapped.y
+
+    # lock to 90 deg angles?
+    if e.shiftKey
+      if Math.abs(dx) < Math.abs(dy)
+        dx = 0
+      else
+        dy = 0
+
+    @editor.setTranslation dx, dy
 
   stopMoveHandler: (e) ->
     e.stopPropagation()
@@ -404,7 +414,19 @@ class TransformBox extends BaseView
     else
       h = 1
 
-    @editor.setScale w, h, @anchor
+    anchor = _.clone @anchor
+    if e.shiftKey
+      if not anchor.x?
+        anchor.x = (@editor.selectionLeftBoundary() + @editor.selectionRightBoundary())/2
+        w = h
+      else if not anchor.y?
+        anchor.y = (@editor.selectionTopBoundary() + @editor.selectionBottomBoundary())/2
+        h = w
+      else
+        w = (w + h)/2
+        h = w
+
+    @editor.setScale w, h, anchor
 
   stopResizeHandler: (e) ->
     e.stopPropagation()

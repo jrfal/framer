@@ -9,7 +9,6 @@ $ = require 'jquery'
 app = new App()
 app_view = new AppView {model: app}
 
-global.plugins = require './plugins.coffee'
 MenuBar = require './views/helpers/menubar.coffee'
 
 init = ->

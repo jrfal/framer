@@ -5,7 +5,7 @@ path = require 'path'
 testFiles = fs.readdirSync('.').filter (name) ->
   return (/^test\..*\.coffee$/).test(name)
 # testFiles = fs.readdirSync('.').filter (name) ->
-#   return (/^test\.(manipulation)\.coffee$/).test(name)
+#   return (/^test\.(loadfile)\.coffee$/).test(name)
 
 # watchFiles = Mocha.utils.files(path.join(process.cwd(), '..')).filter (name) ->
 #   return name != __filename

@@ -6,7 +6,8 @@ _ = require 'underscore'
 messages = require './../src/content/messages.en.json'
 Project = require './../src/scripts/models/project.coffee'
 Page = require './../src/scripts/models/page.coffee'
-components = require '../src/components/components.json'
+plugins = require './../src/plugins/plugins.coffee'
+components = plugins.components
 
 describe 'Loading', ->
   before ->

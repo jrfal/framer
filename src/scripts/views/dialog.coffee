@@ -25,6 +25,19 @@ module.exports.question = (header, text, actions) ->
 module.exports.edit = (header, values, submitLabel) ->
   actions = [{label: submitLabel, class: "submit"}]
   actions.push {label: messages["cancel label"], class: "cancel"}
+  for value in values
+    if value.options
+      options = []
+      for option in value.options
+        if not option.value?
+          option = {value: option}
+        if not value.value?
+          value.value = ''
+        if option.value == value.value
+          option.selected = true
+        option.displayValue = "<None>" if option.value == ""
+        options.push option
+      value.options = options
   dialogView = new Dialog({model: new Backbone.Model({title: header, editValues: values, actions: actions})})
   $('#framer_overlay').append dialogView.render().el
   return dialogView

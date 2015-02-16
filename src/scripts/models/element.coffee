@@ -1,9 +1,7 @@
-# $ = require 'jquery'
 Backbone = require 'backbone'
-# Backbone.$ = $
 _ = require 'underscore'
-components = require '../../components/components.json'
-plugins = require '../plugins.coffee'
+plugins = require '../../plugins/plugins.coffee'
+components = plugins.components
 
 id = 1;
 

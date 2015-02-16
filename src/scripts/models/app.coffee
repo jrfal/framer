@@ -65,8 +65,8 @@ class App extends Backbone.Model
         for data in elements
           pageModel.addElement data
 
-    if ("css" of attributes)
-      $("#cssLink").attr "href", path.dirname(filename)+ '/' + attributes.css
+    # if ("css" of attributes)
+    #   $("#cssLink").attr "href", path.dirname(filename)+ '/' + attributes.css
 
     @set 'project', projectModel
 

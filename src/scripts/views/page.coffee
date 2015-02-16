@@ -1,11 +1,11 @@
 $ = require 'jquery'
-templates = require './../componentTemplates.coffee'
 Backbone = require 'backbone'
 Backbone.$ = $
 _ = require 'underscore'
 Page = require './../models/page.coffee'
 ElementView = require './element.coffee'
 BaseView = require './baseView.coffee'
+plugins = require './../../plugins/plugins.coffee'
 
 class PageView extends BaseView
   className: 'framer-page'
@@ -29,7 +29,13 @@ class PageView extends BaseView
           unused.push elementView
       @elementViews = _.difference @elementViews, unused
 
-      for element in elements.models
+      # console.log @model.get('elements').size()
+      elementQueue = elements.models.slice(0)
+      # console.log @model.get('elements').size()
+      for plugin in plugins.modifyElementQueue
+        plugin @, elementQueue
+
+      for element in elementQueue
         elementView = @getElementView(element)
         $(@el).append(elementView.el)
         elementView.render()

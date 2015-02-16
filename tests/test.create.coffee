@@ -1,7 +1,8 @@
 assert = require 'assert'
 framer = require '../src/scripts/framer.coffee'
 $ = require 'jquery'
-components = require '../src/components/components.json'
+plugins = require '../src/plugins/plugins.coffee'
+components = plugins.components
 Project = require '../src/scripts/models/project.coffee'
 Page = require '../src/scripts/models/page.coffee'
 
@@ -11,9 +12,9 @@ describe 'Creating', ->
     pages = project.get 'pages'
     page = new Page()
     pages.add page
+    framer.app.set 'project', project
     for key, component of components
       page.addElement component
-    framer.app.set 'project', project
 
   describe 'component', ->
     for key, component of components

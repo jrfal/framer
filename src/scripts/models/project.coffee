@@ -19,9 +19,11 @@ class Project extends Backbone.Model
 
   getPageBySlug: (slug) ->
     pages = @get 'pages'
-    pages.each (page) ->
-      if page.get('slug') == slug
-        return page
+    return pages.findWhere {slug: slug}
+
+  allSlugs: ->
+    pages = @get 'pages'
+    return pages.pluck 'slug'
 
   checkNewPage: (page) ->
     slug = @checkSlugFor(page.get('slug'), page)

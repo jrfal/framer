@@ -12,5 +12,7 @@
   "rename page header": "Rename Page",
   "rename page submit": "Save",
   "edit grid header":   "Edit Grid",
-  "edit grid submit":   "Save"
+  "edit grid submit":   "Save",
+  "set master page header": "Set Master Page",
+  "set master page submit": "Save"
 }

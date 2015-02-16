@@ -5,7 +5,8 @@ Backbone = require 'backbone'
 Backbone.$ = $
 _ = require 'underscore'
 BaseView = require './baseView.coffee'
-components = require './../../components/components.json'
+plugins = require './../../plugins/plugins.coffee'
+components = plugins.components
 
 class ElementView extends BaseView
   template: uiTemplates.elementPalette

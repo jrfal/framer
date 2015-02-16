@@ -2,7 +2,8 @@ $ = require 'jquery'
 Backbone = require 'backbone'
 BaseView = require './../baseView.coffee'
 uiTemplates = require './../../uiTemplates.coffee'
-components = require './../../../components/components.json'
+plugins = require './../../../plugins/plugins.coffee'
+components = plugins.components
 
 class PropertyPanel extends BaseView
   template: uiTemplates.propertyPanel

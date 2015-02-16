@@ -1,31 +1,33 @@
 $ = require 'jquery'
-templates = require './../componentTemplates.coffee'
-components = require './../../components/components.json'
 Backbone = require 'backbone'
 Backbone.$ = $
 _ = require 'underscore'
 uiTemplates = require './../uiTemplates.coffee'
 jsonPath = require 'json-path'
 jsonPtr = require 'json-ptr'
+plugins = require './../../plugins/plugins.coffee'
+components = plugins.components
 
 class ElementView extends Backbone.View
   className: 'framer-element'
 
-  template: templates.getTemplate 'rectangle'
-  transformations: []
+  transformations: null
+  renderers: null
+  componentData: null
 
   initialize: ->
+    @transformations = []
+    @renderers = []
+
     if @model.has 'component'
       component = _.findWhere components, {component: @model.get('component')}
-
       if component?
-        if component.template?
-          template = component.template
+        for renderer in component.renderers
+          @renderers.push new plugins.renderers[renderer](@model)
+
         if 'transformations' of component
           @transformations = component.transformations
-      if not template?
-        template = @model.get('component')
-      @template = templates.getTemplate template
+
     _.bindAll @, 'render', 'setElement'
     @model.on "change", @render
     @render()
@@ -55,10 +57,11 @@ class ElementView extends Backbone.View
 
   render: ->
     if @model?
-      oldEl = @el
-      @setElement $(@template(@viewAttributes()))
+      for renderer in @renderers
+        oldEl = @el
+        @setElement renderer.render(@viewAttributes())
+        $(oldEl).replaceWith $(@el)
       @$el.attr("data-element", @model.get('id'))
-      $(oldEl).replaceWith $(@el)
 
   modelData: ->
     return model.attributes

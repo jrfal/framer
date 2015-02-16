@@ -4,7 +4,19 @@
 <div class="bbm-modal__section">
   {{#if message}}<span class="dialog-message">{{message}}</span>{{/if}}
   {{#each editValues}}
+    {{#if options}}
+    <select class="edit-value {{class}}">
+      {{#each options}}
+        {{#if displayValue}}
+          <option value="{{value}}"{{#if selected}} selected{{/if}}>{{displayValue}}</option>
+        {{else}}
+          <option{{#if selected}} selected{{/if}}>{{value}}</option>
+        {{/if}}
+      {{/each}}
+    </select>
+    {{else}}
     <input type="text" class="edit-value {{class}}" value="{{value}}" />
+    {{/if}}
   {{/each}}
 </div>
 <div class="bbm-modal__bottombar">

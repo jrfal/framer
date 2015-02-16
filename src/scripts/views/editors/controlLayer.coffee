@@ -5,9 +5,9 @@ PageView = require './../page.coffee'
 uiTemplates = require './../../uiTemplates.coffee'
 _ = require 'underscore'
 Editor = require './../../models/editor.coffee'
-components = require './../../../components/components.json'
 Element = require './../../models/element.coffee'
-plugins = require './../../plugins.coffee'
+plugins = require './../../../plugins/plugins.coffee'
+components = plugins.components
 PropertyPanel = require './propertyPanel.coffee'
 Snapper = require './../helpers/snapper.coffee'
 

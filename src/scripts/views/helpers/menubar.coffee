@@ -5,7 +5,7 @@ class MenuBar
     _.bindAll @, 'toggleGridLinesHandler', 'showElementPaletteHandler', 'newPageHandler',
       'newProjectHandler', 'loadFileHandler', 'saveFileHandler', 'selectAllHandler',
       'nextPageHandler', 'renamePageHandler', 'updateShowGridCheck', 'editGridHandler',
-      'toggleSnappingHandler', 'updateSnapping'
+      'toggleSnappingHandler', 'updateSnapping', 'setMasterPageHandler'
     @app = app
     @app_view = app_view
     @main_menu = new global.gui.Menu({ type: 'menubar'})
@@ -66,6 +66,10 @@ class MenuBar
     pages_menu.append new gui.MenuItem({
       label: "Rename Page",
       click: @renamePageHandler
+    })
+    pages_menu.append new gui.MenuItem({
+      label: "Set Master Page",
+      click: @setMasterPageHandler
     })
 
     view_menu = new global.gui.Menu()
@@ -136,6 +140,9 @@ class MenuBar
 
   renamePageHandler: ->
     @app_view.renamePage()
+
+  setMasterPageHandler: ->
+    @app_view.setMasterPage()
 
   toggleGridLinesHandler: ->
     if @showgrid_menuitem.checked

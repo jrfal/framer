@@ -20,7 +20,7 @@ class ProjectView extends BaseView
     return new PageView()
 
   showPageSlug: (slug) ->
-    @showPage @model.get('pages').findWhere {slug: slug}
+    @showPage @model.getPageBySlug(slug)
 
   showPage: (page) ->
     @currentPage = page
@@ -41,6 +41,8 @@ class ProjectView extends BaseView
       @pageView.setModel page
       $(@el).empty()
       $(@el).append(@pageView.el)
+      # console.log @model.get('pages').first().get('elements').size()
       @pageView.render()
+      # console.log @model.get('pages').first().get('elements').size()
 
 module.exports = ProjectView

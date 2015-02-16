@@ -24,7 +24,7 @@ class AppView extends BaseView
     _.bindAll @, 'loadFile', 'saveFile', 'loadFileCmd', 'newProject', 'newProjectCmd', 'createElementHandler', 'showError',
       'closeElementPaletteHandler', 'showHideElementPalette', 'savedProject', 'saveAndLoad',
       'saveAndNew', 'makeNewProject', 'renamePage', 'renamePageHandler', 'showHideGridLines',
-      'editGridHandler'
+      'editGridHandler', 'setMasterPageHandler'
     @model.on "change:project", @newProject
     @model.on "error", @showError
     @model.on "saved", @savedProject
@@ -47,7 +47,9 @@ class AppView extends BaseView
 
   render: ->
     $(@el).html uiTemplates.app({})
+    # console.log @model.get('project').get('pages').first().get('elements').size()
     @assign @projectView, '#framer_pages'
+    # console.log @model.get('project').get('pages').first().get('elements').size()
     @assign @elementPalette, '#framer_elementPalette'
     @showHideElementPalette()
     @assign @gridView, "#framer_grid"
@@ -111,11 +113,14 @@ class AppView extends BaseView
       @makeNewProject()
 
   newProject: ->
+    # console.log @model.get('project').get('pages').first().get('elements').size()
     @createProjectView()
+    # console.log @model.get('project').get('pages').first().get('elements').size()
     # if @model?
     #   @projectView.setModel @model.get 'project'
     #   @projectView.currentPage = null
     @render()
+    # console.log @model.get('project').get('pages').first().get('elements').size()
 
   savedProject: ->
     @projectView.projectSaved()
@@ -149,6 +154,19 @@ class AppView extends BaseView
   renamePageHandler: (e) ->
     newPageName = $(e.target).closest('.bbm-modal').find('.edit-value.rename-page').val()
     @projectView.currentPage.set({'slug': newPageName})
+
+  setMasterPage: ->
+    options = _.without @model.get('project').allSlugs(), @projectView.currentPage.get('slug')
+    options.push ''
+    masterPage = @projectView.currentPage.get('masterPage')
+    masterPageSlug = masterPage.get('slug') if masterPage?
+    edit = Dialog.edit messages["set master page header"], [{class: "set-master-page", value: masterPageSlug, options: options}], messages["set master page submit"]
+    $(edit.el).find(".submit").on "click", @setMasterPageHandler
+
+  setMasterPageHandler: (e) ->
+    newMasterPageSlug =  $(e.target).closest('.bbm-modal').find('.edit-value.set-master-page').val()
+    newMasterPage = @model.get('project').getPageBySlug(newMasterPageSlug)
+    @projectView.currentPage.set {'masterPage': newMasterPage}
 
   editGrid: ->
     edit = Dialog.edit messages["edit grid header"], [{class: "grid-cell", value: @model.get('settings').get('gridCellSize')}, {class: "grid-group", value: @model.get('settings').get('gridCellGroup')}], messages["edit grid submit"]

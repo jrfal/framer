@@ -3,6 +3,9 @@
     "title": "Label",
     "component": "label",
     "text": "Label",
+    "renderers": [
+      "handlebars"
+    ],
     "properties": [
       {"property": "text", "type": "paragraph"},
       {"property": "fontSize", "type": "number"},
@@ -15,6 +18,9 @@
     "component": "link",
     "text": "page 1",
     "href": "#first",
+    "renderers": [
+      "handlebars"
+    ],
     "properties": [
       {"inherit": "label"},
       {"property": "href", "type": "string"}
@@ -27,6 +33,9 @@
     "y": 100,
     "w": 300,
     "h": 200,
+    "renderers": [
+      "handlebars"
+    ],
     "properties": [
       {"inherit": "rectangle"}
     ]
@@ -38,6 +47,9 @@
     "y": 100,
     "w": 300,
     "h": 200,
+    "renderers": [
+      "handlebars"
+    ],
     "properties": [
       {"inherit": "label"},
       {"property": "borderColor", "type": "color"},
@@ -53,6 +65,9 @@
       ["table-meta", "/table", "/tableMeta"]
     ],
     "text": "First, Last\nJeff, Fal\nDarth, Vader\nSpider, Man",
+    "renderers": [
+      "handlebars"
+    ],
     "properties": [
       {"inherit": "rectangle"},
       {"property": "oddColor", "type": "color"},
@@ -63,6 +78,9 @@
     "title": "Checkbox",
     "component": "checkbox",
     "text": "Checkbox",
+    "renderers": [
+      "handlebars"
+    ],
     "properties": [
       {"inherit": "label"},
       {"property": "selected", "type": "boolean"}
@@ -75,6 +93,9 @@
     "transformations": [
       ["line-list", "/text", "/list"],
       ["form-elements", "/list[*]", "/htmlList", "array"]
+    ],
+    "renderers": [
+      "handlebars"
     ],
     "properties": [
       {"inherit": "label"}

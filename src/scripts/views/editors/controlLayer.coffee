@@ -149,9 +149,10 @@ class ControlLayer extends PageView
     for elementView in @elementViews
       el_id = elementView.model.get('id')
       elel = $(".framer-page [data-element=#{el_id}]")
-      position = elel.position()
-      if inFrame {x: position.left, y: position.top, w: elel.width(), h: elel.height()}
-        elements.push elementView.model
+      if elel.length > 0
+        position = elel.position()
+        if inFrame {x: position.left, y: position.top, w: elel.width(), h: elel.height()}
+          elements.push elementView.model
 
     return elements
 

@@ -47,9 +47,7 @@ class AppView extends BaseView
 
   render: ->
     $(@el).html uiTemplates.app({})
-    # console.log @model.get('project').get('pages').first().get('elements').size()
     @assign @projectView, '#framer_pages'
-    # console.log @model.get('project').get('pages').first().get('elements').size()
     @assign @elementPalette, '#framer_elementPalette'
     @showHideElementPalette()
     @assign @gridView, "#framer_grid"
@@ -113,14 +111,11 @@ class AppView extends BaseView
       @makeNewProject()
 
   newProject: ->
-    # console.log @model.get('project').get('pages').first().get('elements').size()
     @createProjectView()
-    # console.log @model.get('project').get('pages').first().get('elements').size()
     # if @model?
     #   @projectView.setModel @model.get 'project'
     #   @projectView.currentPage = null
     @render()
-    # console.log @model.get('project').get('pages').first().get('elements').size()
 
   savedProject: ->
     @projectView.projectSaved()

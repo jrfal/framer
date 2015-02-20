@@ -12,7 +12,8 @@ class PageView extends BaseView
   model: null
 
   initialize: ->
-    _.bindAll @, 'render', 'addElementHandler', 'removeElementHandler', 'sortElementsHandler'
+    _.bindAll @, 'render', 'addElementHandler', 'removeElementHandler', 'sortElementsHandler',
+      'pageChangedHandler'
     if @model?
       @setModel @model
 
@@ -29,9 +30,7 @@ class PageView extends BaseView
           unused.push elementView
       @elementViews = _.difference @elementViews, unused
 
-      # console.log @model.get('elements').size()
       elementQueue = elements.models.slice(0)
-      # console.log @model.get('elements').size()
       for plugin in plugins.modifyElementQueue
         plugin @, elementQueue
 
@@ -53,10 +52,15 @@ class PageView extends BaseView
 
   setModel: (model) ->
     @model = model
+    @model.on 'change', @pageChangedHandler
     elements = @model.get 'elements'
     elements.on 'add', @addElementHandler
     elements.on 'remove', @removeElementHandler
     elements.on 'sort', @sortElementsHandler
+
+  pageChangedHandler: () ->
+    console.log 'page changed'
+    @render()
 
   addElementHandler: (model, collection) ->
     elementView = @getElementView model

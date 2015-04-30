@@ -9,6 +9,17 @@ Page = require './../src/scripts/models/page.coffee'
 plugins = require './../src/plugins/plugins.coffee'
 components = plugins.components
 
+stripIDs = (project) ->
+  stripElement = (element) ->
+    delete element.id
+    if element.elements?
+      for child in element.elements
+        stripElement child
+
+  for page in project.pages
+    for element in page.elements
+      stripElement element
+
 describe 'Loading', ->
   before ->
     framer.app.loadFile './testData/test.json'
@@ -33,9 +44,10 @@ describe 'Loading', ->
         assert.equal drawnElement.outerHeight(), $(this).outerHeight()
 
   describe 'simple save', ->
-    it 'should have all the same properties', ->
+    it 'should have all the same properties (except for ids)', ->
       loadFile = JSON.parse(fs.readFileSync('./testData/test.json').toString())
       saveFile = JSON.parse(fs.readFileSync('./testData/savetest.json').toString())
+      stripIDs saveFile
       assert.ok _.isEqual(loadFile, saveFile)
       fs.unlink './testData/savetest.json'
 
@@ -56,6 +68,7 @@ describe 'Save Changes', ->
     it 'should match a previously created reference file', ->
       loadFile = JSON.parse(fs.readFileSync('./testData/reference.json').toString())
       saveFile = JSON.parse(fs.readFileSync('./testData/savetest.json').toString())
+      stripIDs saveFile
       assert.ok _.isEqual(loadFile, saveFile)
       fs.unlink './testData/savetest.json'
 
@@ -123,6 +136,7 @@ describe 'Save and New', ->
     it 'should match a previously created reference file', ->
       loadFile = JSON.parse(fs.readFileSync('./testData/reference2.json').toString())
       saveFile = JSON.parse(fs.readFileSync('./testData/savetest.json').toString())
+      stripIDs saveFile
       assert.ok _.isEqual(loadFile, saveFile)
       fs.unlink './testData/savetest.json'
 

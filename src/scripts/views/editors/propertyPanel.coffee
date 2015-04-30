@@ -4,6 +4,7 @@ BaseView = require './../baseView.coffee'
 uiTemplates = require './../../uiTemplates.coffee'
 plugins = require './../../../plugins/plugins.coffee'
 components = plugins.components
+_ = require 'underscore'
 
 class PropertyPanel extends BaseView
   template: uiTemplates.propertyPanel
@@ -161,6 +162,14 @@ class PropertyPanel extends BaseView
     e.preventDefault()
     @editor.distributeSelectedMiddle()
 
+  groupHandler: (e) ->
+    e.preventDefault()
+    @editor.groupSelected()
+
+  ungroupHandler: (e) ->
+    e.preventDefault()
+    @editor.ungroupSelected()
+
   events:
     "click .cancel" : "cancelHandler"
     "click .save"   : "saveHandler"
@@ -178,5 +187,8 @@ class PropertyPanel extends BaseView
     "click .framer-distribute-left"    : "distributeLeftHandler"
     "click .framer-distribute-center"  : "distributeCenterHandler"
     "click .framer-distribute-middle"  : "distributeMiddleHandler"
+
+    "click .framer-group"   : "groupHandler"
+    "click .framer-ungroup" : "ungroupHandler"
 
 module.exports = PropertyPanel

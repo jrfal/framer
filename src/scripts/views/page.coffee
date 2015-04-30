@@ -26,18 +26,21 @@ class PageView extends BaseView
 
       unused = []
       for elementView in @elementViews
-        if not @model.get('elements').contains elementView.model
+        if not elements.contains elementView.model
           unused.push elementView
       @elementViews = _.difference @elementViews, unused
 
-      elementQueue = elements.models.slice(0)
+      elementQueue = @model.fullElementList()
       for plugin in plugins.modifyElementQueue
         plugin @, elementQueue
 
-      for element in elementQueue
-        elementView = @getElementView(element)
-        $(@el).append(elementView.el)
-        elementView.render()
+      @renderElements(elementQueue)
+
+  renderElements: (queue) ->
+    for element in queue
+      elementView = @getElementView(element)
+      $(@el).append(elementView.el)
+      elementView.render()
 
   newElementView: (model) ->
     return new ElementView {model: model}
@@ -59,18 +62,17 @@ class PageView extends BaseView
     elements.on 'sort', @sortElementsHandler
 
   pageChangedHandler: () ->
-    console.log 'page changed'
     @render()
 
   addElementHandler: (model, collection) ->
-    elementView = @getElementView model
-    elementView.render()
-    $(@el).append(elementView.el)
+    queue = []
+    model.modifyFullElementList(queue)
+    @renderElements(queue)
     if collection.last() != model
       @updateElementOrder()
 
   removeElementHandler: (model, collection) ->
-    workingCopy = elementViews.slice 0
+    workingCopy = @elementViews.slice 0
 
     for elementView in workingCopy
       if (elementView.model == model)

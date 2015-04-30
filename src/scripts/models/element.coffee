@@ -7,7 +7,6 @@ id = 1;
 
 class Element extends Backbone.Model
   initialize: ->
-    _.bindAll @, 'set'
     @set 'id', id++
 
   addMoveUpdates: (updates, x, y) ->
@@ -129,5 +128,14 @@ class Element extends Backbone.Model
     if @has('y') and @has('h')
       return @get('y') + (@get('h')/2)
     return @top()
+
+  modifyFullElementList: (list) ->
+    list.push @
+
+  saveObject: ->
+    elementObject = _.clone @attributes
+    delete elementObject.parent
+
+    return elementObject
 
 module.exports = Element

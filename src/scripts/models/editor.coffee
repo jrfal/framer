@@ -3,6 +3,7 @@ Backbone = require 'backbone'
 Backbone.$ = $
 _ = require 'underscore'
 Element = require './element.coffee'
+Group = require './group.coffee'
 
 class Editor extends Backbone.Model
   defaults:
@@ -10,11 +11,33 @@ class Editor extends Backbone.Model
     translate: {x: 0, y: 0}
     scale: {w: 1, h: 1}
     anchor: null
+    context: null # usually the page
 
   initialize: ->
     @set 'selection', new Backbone.Collection [], {model: Element}
 
+  isElementWithin: (needle, haystack) ->
+    if haystack.has 'elements'
+      if haystack.get('elements').contains needle
+        return true
+      for element in haystack.get('elements').models
+        if @isElementWithin needle, element
+          return true
+
+    return false
+
+  selectableElement: (element) ->
+    if @has 'context'
+      elements = @get('context').get 'elements'
+      if elements.contains element
+        return element
+      for searchElement in elements.models
+        if @isElementWithin element, searchElement
+          return searchElement
+    return element
+
   selectElement: (element) ->
+    element = @selectableElement element
     elements = @get 'selection'
     if not elements.contains element
       elements.add element
@@ -23,6 +46,7 @@ class Editor extends Backbone.Model
     selected = @get 'selection'
     adding = []
     for element in elements
+      element = @selectableElement element
       if not selected.contains element
         adding.push element
     if adding.length > 0
@@ -36,6 +60,7 @@ class Editor extends Backbone.Model
     if not toggled?
       toggled = []
     for element in elements
+      element = @selectableElement element
       if _.contains toggled, element
         keepToggled.push element
       else
@@ -72,6 +97,7 @@ class Editor extends Backbone.Model
 
     adding = []
     for element in elements
+      element = @selectableElement element
       if not selected.contains element
         adding.push element
     if adding.length > 0
@@ -89,6 +115,9 @@ class Editor extends Backbone.Model
     elements.reset()
 
   isSelected: (element) ->
+    if element.has 'parent'
+      if @isSelected element.get('parent')
+        return true
     return @get('selection').contains element
 
   isSelectedID: (id) ->
@@ -271,6 +300,33 @@ class Editor extends Backbone.Model
       for geo in element.getGeos()
         geos.push geo
     return geos
+
+  groupSelected: ->
+    group = new Group()
+    index = -1
+    for element in @get('selection').models
+      group.addElement element
+      if @has 'context'
+        options = {}
+        @get('context').get('elements').remove element, options
+        if options.index?
+          index = options.index
+    if index >= 0
+      @get('context').get('elements').add group, {at: index}
+    @selectOnlyElement group
+
+  ungroupSelected: ->
+    for element in @get('selection').models
+      if element.has 'elements'
+        newSelected = []
+        for subElement in element.get('elements').models
+          @get('context').addElement subElement
+          newSelected.push subElement
+          position = {x: subElement.get('x') + element.get('x'), y: subElement.get('y') + element.get('y')}
+          subElement.set position
+        @get('context').removeElement element
+        @deselectElement element
+        @selectElements newSelected
 
   modifyViewAttributes: (element, viewAttributes) ->
     if @isSelected element

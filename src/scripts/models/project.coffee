@@ -52,4 +52,13 @@ class Project extends Backbone.Model
     if slug != page.get('slug')
       page.set 'slug', slug
 
+  saveObject: ->
+    projectObject = _.clone @attributes
+    pages = []
+    for page in projectObject.pages.models
+      pages.push page.saveObject()
+    projectObject.pages = pages
+
+    return projectObject
+
 module.exports = Project

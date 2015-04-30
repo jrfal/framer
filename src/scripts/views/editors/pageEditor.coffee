@@ -12,13 +12,15 @@ class PageEditor extends PageView
   editor: null
 
   initialize: ->
-    super()
     @editor = new Editor()
-    @controlLayer = new ControlLayer {model: @model, editor: @editor}
+    @controlLayer = new ControlLayer {model: null, editor: @editor}    
+    super()
 
   setModel: (model) ->
     super model
     @controlLayer.setModel model
+    if (@editor)
+      @editor.set 'context', @model
 
   render: ->
     if @model?

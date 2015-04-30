@@ -15,6 +15,25 @@ class Page extends Backbone.Model
 
   addElement: (data) ->
     elements = @get 'elements'
-    elements.add data
+    newModel = elements.add data
+    newModel.set {'parent': @}
+
+  removeElement: (data) ->
+    @get('elements').remove data
+
+  fullElementList: ->
+    elements = @get 'elements'
+    list = []
+    for element in elements.models
+      element.modifyFullElementList list
+    return list
+
+  saveObject: ->
+    pageObject = _.clone @attributes
+    elements = []
+    for element in pageObject.elements.models
+      elements.push element.saveObject()
+    pageObject.elements = elements
+    return pageObject
 
 module.exports = Page

@@ -168,10 +168,14 @@ input, textarea {
   display: inline-block;
 }
 
-@mixin align-button () {
+@mixin panel-button () {
   @include framer-button();
   width: 24px;
   height: 24px;
+}
+
+@mixin align-button () {
+  @include panel-button();
 }
 
 a.framer-align-top {
@@ -222,4 +226,12 @@ a.framer-distribute-center {
 a.framer-distribute-middle {
   @include align-button();
   background: url('../images/icon_distribute_middle.svg');
+}
+a.framer-group {
+  @include panel-button();
+  background: url('../images/icon_group.svg');
+}
+a.framer-ungroup {
+  @include panel-button();
+  background: url('../images/icon_ungroup.svg');
 }

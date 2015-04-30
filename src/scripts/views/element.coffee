@@ -14,23 +14,25 @@ class ElementView extends Backbone.View
   transformations: null
   renderers: null
   componentData: null
+  context: null
 
   initialize: ->
     @transformations = []
     @renderers = []
 
-    if @model.has 'component'
-      component = _.findWhere components, {component: @model.get('component')}
-      if component?
-        for renderer in component.renderers
-          @renderers.push new plugins.renderers[renderer](@model)
+    if @model?
+      if @model.has 'component'
+        component = _.findWhere components, {component: @model.get('component')}
+        if component?
+          for renderer in component.renderers
+            @renderers.push new plugins.renderers[renderer](@model)
 
-        if 'transformations' of component
-          @transformations = component.transformations
+          if 'transformations' of component
+            @transformations = component.transformations
 
-    _.bindAll @, 'render', 'setElement'
-    @model.on "change", @render
-    @render()
+      _.bindAll @, 'render', 'setElement'
+      @model.on "change", @render
+      @render()
 
   viewAttributes: ->
     viewAttributes = _.clone @model.attributes
@@ -53,7 +55,17 @@ class ElementView extends Backbone.View
           else
             transformed = transform(item)
             pointer.set viewAttributes, transformed
+    step = @model
+    while step.has "parent"
+      step = step.get "parent"
+      if viewAttributes.x? and step.has "x"
+        viewAttributes.x += step.get("x")
+      if viewAttributes.y? and step.has "y"
+        viewAttributes.y += step.get("y")
     return viewAttributes
+
+  modifyQueue: (queue) ->
+    queue.push @
 
   render: ->
     if @model?

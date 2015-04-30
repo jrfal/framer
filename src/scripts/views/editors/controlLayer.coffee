@@ -189,18 +189,14 @@ class ControlBox extends BaseView
       oldEl = @el
       viewAttributes = _.clone @model.attributes
       el_id = @model.get('id')
-      # console.log "id: #{el_id}"
       elel = $(".framer-page [data-element=#{el_id}]")
-      # console.log elel.length
       if elel.length > 0
         thisBox = elBoundaries elel
         viewAttributes.x = thisBox.left
         viewAttributes.y = thisBox.top
         viewAttributes.w = thisBox.right - thisBox.left
         viewAttributes.h = thisBox.bottom - thisBox.top
-      # console.log viewAttributes
       @setElement $(@template(_.extend(viewAttributes, {selected: @selected})))
-      # console.log @el
       $(oldEl).replaceWith $(@el)
 
   select: ->
@@ -320,25 +316,55 @@ class TransformBox extends BaseView
             modelBoundaries.bottom = _.max [model.get('y') + model.get('h'), modelBoundaries.bottom]
     return modelBoundaries
 
+  modelVisibleBoundaries: (model) ->
+    boundaries = {}
+    el_id = model.get('id')
+    elel = $(".framer-page [data-element=#{el_id}]")
+    if elel.length > 0
+      thisBox = elBoundaries elel
+
+      boundaries.left = thisBox.left if not boundaries.left?
+      boundaries.top = thisBox.top if not boundaries.top?
+      boundaries.right = thisBox.right if not boundaries.right?
+      boundaries.bottom = thisBox.bottom if not boundaries.bottom?
+
+      boundaries.left = _.min([thisBox.left, boundaries.left])
+      boundaries.top = _.min([thisBox.top, boundaries.top])
+      boundaries.right = _.max([thisBox.right, boundaries.right])
+      boundaries.bottom = _.max([thisBox.bottom, boundaries.bottom])
+
+    if model.has 'elements'
+      for element in model.get('elements').models
+        thisBox = @modelVisibleBoundaries element
+        boundaries.left = thisBox.left if not boundaries.left?
+        boundaries.top = thisBox.top if not boundaries.top?
+        boundaries.right = thisBox.right if not boundaries.right?
+        boundaries.bottom = thisBox.bottom if not boundaries.bottom?
+
+        boundaries.left = _.min([thisBox.left, boundaries.left])
+        boundaries.top = _.min([thisBox.top, boundaries.top])
+        boundaries.right = _.max([thisBox.right, boundaries.right])
+        boundaries.bottom = _.max([thisBox.bottom, boundaries.bottom])
+
+    return boundaries
+
+
   visibleBoundaries: ->
     boundaries = {}
     if @collection?
       for model in @collection.models
         visible = true
-        el_id = model.get('id')
-        elel = $(".framer-page [data-element=#{el_id}]")
-        if elel.length > 0
-          thisBox = elBoundaries elel
+        thisBox = @modelVisibleBoundaries model
 
-          boundaries.left = thisBox.left if not boundaries.left?
-          boundaries.top = thisBox.top if not boundaries.top?
-          boundaries.right = thisBox.right if not boundaries.right?
-          boundaries.bottom = thisBox.bottom if not boundaries.bottom?
+        boundaries.left = thisBox.left if not boundaries.left?
+        boundaries.top = thisBox.top if not boundaries.top?
+        boundaries.right = thisBox.right if not boundaries.right?
+        boundaries.bottom = thisBox.bottom if not boundaries.bottom?
 
-          boundaries.left = _.min([thisBox.left, boundaries.left])
-          boundaries.top = _.min([thisBox.top, boundaries.top])
-          boundaries.right = _.max([thisBox.right, boundaries.right])
-          boundaries.bottom = _.max([thisBox.bottom, boundaries.bottom])
+        boundaries.left = _.min([thisBox.left, boundaries.left])
+        boundaries.top = _.min([thisBox.top, boundaries.top])
+        boundaries.right = _.max([thisBox.right, boundaries.right])
+        boundaries.bottom = _.max([thisBox.bottom, boundaries.bottom])
     return boundaries
 
   render: ->

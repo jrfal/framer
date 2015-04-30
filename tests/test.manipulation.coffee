@@ -18,6 +18,8 @@ describe 'Manipulating', ->
     e.screenY = 5 + 23
     $(document).trigger e
     e = $.Event 'mouseup'
+    e.screenX = 160 + 11
+    e.screenY = 5 + 23
     $(document).trigger e
 
     # edit text, font, size
@@ -49,7 +51,7 @@ describe 'Manipulating', ->
 
   describe 'moving', ->
     it 'should have moved the rectangle to 160,5', ->
-      rectangle = $ '#framer_pages #first .framer-drawn-element'
+      rectangle = $ '#framer_pages #first .framer-drawn-element:last'
       position = rectangle.position()
       assert.equal position.left, 160
       assert.equal position.top, 5
@@ -72,15 +74,15 @@ describe 'Manipulating', ->
       assert.equal rectangleText.css("color"), "rgb(0, 255, 0)"
   describe 'border color edit', ->
     it 'the border color should be #f00', ->
-      rectangle = $ '#framer_pages #first .framer-drawn-element'
+      rectangle = $ '#framer_pages #first .framer-drawn-element:last'
       assert.equal rectangle.css("border-color"), "rgb(255, 0, 0)"
   describe 'border width edit', ->
     it 'the border width should be 4px', ->
-      rectangle = $ '#framer_pages #first .framer-drawn-element'
+      rectangle = $ '#framer_pages #first .framer-drawn-element:last'
       assert.equal rectangle.css("border-width"), "4px"
   describe 'fill color edit', ->
     it 'the fill color should be #00f', ->
-      rectangle = $ '#framer_pages #first .framer-drawn-element'
+      rectangle = $ '#framer_pages #first .framer-drawn-element:last'
       assert.equal rectangle.css("background-color"), "rgb(0, 0, 255)"
   describe 'grid content edit', ->
     it 'should have a 1x3 grid', ->
@@ -251,14 +253,14 @@ describe 'Snapping', ->
 
   describe 'moving', ->
     it 'should have moved the rectangle to 159,0', ->
-      rectangle = $ '#framer_pages #first .framer-drawn-element'
+      rectangle = $ '#framer_pages #first .framer-drawn-element:last'
       position = rectangle.position()
       assert.equal position.left, 159
       assert.equal position.top, 0
 
   describe 'resizing', ->
     it 'should have resized the rectangle to 572x273', ->
-      rectangle = $ '#framer_pages #first .framer-drawn-element'
+      rectangle = $ '#framer_pages #first .framer-drawn-element:last'
       assert.equal rectangle.outerWidth(), 413
       assert.equal rectangle.outerHeight(), 273
 

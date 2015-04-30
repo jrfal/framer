@@ -181,3 +181,20 @@ describe 'Grouping:', ->
       assert.equal attributes.y, 400
       assert.equal attributes.w, 151
       assert.equal attributes.h, 14
+
+  describe 'Group saving', ->
+    element1 = new Element()
+    element1.set {x: 45, y: 714}
+    element2 = new Element()
+    group = new Group()
+
+    group.addElement element1
+    group.addElement element2
+
+    groupObj = group.saveObject()
+
+    it 'should contain flat objects as sub-elements', ->
+      assert.equal groupObj.component, "group"
+      assert.equal groupObj.elements.length, 2
+      assert.equal groupObj.elements[0].x, 45
+      assert.equal groupObj.elements[0].y, 714

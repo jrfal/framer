@@ -71,13 +71,6 @@ class App extends Backbone.Model
     @set 'project', projectModel
 
   saveFile: (filename) ->
-    # projectString = JSON.stringify(@get 'project')
-    # projectObj = JSON.parse(projectString)
-    # if 'pages' of projectObj and projectObj?
-    #   for page in projectObj.pages
-    #     if 'elements' of page and page?
-    #       for element in page.elements
-    #         delete element.id
     projectObj = @get('project').saveObject()
     fs.writeFile(filename, JSON.stringify(projectObj, null, "\t"))
     @trigger 'savedProject'

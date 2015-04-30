@@ -33,7 +33,7 @@ describe 'Loading', ->
     it 'should match all the control box sizes and positions to their elements', ->
       page = framer.app.get('project').get('pages').first()
       boxes = $("#framer_controls .control-box")
-      assert.equal 6, boxes.length
+      assert.equal 8, boxes.length
       boxes.each ->
         id = $(this).data('element')
         drawnElement = $("#framer_pages [data-element=#{id}]")
@@ -62,6 +62,12 @@ describe 'Save Changes', ->
     page.addElement data
     data = {component: "oval", x: 40, y: 110, w: 800, h: 1001}
     page.addElement data
+    data = {"x": 0, "y": 0, "w": 1, "h": 1, "component": "group"}
+    group = page.addElement data
+    data = {"component": "oval", "x": 645, "y": 442, "w": 92, "h": 100}
+    group.addElement data
+    data = {"component": "oval", "x": 690, "y": 395, "w": 76, "h": 84}
+    group.addElement data
     framer.app.saveFile './testData/savetest.json'
 
   describe 'save modifications', ->

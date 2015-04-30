@@ -11,6 +11,29 @@
           "city": "Denver"
         },
         {
+          "x": 0,
+          "y": 0,
+          "w": 1,
+          "h": 1,
+          "component": "group",
+          "elements": [
+            {
+              "component": "oval",
+              "x": 645,
+              "y": 442,
+              "w": 92,
+              "h": 100
+            },
+            {
+              "component": "oval",
+              "x": 690,
+              "y": 395,
+              "w": 76,
+              "h": 84
+            }
+          ]
+        },
+        {
           "component": "test",
           "name": "Bill",
           "city": "Portland"

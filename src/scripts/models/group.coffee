@@ -11,23 +11,32 @@ class Group extends Element
     h: 1.0
 
   initialize: ->
-    @set 'elements', new Backbone.Collection([], {model: Element})
-    _.bindAll @, 'changeHandler'
-    @on 'change', @changeHandler
+    super()
+    @set 'component', 'group'
+    # _.bindAll @, 'changeHandler'
+    # @on 'change', @changeHandler
 
-  addElement: (data) ->
-    elements = @get 'elements'
-    elements.add data
-    data.set 'parent', @
+  # addElement: (data) ->
+  #   elements = @get 'elements'
+  #   elements.add data
+  #   data.set 'parent', @
 
-  modifyFullElementList: (list) ->
-    if @has 'elements'
-      elements = @get 'elements'
-      for element in elements.models
-        element.modifyFullElementList(list)
+  # modifyFullElementList: (list) ->
+  #   if @has 'elements'
+  #     elements = @get 'elements'
+  #     for element in elements.models
+  #       element.modifyFullElementList(list)
 
-  changeHandler: ->
-    for element in @get("elements").models
-      element.trigger 'change'
+  # changeHandler: ->
+  #   for element in @get("elements").models
+  #     element.trigger 'change'
+
+  # saveObject: ->
+  #   groupObject = super()
+  #   elements = []
+  #   for element in groupObject.elements.models
+  #     elements.push element.saveObject()
+  #   groupObject.elements = elements
+  #   return groupObject
 
 module.exports = Group

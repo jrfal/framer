@@ -8,6 +8,8 @@ id = 1;
 class Element extends Backbone.Model
   initialize: ->
     @set 'id', id++
+    _.bindAll @, 'changeHandler'
+    @on 'change', @changeHandler
 
   addMoveUpdates: (updates, x, y) ->
     updates.x = x
@@ -130,12 +132,43 @@ class Element extends Backbone.Model
     return @top()
 
   modifyFullElementList: (list) ->
-    list.push @
+    if @has 'elements'
+      elements = @get 'elements'
+      for element in elements.models
+        element.modifyFullElementList(list)
+    else
+      list.push @
 
   saveObject: ->
     elementObject = _.clone @attributes
     delete elementObject.parent
 
+    if elementObject.elements?
+      elements = []
+      for element in elementObject.elements.models
+        elements.push element.saveObject()
+      elementObject.elements = elements
+
     return elementObject
+
+  addElement: (data) ->
+    if not @has 'elements'
+      @set 'elements', new Backbone.Collection([], {model: Element})
+    elements = @get 'elements'
+    newModel = elements.add data
+    newModel.set 'parent', @
+
+    if newModel.has "elements"
+      if not newModel.get("elements").models?
+        children = newModel.get("elements")
+        newModel.unset "elements"
+        for child in children
+          newModel.addElement child
+
+  changeHandler: ->
+    if @has "elements"
+      if @get("elements").models?
+        for element in @get("elements").models
+          element.trigger 'change'
 
 module.exports = Element

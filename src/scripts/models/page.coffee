@@ -18,6 +18,15 @@ class Page extends Backbone.Model
     newModel = elements.add data
     newModel.set {'parent': @}
 
+    if newModel.has "elements"
+      if not newModel.get("elements").models?
+        children = newModel.get("elements")
+        newModel.unset "elements"
+        for child in children
+          newModel.addElement child
+
+    return newModel
+
   removeElement: (data) ->
     @get('elements').remove data
 

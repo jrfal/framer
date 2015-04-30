@@ -322,8 +322,24 @@ class Editor extends Backbone.Model
         for subElement in element.get('elements').models
           @get('context').addElement subElement
           newSelected.push subElement
-          position = {x: subElement.get('x') + element.get('x'), y: subElement.get('y') + element.get('y')}
-          subElement.set position
+          updates = {}
+          if subElement.has 'x'
+            updates.x = subElement.get 'x'
+            if element.has 'w'
+              updates.x *= element.get 'w'
+            if element.has 'x'
+              updates.x += element.get 'x'
+          if subElement.has 'y'
+            updates.y = subElement.get 'y'
+            if element.has 'h'
+              updates.y *= element.get 'h'
+            if element.has 'y'
+              updates.y += element.get 'y'
+          if subElement.has('w') and element.has('w')
+            updates.w = subElement.get('w') * element.get('w')
+          if subElement.has('h') and element.has('h')
+            updates.h = subElement.get('h') * element.get('h')
+          subElement.set updates
         @get('context').removeElement element
         @deselectElement element
         @selectElements newSelected

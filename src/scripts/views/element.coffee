@@ -58,10 +58,18 @@ class ElementView extends Backbone.View
     step = @model
     while step.has "parent"
       step = step.get "parent"
+      if viewAttributes.x? and step.has "w"
+        viewAttributes.x *= step.get("w")
+      if viewAttributes.y? and step.has "h"
+        viewAttributes.y *= step.get("h")
       if viewAttributes.x? and step.has "x"
         viewAttributes.x += step.get("x")
       if viewAttributes.y? and step.has "y"
         viewAttributes.y += step.get("y")
+      if viewAttributes.w? and step.has "w"
+        viewAttributes.w *= step.get("w")
+      if viewAttributes.h? and step.has "h"
+        viewAttributes.h *= step.get("h")
     return viewAttributes
 
   modifyQueue: (queue) ->

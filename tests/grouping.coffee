@@ -9,6 +9,7 @@ Group = require "../src/scripts/models/group.coffee"
 Editor = require "../src/scripts/models/editor.coffee"
 
 PageEditor = require "../src/scripts/views/editors/pageEditor.coffee"
+ElementView = require "../src/scripts/views/element.coffee"
 
 describe 'Grouping:', ->
   describe 'Grouping and ungrouping changes the number of top-level elements', ->
@@ -143,3 +144,40 @@ describe 'Grouping:', ->
     it 'should have permanently moved element to 284, 1689', ->
       assert.equal element.get('x'), 284
       assert.equal element.get('y'), 1689
+
+  describe 'Group element, scale group, ungroup elements', ->
+    page = new Page()
+    pageEditor = new PageEditor {model: page}
+
+    element = new Element()
+    element.set {x: 304, y: 920, w: 364, h: 470}
+
+    pageEditor.editor.selectElement element
+
+    group = pageEditor.editor.groupSelected()
+    group.set {w: 0.75, h: 0.9}
+
+    pageEditor.editor.ungroupSelected()
+
+    it 'should have permanently saled element to 228,828 273x423', ->
+      assert.equal element.get('x'), 228
+      assert.equal element.get('y'), 828
+      assert.equal element.get('w'), 273
+      assert.equal element.get('h'), 423
+
+  describe 'Group scaling', ->
+    element = new Element()
+    elementView = new ElementView {model: element}
+    element.set {x: 202, y: 1600, w: 302, h: 56}
+
+    group = new Group()
+    group.addElement element
+    group.set {w: 0.5, h: 0.25}
+
+    attributes = elementView.viewAttributes()
+
+    it 'should scale x and y to 101,400 and width and height to 151x14', ->
+      assert.equal attributes.x, 101
+      assert.equal attributes.y, 400
+      assert.equal attributes.w, 151
+      assert.equal attributes.h, 14

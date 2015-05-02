@@ -235,3 +235,7 @@ a.framer-ungroup {
   @include panel-button();
   background: url('../images/icon_ungroup.svg');
 }
+a.framer-componentize {
+  @include panel-button();
+  background: url('../images/icon_componentize.svg');
+}

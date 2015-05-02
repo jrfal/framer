@@ -8,8 +8,15 @@ id = 1;
 class Element extends Backbone.Model
   initialize: ->
     @set 'id', id++
-    _.bindAll @, 'changeHandler'
+    _.bindAll @, 'changeHandler', 'changeMasterHandler', 'masterChangedHandler'
     @on 'change', @changeHandler
+
+    @changeMasterHandler()
+    @on 'change:master', @changeMasterHandler
+
+  removeFromParent: ->
+    if @has "parent"
+      @get("parent").removeElement @
 
   addMoveUpdates: (updates, x, y) ->
     updates.x = x
@@ -165,10 +172,49 @@ class Element extends Backbone.Model
         for child in children
           newModel.addElement child
 
+  removeElement: (data) ->
+    if @has "elements"
+      @get("elements").remove data
+
   changeHandler: ->
     if @has "elements"
       if @get("elements").models?
         for element in @get("elements").models
-          element.trigger 'change'
+          element.trigger 'change', element
+
+  changeMasterHandler: ->
+    if @has "master"
+      if @has "elements"
+        for element in @get("elements").models
+          element.removeFromParent()
+
+      master = @get "master"
+      if master.has "elements"
+        for element in master.get("elements").models
+          @addElement new Element({master: element})
+
+      master.on "change", @masterChangedHandler
+
+  masterChangedHandler: (master) ->
+    if master == @get("master")
+      @trigger "change", @
+    else
+      console.log "master: "+master
+      master.off "change", @masterChangeHandler
+
+  orMasterHas: (key) ->
+    if @has key
+      return true
+    if @has "master"
+      if @get("master").orMasterHas key
+        return true
+    return false
+
+  orMasterGet: (key) ->
+    if @has key
+      return @get key
+    if @has "master"
+      return @get("master").orMasterGet key
+    return @get key
 
 module.exports = Element

@@ -130,13 +130,13 @@ class Editor extends Backbone.Model
   setTranslation: (dx, dy) ->
     @set 'translate', {x: dx, y: dy}
     for model in @get('selection').models
-      model.trigger 'change'
+      model.trigger 'change', model
 
   setScale: (dw, dh, anchor) ->
     @set 'scale', {w: dw, h: dh}
     @set 'anchor', anchor
     for model in @get('selection').models
-      model.trigger 'change'
+      model.trigger 'change', model
 
   resetMods: ->
     @set 'translate', {x: 0, y: 0}
@@ -343,6 +343,16 @@ class Editor extends Backbone.Model
         @get('context').removeElement element
         @deselectElement element
         @selectElements newSelected
+
+  componentizeSelected: ->
+    instance = null
+    for element in @get('selection').models
+      instance = new Element({master: element})
+      @get('context').addElement instance
+      instance.set 'x', element.get('x')
+      instance.set 'y', element.get('y')
+
+    return instance
 
   modifyViewAttributes: (element, viewAttributes) ->
     if @isSelected element

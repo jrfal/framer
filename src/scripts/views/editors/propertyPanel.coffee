@@ -170,6 +170,10 @@ class PropertyPanel extends BaseView
     e.preventDefault()
     @editor.ungroupSelected()
 
+  componentizeHandler: (e) ->
+    e.preventDefault()
+    @editor.componentizeSelected()
+
   events:
     "click .cancel" : "cancelHandler"
     "click .save"   : "saveHandler"
@@ -190,5 +194,7 @@ class PropertyPanel extends BaseView
 
     "click .framer-group"   : "groupHandler"
     "click .framer-ungroup" : "ungroupHandler"
+
+    "click .framer-componentize" : "componentizeHandler"
 
 module.exports = PropertyPanel

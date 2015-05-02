@@ -224,3 +224,11 @@ a.framer-ungroup {
   width: 24px;
   height: 24px;
   background: url('../images/icon_ungroup.svg'); }
+
+a.framer-componentize {
+  border: 1px solid #555;
+  padding: 5px;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background: url('../images/icon_componentize.svg'); }

@@ -45,4 +45,10 @@ class Page extends Backbone.Model
     pageObject.elements = elements
     return pageObject
 
+  orMasterHas: (key) ->
+    return @has key
+
+  orMasterGet: (key) ->
+    return @get key
+
 module.exports = Page

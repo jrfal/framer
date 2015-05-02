@@ -21,8 +21,8 @@ class ElementView extends Backbone.View
     @renderers = []
 
     if @model?
-      if @model.has 'component'
-        component = _.findWhere components, {component: @model.get('component')}
+      if @model.orMasterHas 'component'
+        component = _.findWhere components, {component: @model.orMasterGet('component')}
         if component?
           for renderer in component.renderers
             @renderers.push new plugins.renderers[renderer](@model)
@@ -35,7 +35,10 @@ class ElementView extends Backbone.View
       @render()
 
   viewAttributes: ->
-    viewAttributes = _.clone @model.attributes
+    viewAttributes = {}
+    if @model.has 'master'
+      _.extend viewAttributes, @model.get('master').attributes
+    _.extend viewAttributes, @model.attributes
     for transformation in @transformations
       transform = plugins.transformations[transformation[0]]
       path = jsonPath.create transformation[1]
@@ -58,18 +61,23 @@ class ElementView extends Backbone.View
     step = @model
     while step.has "parent"
       step = step.get "parent"
-      if viewAttributes.x? and step.has "w"
-        viewAttributes.x *= step.get("w")
-      if viewAttributes.y? and step.has "h"
-        viewAttributes.y *= step.get("h")
-      if viewAttributes.x? and step.has "x"
-        viewAttributes.x += step.get("x")
-      if viewAttributes.y? and step.has "y"
-        viewAttributes.y += step.get("y")
-      if viewAttributes.w? and step.has "w"
-        viewAttributes.w *= step.get("w")
-      if viewAttributes.h? and step.has "h"
-        viewAttributes.h *= step.get("h")
+      if viewAttributes.x? and step.orMasterHas "w"
+        viewAttributes.x *= step.orMasterGet("w")
+      if viewAttributes.y? and step.orMasterHas "h"
+        viewAttributes.y *= step.orMasterGet("h")
+      if viewAttributes.x? and step.orMasterHas "x"
+        viewAttributes.x += step.orMasterGet("x")
+      if viewAttributes.y? and step.orMasterHas "y"
+        viewAttributes.y += step.orMasterGet("y")
+      if viewAttributes.w? and step.orMasterHas "w"
+        viewAttributes.w *= step.orMasterGet("w")
+      if viewAttributes.h? and step.orMasterHas "h"
+        viewAttributes.h *= step.orMasterGet("h")
+    # eliminate some high precision error
+    viewAttributes.x = Math.round(viewAttributes.x * 1000)/1000
+    viewAttributes.y = Math.round(viewAttributes.y * 1000)/1000
+    viewAttributes.w = Math.round(viewAttributes.w * 1000)/1000
+    viewAttributes.h = Math.round(viewAttributes.h * 1000)/1000
     return viewAttributes
 
   modifyQueue: (queue) ->

@@ -5,7 +5,7 @@ class HandlebarsRenderer
   template: null
 
   constructor: (element) ->
-    template = element.get('component')
+    template = element.orMasterGet('component')
     @template = templates.getTemplate template
 
   render: (viewAttributes) ->

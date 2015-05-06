@@ -12,11 +12,19 @@ PropertyPanel = require './propertyPanel.coffee'
 Snapper = require './../helpers/snapper.coffee'
 
 elBoundaries = (el) ->
-  thisBox =
-    "left":   parseInt(el.css("margin-left")) + el.position().left
-    "top":    parseInt(el.css("margin-top")) + el.position().top
-    "right":  el.position().left + el.outerWidth() + parseInt(el.css("margin-right"))
-    "bottom": el.position().top + el.outerHeight() + parseInt(el.css("margin-bottom"))
+  position = el.position()
+  if isNaN(position.left) or isNaN(position.top)
+    thisBox =
+      "left": 0
+      "top": 0
+      "right": 0
+      "bottom": 0
+  else
+    thisBox =
+      "left":   parseInt(el.css("margin-left")) + position.left
+      "top":    parseInt(el.css("margin-top")) + position.top
+      "right":  position.left + el.outerWidth() + parseInt(el.css("margin-right"))
+      "bottom": position.top + el.outerHeight() + parseInt(el.css("margin-bottom"))
   return thisBox
 
 class ControlLayer extends PageView
@@ -179,7 +187,7 @@ class ControlBox extends BaseView
   initialize: (options) ->
     _.bindAll @, 'render', 'selectHandler', 'checkSelected', 'startMoveHandler',
       'moveHandler', 'stopMoveHandler'
-    @model.on "change", @render
+    @model.on "change modifying", @render
     if 'editor' of options
       @editor = options.editor
       @editor.get('selection').on "add remove reset", @checkSelected if @editor?
@@ -396,7 +404,7 @@ class TransformBox extends BaseView
 
   setCollection: (collection) ->
     @collection = collection
-    @collection.on 'add remove change', @changeSelection
+    @collection.on 'add remove change modifying', @changeSelection
     @render()
 
   startResizeHandler: (e) ->
@@ -433,11 +441,15 @@ class TransformBox extends BaseView
     y = y + snapped.y
 
     if @anchor.x?
-      w = (x - @anchor.x)/(@grab.x + @offset.x - @anchor.x)
+      scaleFrom = @grab.x + @offset.x - @anchor.x
+      scaleFrom = 1 if scaleFrom == 0
+      w = (x - @anchor.x)/scaleFrom
     else
       w = 1
     if @anchor.y?
-      h = (y - @anchor.y)/(@grab.y + @offset.y - @anchor.y)
+      scaleFrom = @grab.y + @offset.y - @anchor.y
+      scaleFrom = 1 if scaleFrom == 0
+      h = (y - @anchor.y)/scaleFrom
     else
       h = 1
 

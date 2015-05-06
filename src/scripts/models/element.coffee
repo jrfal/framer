@@ -32,6 +32,16 @@ class Element extends Backbone.Model
     @set updates
 
   addScaleUpdates: (updates, dw, dh) ->
+    if not @has 'w'
+      if @has "naturalW"
+        @set "w", @get("naturalW")
+      else
+        @set 'w', 1
+    if not @has 'h'
+      if @has "naturalH"
+        @set "h", @get("naturalH")
+      else
+        @set 'h', 1
     updates.w = @get('w') * dw
     updates.h = @get('h') * dh
     return updates
@@ -143,11 +153,13 @@ class Element extends Backbone.Model
       elements = @get 'elements'
       for element in elements.models
         element.modifyFullElementList(list)
-    else
+    else if @get("component") != "group"
       list.push @
 
   saveObject: ->
     elementObject = _.clone @attributes
+    delete elementObject.naturalW
+    delete elementObject.naturalH
     delete elementObject.parent
 
     if elementObject.elements?
@@ -199,7 +211,6 @@ class Element extends Backbone.Model
     if master == @get("master")
       @trigger "change", @
     else
-      console.log "master: "+master
       master.off "change", @masterChangeHandler
 
   orMasterHas: (key) ->

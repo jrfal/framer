@@ -15,6 +15,7 @@ class ElementView extends Backbone.View
   renderers: null
   componentData: null
   context: null
+  needNaturalSize: true
 
   initialize: ->
     @transformations = []
@@ -30,8 +31,9 @@ class ElementView extends Backbone.View
           if 'transformations' of component
             @transformations = component.transformations
 
-      _.bindAll @, 'render', 'setElement'
-      @model.on "change", @render
+      _.bindAll @, 'changeHandler', 'setElement', 'render'
+      @model.on "change", @changeHandler
+      @model.on "modifying", @render
       @render()
 
   viewAttributes: ->
@@ -39,6 +41,7 @@ class ElementView extends Backbone.View
     if @model.has 'master'
       _.extend viewAttributes, @model.get('master').attributes
     _.extend viewAttributes, @model.attributes
+
     for transformation in @transformations
       transform = plugins.transformations[transformation[0]]
       path = jsonPath.create transformation[1]
@@ -74,14 +77,22 @@ class ElementView extends Backbone.View
       if viewAttributes.h? and step.orMasterHas "h"
         viewAttributes.h *= step.orMasterGet("h")
     # eliminate some high precision error
-    viewAttributes.x = Math.round(viewAttributes.x * 1000)/1000
-    viewAttributes.y = Math.round(viewAttributes.y * 1000)/1000
-    viewAttributes.w = Math.round(viewAttributes.w * 1000)/1000
-    viewAttributes.h = Math.round(viewAttributes.h * 1000)/1000
+    if viewAttributes.x?
+      viewAttributes.x = Math.round(viewAttributes.x * 1000)/1000
+    if viewAttributes.y?
+      viewAttributes.y = Math.round(viewAttributes.y * 1000)/1000
+    if viewAttributes.w?
+      viewAttributes.w = Math.round(viewAttributes.w * 1000)/1000
+    if viewAttributes.h?
+      viewAttributes.h = Math.round(viewAttributes.h * 1000)/1000
     return viewAttributes
 
   modifyQueue: (queue) ->
     queue.push @
+
+  changeHandler: ->
+    @needNaturalSize = true
+    @render()
 
   render: ->
     if @model?
@@ -90,6 +101,24 @@ class ElementView extends Backbone.View
         @setElement renderer.render(@viewAttributes())
         $(oldEl).replaceWith $(@el)
       @$el.attr("data-element", @model.get('id'))
+      if @needNaturalSize
+        naturalW = $(@el).width()
+        naturalH = $(@el).height()
+        if naturalW == 0
+          if not @model.has "naturalW"
+            @model.set "naturalW", 1
+        else
+          @model.set "naturalW", naturalW
+        if naturalH == 0
+          if not @model.has "naturalH"
+            @model.set "naturalH", 1
+        else
+          @model.set "naturalH", naturalH
+        @needNaturalSize = false
+        if @model.get("w") < naturalW
+          @model.set "w", naturalW
+        if @model.get("h") < naturalH
+          @model.set "h", naturalH
 
   modelData: ->
     return model.attributes

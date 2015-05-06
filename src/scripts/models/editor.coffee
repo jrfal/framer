@@ -130,13 +130,13 @@ class Editor extends Backbone.Model
   setTranslation: (dx, dy) ->
     @set 'translate', {x: dx, y: dy}
     for model in @get('selection').models
-      model.trigger 'change', model
+      model.trigger 'modifying', model
 
   setScale: (dw, dh, anchor) ->
     @set 'scale', {w: dw, h: dh}
     @set 'anchor', anchor
     for model in @get('selection').models
-      model.trigger 'change', model
+      model.trigger 'modifying', model
 
   resetMods: ->
     @set 'translate', {x: 0, y: 0}
@@ -367,11 +367,19 @@ class Editor extends Backbone.Model
         if scale.h != 1
           viewAttributes.y = (viewAttributes.y - anchor.y) * scale.h + anchor.y
         viewAttributes.y = viewAttributes.y + translate.y
-      if viewAttributes.w?
-        if scale.w != 1
-          viewAttributes.w = viewAttributes.w * scale.w
-      if viewAttributes.h?
-        if scale.h != 1
-          viewAttributes.h = viewAttributes.h * scale.h
+      if scale.w != 1
+        if not viewAttributes.w?
+          if viewAttributes.naturalW?
+            viewAttributes.w = viewAttributes.naturalW
+          else
+            viewAttributes.w = 1
+        viewAttributes.w = viewAttributes.w * scale.w
+      if scale.h != 1
+        if not viewAttributes.h?
+          if viewAttributes.naturalH?
+            viewAttributes.h = viewAttributes.naturalH
+          else
+            viewAttributes.h = 1
+        viewAttributes.h = viewAttributes.h * scale.h
 
 module.exports = Editor

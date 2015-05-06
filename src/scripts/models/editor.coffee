@@ -113,6 +113,7 @@ class Editor extends Backbone.Model
   unselectAll: ->
     elements = @get 'selection'
     elements.reset()
+    elements.trigger "remove"
 
   isSelected: (element) ->
     if element.has 'parent'

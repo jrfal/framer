@@ -4,10 +4,15 @@ class MenuBar
   constructor: (app, app_view) ->
     _.bindAll @, 'toggleGridLinesHandler', 'showElementPaletteHandler', 'newPageHandler',
       'newProjectHandler', 'loadFileHandler', 'saveFileHandler', 'selectAllHandler',
-      'nextPageHandler', 'renamePageHandler', 'updateShowGridCheck', 'editGridHandler',
-      'toggleSnappingHandler', 'updateSnapping', 'setMasterPageHandler'
+      'deselectHandler', 'nextPageHandler', 'renamePageHandler', 'updateShowGridCheck',
+      'editGridHandler', 'toggleSnappingHandler', 'updateSnapping', 'setMasterPageHandler'
     @app = app
     @app_view = app_view
+    if global.gui?
+      @initMenu()
+
+
+  initMenu: ->
     @main_menu = new global.gui.Menu({ type: 'menubar'})
     try
       @main_menu.createMacBuiltin "framer", {hideEdit:true}
@@ -43,6 +48,12 @@ class MenuBar
       click: @selectAllHandler
       key: "a",
       modifiers: "cmd"
+    })
+    edit_menu.append new gui.MenuItem({
+      label: "Deselect",
+      click: @deselectHandler
+      key: "a",
+      modifiers: "cmd-shift"
     })
     @snapping_menuitem = new gui.MenuItem({
       type: "checkbox",
@@ -155,6 +166,9 @@ class MenuBar
 
   selectAllHandler: ->
     @app_view.projectView.pageView.controlLayer.selectAll()
+
+  deselectHandler: ->
+    @app_view.projectView.pageView.editor.unselectAll()
 
   toggleSnappingHandler: ->
     @app.setSnapping @snapping_menuitem.checked

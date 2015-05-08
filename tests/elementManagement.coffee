@@ -42,3 +42,15 @@ describe "Create and copy element", ->
 
   it "should have two objects on the page", ->
     assert.equal 2, data.page.get("elements").length
+
+describe "Create and duplicate element", ->
+  data = setup.appSetup()
+  menubar = new MenuBar data.app, data.app_view
+
+  element = setup.addComponent data.page, "rectangle"
+
+  data.editor.selectElement element
+  menubar.duplicateHandler()
+
+  it "should have two objects on the page", ->
+    assert.equal 2, data.page.get("elements").length

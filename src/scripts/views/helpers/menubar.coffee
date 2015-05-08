@@ -6,7 +6,7 @@ class MenuBar
       'newProjectHandler', 'loadFileHandler', 'saveFileHandler', 'selectAllHandler',
       'deselectHandler', 'nextPageHandler', 'renamePageHandler', 'updateShowGridCheck',
       'editGridHandler', 'toggleSnappingHandler', 'updateSnapping', 'setMasterPageHandler',
-      'copyHandler', 'pasteHandler'
+      'copyHandler', 'pasteHandler', 'duplicateHandler'
     @app = app
     @app_view = app_view
     if global.gui?
@@ -58,6 +58,12 @@ class MenuBar
       label: "Paste"
       click: @pasteHandler
       key: "v"
+      modifiers: "cmd"
+    })
+    edit_menu.append new gui.MenuItem({
+      label: "Duplicate"
+      click: @duplicateHandler
+      key: "d"
       modifiers: "cmd"
     })
     edit_menu.append new gui.MenuItem({
@@ -205,6 +211,11 @@ class MenuBar
 
   pasteHandler: ->
     data = JSON.parse @clipboard.get()
+    for item in data
+      @app_view.projectView.pageView.model.addElement item
+
+  duplicateHandler: ->
+    data = @app_view.projectView.pageView.editor.selectedData()
     for item in data
       @app_view.projectView.pageView.model.addElement item
 

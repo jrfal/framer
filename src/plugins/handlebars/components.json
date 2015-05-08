@@ -75,6 +75,17 @@
     ]
   },
   {
+    "title": "Text Input",
+    "component": "text-input",
+    "text": "Text Value",
+    "renderers": [
+      "handlebars"
+    ],
+    "properties": [
+      {"inherit": "label"}
+    ]
+  },
+  {
     "title": "Checkbox",
     "component": "checkbox",
     "text": "Checkbox",

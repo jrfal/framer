@@ -21,9 +21,9 @@ module.exports.addElement = (page) ->
   element
 
 module.exports.addComponent = (page, component) ->
-  component = _.findWhere components, {component: "rectangle"}
+  component = _.findWhere components, {component: component}
   element = new Element(component)
 
   page.addElement element
 
-  element  
+  element

@@ -1,3 +1,4 @@
+require "./elements.coffee"
 require "./components.coffee"
 require "./elementManagement.coffee"
 require "./engine.coffee"

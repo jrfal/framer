@@ -128,6 +128,12 @@ class Editor extends Backbone.Model
     else
       return false
 
+  selectedData: ->
+    data = []
+    for element in @get("selection").models
+      data.push element.copyObject()
+    return data
+
   setTranslation: (dx, dy) ->
     @set 'translate', {x: dx, y: dy}
     for model in @get('selection').models

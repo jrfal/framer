@@ -170,6 +170,12 @@ class Element extends Backbone.Model
 
     return elementObject
 
+  copyObject: ->
+    elementObject = @saveObject()
+    delete elementObject.id
+
+    return elementObject
+
   addElement: (data) ->
     if not @has 'elements'
       @set 'elements', new Backbone.Collection([], {model: Element})

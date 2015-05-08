@@ -5,11 +5,16 @@ class MenuBar
     _.bindAll @, 'toggleGridLinesHandler', 'showElementPaletteHandler', 'newPageHandler',
       'newProjectHandler', 'loadFileHandler', 'saveFileHandler', 'selectAllHandler',
       'deselectHandler', 'nextPageHandler', 'renamePageHandler', 'updateShowGridCheck',
-      'editGridHandler', 'toggleSnappingHandler', 'updateSnapping', 'setMasterPageHandler'
+      'editGridHandler', 'toggleSnappingHandler', 'updateSnapping', 'setMasterPageHandler',
+      'copyHandler', 'pasteHandler'
     @app = app
     @app_view = app_view
     if global.gui?
       @initMenu()
+
+      @clipboard = global.gui.Clipboard.get()
+    else
+      @clipboard = new FakeClipboard()
 
 
   initMenu: ->
@@ -43,6 +48,18 @@ class MenuBar
     })
 
     edit_menu = new global.gui.Menu()
+    edit_menu.append new gui.MenuItem({
+      label: "Copy"
+      click: @copyHandler
+      key: "c"
+      modifiers: "cmd"
+    })
+    edit_menu.append new gui.MenuItem({
+      label: "Paste"
+      click: @pasteHandler
+      key: "v"
+      modifiers: "cmd"
+    })
     edit_menu.append new gui.MenuItem({
       label: "Select All",
       click: @selectAllHandler
@@ -181,6 +198,24 @@ class MenuBar
 
   saveFileHandler: ->
     @app_view.saveFileCmd()
+
+  copyHandler: ->
+    selection = @app_view.projectView.pageView.editor.selectedData()
+    @clipboard.set JSON.stringify(selection)
+
+  pasteHandler: ->
+    data = JSON.parse @clipboard.get()
+    for item in data
+      @app_view.projectView.pageView.model.addElement item
+
+class FakeClipboard
+  data: ''
+
+  set: (data) ->
+    @data = data
+
+  get: ->
+    return @data
 
 
 module.exports = MenuBar

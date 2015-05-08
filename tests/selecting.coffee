@@ -8,26 +8,21 @@ AppView = require "../src/scripts/views/appView.coffee"
 MenuBar = require '../src/scripts/views/helpers/menubar.coffee'
 Element = require "../src/scripts/models/element.coffee"
 
+setup = require './setups.coffee'
+
 describe "Selecting none", ->
-  app = new App()
-  app_view = new AppView {model: app}
-  menubar = new MenuBar app, app_view
-  page = app.get("project").get("pages").first()
+  data = setup.appSetup()
+  menubar = new MenuBar data.app, data.app_view
 
-  element = new Element()
-  page.addElement element
+  element = setup.addElement data.page
+  element2 = setup.addElement data.page
 
-  element2 = new Element()
-  page.addElement element2
+  data.editor.selectElement element
+  data.editor.selectElement element2
 
-  editor = app_view.projectView.pageView.editor
-
-  editor.selectElement element
-  editor.selectElement element2
-
-  assert.equal editor.get("selection").length, 2
+  assert.equal data.editor.get("selection").length, 2
 
   menubar.deselectHandler()
 
   it "should have none selected", ->
-    assert.equal editor.get("selection").length, 0
+    assert.equal data.editor.get("selection").length, 0

@@ -13,7 +13,7 @@ class PropertyPanel extends BaseView
     _.bindAll @, 'render', 'cancelHandler', 'saveHandler', 'remove',
       'startDragHandler', 'dragHandler', 'stopDragHandler', 'alignTopHandler',
       'alignRightHandler', 'alignBottomHandler', 'alignLeftHandler',
-      'alignCenterHandler', 'alignMiddleHandler'
+      'alignCenterHandler', 'alignMiddleHandler', 'inputMouseHandler'
     @previous = {}
     @editor = options.editor if options.editor
     @render()
@@ -174,6 +174,9 @@ class PropertyPanel extends BaseView
     e.preventDefault()
     @editor.componentizeSelected()
 
+  inputMouseHandler: (e) ->
+    e.stopPropagation()
+
   events:
     "click .cancel" : "cancelHandler"
     "click .save"   : "saveHandler"
@@ -196,5 +199,8 @@ class PropertyPanel extends BaseView
     "click .framer-ungroup" : "ungroupHandler"
 
     "click .framer-componentize" : "componentizeHandler"
+
+    "mousedown input": "inputMouseHandler"
+    "mousedown textarea": "inputMouseHandler"
 
 module.exports = PropertyPanel

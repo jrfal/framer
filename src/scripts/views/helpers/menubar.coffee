@@ -120,7 +120,8 @@ class MenuBar
     })
     view_menu.append new gui.MenuItem({
       label: "Show Element Palette",
-      click: @showElementPaletteHandler
+      click: @showElementPaletteHandler,
+      key: "1"
     })
 
     sub_menu = new global.gui.MenuItem({label: 'File'})

@@ -1,16 +1,5 @@
-$ = require 'jquery'
-templates = require './componentTemplates.coffee'
+# Handlebars
 
-class HandlebarsRenderer
-  template: null
-
-  constructor: (element) ->
-    template = element.orMasterGet('component')
-    @template = templates.getTemplate template
-
-  render: (viewAttributes) ->
-    if @template?
-      return $ @template(viewAttributes)
-    return $ '<div></div>'
-
-module.exports = HandlebarsRenderer
+module.exports.register = (plugins) ->
+  plugins.renderers.handlebars = require './renderer/handlebars.coffee'
+  plugins.components.push.apply plugins.components, require('./components.json')

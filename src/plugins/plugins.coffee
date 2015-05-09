@@ -1,5 +1,7 @@
 pluginFiles = [
   require('./masterPage/masterPage.coffee')
+  require('./handlebars/handlebars.coffee')
+  require('./basicPost/basicPost.coffee')
 ]
 
 plugins = {}
@@ -16,10 +18,9 @@ plugins.validations = {
   'boolean' : require('./validations/boolean.coffee')
 }
 plugins.propertyTypes = require('./propertyTypes.json')
-plugins.renderers = {
-  'handlebars' : require('./handlebars/handlebars.coffee')
-}
-plugins.components.push.apply plugins.components, require('./handlebars/components.json')
+plugins.renderers = {}
+plugins.postRenderers = {}
+
 module.exports = plugins
 
 plugins.modifyElementQueue = []

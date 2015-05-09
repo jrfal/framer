@@ -21,6 +21,10 @@ describe "Create a checkbox", ->
   it "should be an input[type=checkbox] element", ->
     assert.equal $("input[type=checkbox]").length, 1
 
+  it "should be indeterminate if I set it that way", ->
+    element.set "indeterminate", true
+    assert $("input[type=checkbox]").prop("indeterminate")
+
 describe "Create a text input", ->
   data = setup.appSetup()
   $("body").append data.app_view.projectView.pageView.el

@@ -20,6 +20,7 @@ class ElementView extends Backbone.View
   initialize: ->
     @transformations = []
     @renderers = []
+    @postRenderers = []
 
     if @model?
       if @model.orMasterHas 'component'
@@ -27,6 +28,10 @@ class ElementView extends Backbone.View
         if component?
           for renderer in component.renderers
             @renderers.push new plugins.renderers[renderer](@model)
+
+          if component.postRenderers?
+            for postRenderer in component.postRenderers
+              @postRenderers.push new plugins.postRenderers[postRenderer]
 
           if 'transformations' of component
             @transformations = component.transformations
@@ -119,6 +124,8 @@ class ElementView extends Backbone.View
           @model.set "w", naturalW
         if @model.get("h") < naturalH
           @model.set "h", naturalH
+      for postRenderer in @postRenderers
+        postRenderer.postRender @el
 
   modelData: ->
     return model.attributes

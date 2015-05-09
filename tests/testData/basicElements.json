@@ -42,6 +42,16 @@
           "href": "#checkboxList"
         }
       ]
+    },
+    {
+      "slug": "textBlock",
+      "title": "text block page",
+      "elements": [
+        {
+          "component": "textBlock",
+          "text": "# hello\n* how\n* are\n* you"
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,9 @@
+<div class="framer-element" {{> _elementStyle}}>
+  <div class="framer-text" style="{{#if fontFamily}}font-family:'{{fontFamily}}';{{/if}}{{#if fontSize}}font-size:{{fontSize}};{{/if}}">
+    {{~#if html~}}
+    {{{html}}}
+    {{~else~}}
+    {{text}}
+    {{~/if~}}
+  </div>
+</div>

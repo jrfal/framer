@@ -76,7 +76,7 @@
   },
   {
     "title": "Text Input",
-    "component": "text-input",
+    "component": "textInput",
     "text": "Text Value",
     "renderers": [
       "handlebars"
@@ -105,6 +105,17 @@
       ["line-list", "/text", "/list"],
       ["form-elements", "/list[*]", "/htmlList", "array"]
     ],
+    "renderers": [
+      "handlebars"
+    ],
+    "properties": [
+      {"inherit": "label"}
+    ]
+  },
+  {
+    "title": "Text Block",
+    "component": "textBlock",
+    "text": "#text",
     "renderers": [
       "handlebars"
     ],

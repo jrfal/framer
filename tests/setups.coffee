@@ -5,12 +5,15 @@ Element = require "../src/scripts/models/element.coffee"
 plugins = require '../src/plugins/plugins.coffee'
 components = plugins.components
 
+$ = require "jquery"
+
 module.exports.appSetup = ->
   data = {}
   data.app = new App()
   data.app_view = new AppView {model: data.app}
   data.page = data.app.get("project").get("pages").first()
   data.editor = data.app_view.projectView.pageView.editor
+  $("body").append $(data.app_view.projectView.pageView.el)
 
   data
 

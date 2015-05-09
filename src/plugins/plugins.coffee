@@ -2,6 +2,7 @@ pluginFiles = [
   require('./masterPage/masterPage.coffee')
   require('./handlebars/handlebars.coffee')
   require('./basicPost/basicPost.coffee')
+  require('./markdown/markdown.coffee')
 ]
 
 plugins = {}

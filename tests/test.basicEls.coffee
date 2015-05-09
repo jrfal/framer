@@ -42,3 +42,17 @@ describe 'Basic Elements', ->
     it 'should link to #checkboxList', ->
       link = $ '#framer_pages #link a.framer-element'
       assert.equal link.attr("href"), "#checkboxList"
+
+  describe 'textBloxk', ->
+    it 'should be a text block', ->
+      framer.app_view.projectView.showPageSlug('textBlock')
+      block = $ '#framer_pages #textBlock .framer-element .framer-text'
+      assert.equal block.html(), """
+<h1>hello</h1>
+<ul>
+<li>how</li>
+<li>are</li>
+<li>you</li>
+</ul>
+
+"""

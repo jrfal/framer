@@ -39,10 +39,11 @@ class ControlLayer extends PageView
   propertyPanel: null
   transformBox: null
   snapper: null
+  propertyPanelButton: null
 
   initialize: (options) ->
     _.bindAll @, 'startDragHandler', 'moveDragHandler', 'stopDragHandler', 'selectionChange',
-      'updateSnapping'
+      'updateSnapping', "togglePropertyPanel"
     if options.editor?
       @editor = options.editor
     else
@@ -55,6 +56,8 @@ class ControlLayer extends PageView
     @transformBox = new TransformBox {collection:@editor.get('selection'), editor: @editor}
     @snapper = new Snapper()
     @transformBox.snapper = @snapper
+    @propertyPanelButton = new MinimizePropertiesButton()
+    @propertyPanelButton.on "click", @togglePropertyPanel
     super()
 
   render: ->
@@ -63,6 +66,7 @@ class ControlLayer extends PageView
     $(@transformBox.el).hide()
     $(@el).append @transformBox.el
     $(@el).append @selectingFrameEl
+    $(@el).append @propertyPanelButton.el
 
   newElementView: (model) ->
     controlBox = new ControlBox {model: model, editor: @editor}
@@ -180,6 +184,16 @@ class ControlLayer extends PageView
     for view in @elementViews
       view.changeZoom factor
     @transformBox.changeZoom factor
+
+  togglePropertyPanel: ->
+    if @propertyPanel?
+      if $(@propertyPanel.el).hasClass "showing"
+        @propertyPanel.slideOut()
+      else
+        @propertyPanel = null
+        @selectionChange()
+    else
+      @selectionChange()
 
   events:
     "mousedown" : "startDragHandler"
@@ -494,5 +508,26 @@ class TransformBox extends BaseView
 
   events:
     "mousedown .resize-handle"  : "startResizeHandler"
+
+class MinimizePropertiesButton extends BaseView
+  tagName: "a"
+  id: "wirekit_properties_button"
+
+  init: ->
+    super()
+    _.bindAll @, "clickHandler", "mousedownHandler"
+
+  clickHandler: (e) ->
+    e.stopPropagation()
+    e.preventDefault()
+    @trigger "click"
+
+  mousedownHandler: (e) ->
+    e.stopPropagation()
+    e.preventDefault()
+
+  events:
+    "click": "clickHandler"
+    "mousedown": "mousedownHandler"
 
 module.exports = ControlLayer

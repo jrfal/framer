@@ -145,7 +145,7 @@ input, textarea {
 .property-panel {
   left: auto;
   top: 5px;
-  right: 5px;
+  right: 40px;
 }
 
 #framer_elementPalette {
@@ -248,4 +248,13 @@ a.framer-componentize {
 
 .framer-page {
   transform-origin: 0 0;
+}
+
+#wirekit_properties_button {
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  background: url('../images/icon_properties.svg');
 }

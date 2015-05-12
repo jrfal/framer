@@ -10,6 +10,7 @@ plugins = require './../../plugins/plugins.coffee'
 class PageView extends BaseView
   className: 'framer-page'
   model: null
+  zoomFactor: 1
 
   initialize: ->
     _.bindAll @, 'render', 'addElementHandler', 'removeElementHandler', 'sortElementsHandler',
@@ -101,5 +102,15 @@ class PageView extends BaseView
                   if element == search.model
                     $(elementView.el).before(search.el)
                     clean = false
+
+  changeZoom: (factor) ->
+    @zoomFactor = factor
+    $(@el).css "transform", "scale(#{@zoomFactor})"
+
+  zoomIn: ->
+    @changeZoom @zoomFactor * 1.5
+
+  zoomOut: ->
+    @changeZoom @zoomFactor * 2 / 3
 
 module.exports = PageView

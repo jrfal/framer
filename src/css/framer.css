@@ -232,3 +232,6 @@ a.framer-componentize {
   width: 24px;
   height: 24px;
   background: url('../images/icon_componentize.svg'); }
+
+.framer-page {
+  transform-origin: 0 0; }

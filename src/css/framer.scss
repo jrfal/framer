@@ -239,3 +239,7 @@ a.framer-componentize {
   @include panel-button();
   background: url('../images/icon_componentize.svg');
 }
+
+.framer-page {
+  transform-origin: 0 0;
+}

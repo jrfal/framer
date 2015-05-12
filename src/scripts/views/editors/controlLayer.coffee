@@ -12,6 +12,7 @@ PropertyPanel = require './propertyPanel.coffee'
 Snapper = require './../helpers/snapper.coffee'
 
 elBoundaries = (el) ->
+  return el[0].getBoundingClientRect()
   position = el.position()
   if isNaN(position.left) or isNaN(position.top)
     thisBox =
@@ -174,6 +175,12 @@ class ControlLayer extends PageView
     @appData.settings.on 'change:snapping', @updateSnapping
     @snapper.addGuide appData.grid
 
+  changeZoom: (factor) ->
+    @zoomFactor = factor
+    for view in @elementViews
+      view.changeZoom factor
+    @transformBox.changeZoom factor
+
   events:
     "mousedown" : "startDragHandler"
 
@@ -183,6 +190,7 @@ class ControlBox extends BaseView
   selected: false
   editor: null
   snapper: null
+  zoomFactor: 1
 
   initialize: (options) ->
     _.bindAll @, 'render', 'selectHandler', 'checkSelected', 'startMoveHandler',
@@ -258,8 +266,8 @@ class ControlBox extends BaseView
 
   moveHandler: (e) ->
     e.stopPropagation()
-    dx =  e.screenX - @grab.x
-    dy =  e.screenY - @grab.y
+    dx =  (e.screenX - @grab.x) / @zoomFactor
+    dy =  (e.screenY - @grab.y) / @zoomFactor
 
     if not @editor.isSelected @model
       @editor.selectOnlyElement @model
@@ -287,6 +295,10 @@ class ControlBox extends BaseView
     $(document).off 'mousemove', @moveHandler
     $(document).off 'mouseup', @stopMoveHandler
 
+  changeZoom: (factor) ->
+    @zoomFactor = factor
+    @render()
+
   events:
     "click"                     : "selectHandler"
     "mousedown .control-border" : "startMoveHandler"
@@ -296,6 +308,7 @@ class TransformBox extends BaseView
   editor: null
   box: {}
   snapper: null
+  zoomFactor: 1
 
   initialize: (options) ->
     _.bindAll @, 'render', 'startResizeHandler', 'resizeHandler', 'stopResizeHandler',
@@ -431,8 +444,8 @@ class TransformBox extends BaseView
 
   resizeHandler: (e) ->
     e.stopPropagation()
-    x = e.screenX + @offset.x
-    y = e.screenY + @offset.y
+    x = (e.screenX + @offset.x)
+    y = (e.screenY + @offset.y)
 
     # let's do some snapping
     geos = [{x:x, y:y}]
@@ -465,6 +478,8 @@ class TransformBox extends BaseView
         w = (w + h)/2
         h = w
 
+    anchor.x /= @zoomFactor if anchor.x?
+    anchor.y /= @zoomFactor if anchor.y?
     @editor.setScale w, h, anchor
 
   stopResizeHandler: (e) ->
@@ -472,6 +487,10 @@ class TransformBox extends BaseView
     @editor.applyMods()
     $(document).off 'mousemove', @resizeHandler
     $(document).off 'mouseup', @stopResizeHandler
+
+  changeZoom: (factor) ->
+    @zoomFactor = factor
+    @render()
 
   events:
     "mousedown .resize-handle"  : "startResizeHandler"

@@ -11,6 +11,8 @@ Editor = require "../src/scripts/models/editor.coffee"
 PageEditor = require "../src/scripts/views/editors/pageEditor.coffee"
 ElementView = require "../src/scripts/views/element.coffee"
 
+setup = require './setups.coffee'
+
 describe 'Grouping:', ->
   describe 'Grouping and ungrouping changes the number of top-level elements', ->
     page = null
@@ -51,30 +53,37 @@ describe 'Grouping:', ->
       assert.equal editor.get("selection").length, 2
 
   describe 'Grouping and moving the control box should update the appearance of all the elements', ->
-    page = new Page()
-    pageEditor = new PageEditor {model: page}
-    element1 = new Element()
-    element1.set "x", 203
-    element1.set "y", 511
+    data = null
+    element1 = null
+    element2 = null
+    controlBox1 = null
+    controlBox2 = null
+    pageEditor = null
+    group = null
 
-    element2 = new Element()
-    element2.set "x", 680
-    element2.set "y", -105
+    before ->
+      data = setup.appSetup()
+      element1 = setup.addElement data.page
+      element1.set "x", 203
+      element1.set "y", 511
 
-    page.addElement element1
-    page.addElement element2
+      element2 = setup.addElement data.page
+      element2.set "x", 680
+      element2.set "y", -105
 
-    controlBox1 = pageEditor.controlLayer.getElementView element1
-    controlBox2 = pageEditor.controlLayer.getElementView element2
+      pageEditor = data.app_view.projectView.pageView
 
-    controlBox1.selectHandler {stopPropagation: -> true}
-    controlBox2.selectHandler {shiftKey: true, stopPropagation: -> true}
+      controlBox1 = pageEditor.controlLayer.getElementView element1
+      controlBox2 = pageEditor.controlLayer.getElementView element2
 
-    assert.equal pageEditor.editor.get("selection").length, 2
+      controlBox1.selectHandler {stopPropagation: -> true}
+      controlBox2.selectHandler {shiftKey: true, stopPropagation: -> true}
 
-    group = pageEditor.editor.groupSelected()
-    group.set "x", 28
-    group.set "y", 1001
+      assert.equal pageEditor.editor.get("selection").length, 2
+
+      group = pageEditor.editor.groupSelected()
+      group.set "x", 28
+      group.set "y", 1001
 
     it 'should have x and y attributes of 231 and 1512', ->
       elementView = pageEditor.getElementView element1

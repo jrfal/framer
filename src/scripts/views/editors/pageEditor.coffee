@@ -13,7 +13,7 @@ class PageEditor extends PageView
 
   initialize: ->
     @editor = new Editor()
-    @controlLayer = new ControlLayer {model: null, editor: @editor}    
+    @controlLayer = new ControlLayer {model: null, editor: @editor}
     super()
 
   setModel: (model) ->
@@ -40,5 +40,9 @@ class PageEditor extends PageView
     if @editor?
       element.editor = @editor
     return element
+
+  changeZoom: (factor) ->
+    super factor
+    @controlLayer.changeZoom factor
 
 module.exports = PageEditor

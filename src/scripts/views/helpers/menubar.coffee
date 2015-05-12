@@ -6,7 +6,7 @@ class MenuBar
       'newProjectHandler', 'loadFileHandler', 'saveFileHandler', 'selectAllHandler',
       'deselectHandler', 'nextPageHandler', 'renamePageHandler', 'updateShowGridCheck',
       'editGridHandler', 'toggleSnappingHandler', 'updateSnapping', 'setMasterPageHandler',
-      'copyHandler', 'pasteHandler', 'duplicateHandler'
+      'copyHandler', 'pasteHandler', 'duplicateHandler', 'zoomInHandler', 'zoomOutHandler'
     @app = app
     @app_view = app_view
     if global.gui?
@@ -123,6 +123,16 @@ class MenuBar
       click: @showElementPaletteHandler,
       key: "1"
     })
+    view_menu.append new gui.MenuItem({
+      label: "Zoom In",
+      click: @zoomInHandler,
+      key: "+"
+    })
+    view_menu.append new gui.MenuItem({
+      label: "Zoom Out",
+      click: @zoomOutHandler,
+      key: "-"
+    })
 
     sub_menu = new global.gui.MenuItem({label: 'File'})
     sub_menu.submenu = file_menu
@@ -219,6 +229,12 @@ class MenuBar
     data = @app_view.projectView.pageView.editor.selectedData()
     for item in data
       @app_view.projectView.pageView.model.addElement item
+
+  zoomInHandler: ->
+    @app_view.projectView.pageView.zoomIn()
+
+  zoomOutHandler: ->
+    @app_view.projectView.pageView.zoomOut()
 
 class FakeClipboard
   data: ''

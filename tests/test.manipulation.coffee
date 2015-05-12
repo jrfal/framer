@@ -115,7 +115,6 @@ describe 'Resizing', ->
       controlBox.trigger "click"
       transformBox = $('#framer_controls .transform-box')
       elel = $(".framer-page [data-element=#{id}]")
-      # rectangle = $('#framer_pages #first .framer-drawn-element:nth-child('+number+')')
       handle = transformBox.find('.resize-handle-'+edge)
       e = $.Event 'mousedown'
       if edge in ['tl', 'l', 'bl']

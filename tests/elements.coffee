@@ -13,9 +13,12 @@ components = plugins.components
 setup = require './setups.coffee'
 
 describe "Create a checkbox", ->
-  data = setup.appSetup()
+  data = null
+  element = null
 
-  element = setup.addComponent data.page, "checkbox"
+  before ->
+    data = setup.appSetup()
+    element = setup.addComponent data.page, "checkbox"
 
   it "should be an input[type=checkbox] element", ->
     assert.equal $("input[type=checkbox]").length, 1
@@ -25,19 +28,24 @@ describe "Create a checkbox", ->
     assert $("input[type=checkbox]").prop("indeterminate")
 
 describe "Create a text input", ->
-  data = setup.appSetup()
+  data = null
+  element = null
 
-  element = setup.addComponent data.page, "textInput"
+  before ->
+    data = setup.appSetup()
+    element = setup.addComponent data.page, "textInput"
 
   it "should be an input[type=text] element", ->
     assert.equal $("input[type=text]").length, 1
 
 describe "Create a text block", ->
-  data = setup.appSetup()
+  data = null
+  element = null
 
-  element = setup.addComponent data.page, "textBlock"
-
-  element.set "text", """
+  before ->
+    data = setup.appSetup()
+    element = setup.addComponent data.page, "textBlock"
+    element.set "text", """
 # Here
 ## is
 ### a

@@ -8,12 +8,12 @@ components = plugins.components
 $ = require "jquery"
 
 module.exports.appSetup = ->
+  $("body").append $("<div id='app'></div>")
   data = {}
   data.app = new App()
   data.app_view = new AppView {model: data.app}
   data.page = data.app.get("project").get("pages").first()
   data.editor = data.app_view.projectView.pageView.editor
-  $("body").append $(data.app_view.projectView.pageView.el)
 
   data
 

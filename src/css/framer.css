@@ -97,6 +97,11 @@ input, textarea {
   .framer-modal input, .framer-modal textarea {
     font-size: 14px; }
 
+.property-panel {
+  left: auto;
+  top: 5px;
+  right: 5px; }
+
 #framer_elementPalette {
   position: absolute;
   bottom: 0;

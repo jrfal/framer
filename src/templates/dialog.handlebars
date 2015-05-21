@@ -2,6 +2,7 @@
   <h3 class="bbm-modal__title">{{title}}</h3>
 </div>
 <div class="bbm-modal__section">
+  <form>
   {{#if message}}<span class="dialog-message">{{message}}</span>{{/if}}
   {{#each editValues}}
     {{#if options}}
@@ -18,6 +19,7 @@
     <input type="text" class="edit-value {{class}}" value="{{value}}" />
     {{/if}}
   {{/each}}
+  </form>
 </div>
 <div class="bbm-modal__bottombar">
   {{#each actions}}

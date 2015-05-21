@@ -10,6 +10,9 @@ class Dialog extends Backbone.Modal
   cancelEl: '.bbm-button.cancel'
   submitEl: '.bbm-button.submit'
 
+  submit: ->
+    $(@el).find("form").submit()
+
 module.exports.message = (header, text) ->
   dialogView = new Dialog({model: new Backbone.Model({title: header, message: text, actions: [{label: messages["close label"], class: "cancel"}]})})
   $('#framer_overlay').append dialogView.render().el

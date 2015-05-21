@@ -144,9 +144,11 @@ class AppView extends BaseView
 
   renamePage: ->
     edit = Dialog.edit messages["rename page header"], [{class: "rename-page", value: @projectView.currentPage.get('slug')}], messages["rename page submit"]
-    $(edit.el).find(".submit").on "click", @renamePageHandler
+    $(edit.el).find("form").on "submit", @renamePageHandler
+    # $(edit.el).find(".submit").on "click", @renamePageHandler
 
   renamePageHandler: (e) ->
+    e.preventDefault()
     newPageName = $(e.target).closest('.bbm-modal').find('.edit-value.rename-page').val()
     @projectView.currentPage.set({'slug': newPageName})
 

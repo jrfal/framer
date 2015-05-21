@@ -361,6 +361,11 @@ class Editor extends Backbone.Model
 
     return instance
 
+  deleteSelected: ->
+    for element in @get('selection').models
+      @get('context').removeElement element
+    @unselectAll()
+
   modifyViewAttributes: (element, viewAttributes) ->
     if @isSelected element
       scale = @get 'scale'

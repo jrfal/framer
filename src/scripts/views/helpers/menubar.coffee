@@ -6,7 +6,8 @@ class MenuBar
       'newProjectHandler', 'loadFileHandler', 'saveFileHandler', 'selectAllHandler',
       'deselectHandler', 'nextPageHandler', 'renamePageHandler', 'updateShowGridCheck',
       'editGridHandler', 'toggleSnappingHandler', 'updateSnapping', 'setMasterPageHandler',
-      'copyHandler', 'pasteHandler', 'duplicateHandler', 'zoomInHandler', 'zoomOutHandler'
+      'copyHandler', 'cutHandler', 'pasteHandler', 'duplicateHandler', 'zoomInHandler',
+      'zoomOutHandler'
     @app = app
     @app_view = app_view
     if global.gui?
@@ -52,6 +53,12 @@ class MenuBar
       label: "Copy"
       click: @copyHandler
       key: "c"
+      modifiers: "cmd"
+    })
+    edit_menu.append new gui.MenuItem({
+      label: "Cut"
+      click: @cutHandler
+      key: "x"
       modifiers: "cmd"
     })
     edit_menu.append new gui.MenuItem({
@@ -219,6 +226,11 @@ class MenuBar
   copyHandler: ->
     selection = @app_view.projectView.pageView.editor.selectedData()
     @clipboard.set JSON.stringify(selection)
+
+  cutHandler: ->
+    selection = @app_view.projectView.pageView.editor.selectedData()
+    @clipboard.set JSON.stringify(selection)
+    @app_view.projectView.pageView.editor.deleteSelected()
 
   pasteHandler: ->
     data = JSON.parse @clipboard.get()

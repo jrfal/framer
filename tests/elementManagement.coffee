@@ -43,6 +43,39 @@ describe "Create and copy element", ->
   it "should have two objects on the page", ->
     assert.equal 2, data.page.get("elements").length
 
+describe "Create and cut element", ->
+  data = setup.appSetup()
+  menubar = new MenuBar data.app, data.app_view
+
+  element = setup.addComponent data.page, "rectangle"
+
+  data.editor.selectElement element
+  menubar.cutHandler()
+
+  reference = _.findWhere components, {component: "rectangle"}
+
+  it "should have no selected items", ->
+    assert.equal data.editor.get("selection").size(), 0
+
+describe "Create, cut, and paste element", ->
+  data = setup.appSetup()
+  menubar = new MenuBar data.app, data.app_view
+
+  element = setup.addComponent data.page, "rectangle"
+
+  data.editor.selectElement element
+  menubar.cutHandler()
+
+  reference = _.findWhere components, {component: "rectangle"}
+
+  menubar.pasteHandler()
+
+  it "should have the appropriate object representation in the clipboard", ->
+    assert.deepEqual [reference], JSON.parse([menubar.clipboard.get()])
+
+  it "should have one object on the page", ->
+    assert.equal 1, data.page.get("elements").length
+
 describe "Create and duplicate element", ->
   data = setup.appSetup()
   menubar = new MenuBar data.app, data.app_view

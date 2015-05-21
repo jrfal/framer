@@ -1,7 +1,5 @@
 $ = require 'jquery'
-# uiTemplates = require './../uiTemplates.coffee'
 Backbone = require 'backbone'
-# Backbone.$ = $
 _ = require 'underscore'
 Project = require './../models/project.coffee'
 BaseView = require './baseView.coffee'

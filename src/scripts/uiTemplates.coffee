@@ -2,6 +2,7 @@ Handlebars = require 'handlebars'
 fs = require 'fs'
 
 Handlebars.registerPartial 'propertyPanel', fs.readFileSync(global.cfg.guiTemplateDir+'propertyPanel.handleBars').toString()
+Handlebars.registerPartial 'pagesPanel', fs.readFileSync(global.cfg.guiTemplateDir+'pagesPanel.handleBars').toString()
 Handlebars.registerPartial 'app', fs.readFileSync(global.cfg.guiTemplateDir+'app.handleBars').toString()
 Handlebars.registerPartial 'controlBox', fs.readFileSync(global.cfg.guiTemplateDir+'controlBox.handleBars').toString()
 Handlebars.registerPartial 'transformBox', fs.readFileSync(global.cfg.guiTemplateDir+'transformBox.handleBars').toString()
@@ -11,6 +12,7 @@ Handlebars.registerPartial 'selectingFrame', fs.readFileSync(global.cfg.guiTempl
 Handlebars.registerPartial 'gridLines', fs.readFileSync(global.cfg.guiTemplateDir+'gridLines.handleBars').toString()
 
 module.exports.propertyPanel = Handlebars.compile "{{> propertyPanel}}"
+module.exports.pagesPanel = Handlebars.compile "{{> pagesPanel}}"
 module.exports.app = Handlebars.compile "{{> app}}"
 module.exports.controlBox = Handlebars.compile "{{> controlBox}}"
 module.exports.transformBox = Handlebars.compile "{{> transformBox}}"

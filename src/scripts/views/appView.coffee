@@ -42,7 +42,7 @@ class AppView extends BaseView
 
   createProjectView: ->
     settings = @model.get 'settings'
-    @projectView = new ProjectEditor({model: @model.get 'project'})
+    @projectView = new ProjectEditor {model: @model.get 'project'}
     @projectView.setAppData {settings: settings, grid: @model.grid}
 
   render: ->

@@ -10,6 +10,7 @@ plugins = require './../../../plugins/plugins.coffee'
 components = plugins.components
 PropertyPanel = require './propertyPanel.coffee'
 Snapper = require './../helpers/snapper.coffee'
+MinimizeButton = require './minimizeButton.coffee'
 
 elBoundaries = (el) ->
   return el[0].getBoundingClientRect()
@@ -509,25 +510,7 @@ class TransformBox extends BaseView
   events:
     "mousedown .resize-handle"  : "startResizeHandler"
 
-class MinimizePropertiesButton extends BaseView
-  tagName: "a"
+class MinimizePropertiesButton extends MinimizeButton
   id: "wirekit_properties_button"
-
-  init: ->
-    super()
-    _.bindAll @, "clickHandler", "mousedownHandler"
-
-  clickHandler: (e) ->
-    e.stopPropagation()
-    e.preventDefault()
-    @trigger "click"
-
-  mousedownHandler: (e) ->
-    e.stopPropagation()
-    e.preventDefault()
-
-  events:
-    "click": "clickHandler"
-    "mousedown": "mousedownHandler"
 
 module.exports = ControlLayer

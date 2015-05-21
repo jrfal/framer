@@ -1,1 +1,1 @@
-/Applications/node-webkit.app/Contents/MacOS/node-webkit .
+/Applications/nwjs.app/Contents/MacOS/nwjs .

@@ -241,10 +241,16 @@ a.framer-componentize {
 .framer-page {
   transform-origin: 0 0; }
 
-#wirekit_properties_button {
+#wirekit_properties_button, #wirekit_pages_button {
   width: 24px;
   height: 24px;
   position: absolute;
   right: 0;
   top: 0;
   background: url('../images/icon_properties.svg'); }
+
+#wirekit_pages_button {
+  background: url('../images/icon_pages.svg');
+  right: auto;
+  left: 0; }
+

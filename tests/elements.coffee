@@ -27,6 +27,10 @@ describe "Create a checkbox", ->
     element.set "indeterminate", true
     assert $("input[type=checkbox]").prop("indeterminate")
 
+  it "should have red text color if I set it that way", ->
+    element.set "fontColor", "#ff0000"
+    assert.equal $("input[type=checkbox]").parent().find(".framer-text").css("color"), "rgb(255, 0, 0)"
+
 describe "Create a text input", ->
   data = null
   element = null

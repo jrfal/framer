@@ -1,3 +1,3 @@
 <span class="framer-element" {{> _elementStyle}}>
-  <input type="checkbox"{{#if selected}} checked{{/if}} {{#if indeterminate}}class="wirekit-indeterminate"{{/if}}/><label class="framer-text" style="{{#if fontFamily}}font-family:'{{fontFamily}}';{{/if}}{{#if fontSize}}font-size:{{fontSize}};{{/if}}">{{text}}</label>
+  <input type="checkbox"{{#if selected}} checked{{/if}} {{#if indeterminate}}class="wirekit-indeterminate"{{/if}}/><label class="framer-text" {{> _textStyle}}>{{text}}</label>
 </span>

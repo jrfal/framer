@@ -4,6 +4,8 @@ global.window = document.defaultView
 setup = require './setups.coffee'
 assert = require "assert"
 $ = require "jquery"
+plugins = require '../src/plugins/plugins.coffee'
+components = plugins.components
 
 Page = require '../src/scripts/models/page.coffee'
 
@@ -104,3 +106,22 @@ describe "Click a page on the page panel", ->
 
   it "should be showing 4th page", ->
     assert.equal fourthPage, data.app_view.projectView.currentPage
+
+describe "Labels on the property panel", ->
+  data = null
+  element = null
+
+  before ->
+    data = setup.appSetup()
+    element = setup.addComponent data.page, "rectangle"
+
+    data.app_view.projectView.pageView.editor.selectElement element
+
+  it "should show English labels", ->
+    assert.equal $(".property-panel label[for=property-panel-text]").text(), "Text"
+    assert.equal $(".property-panel label[for=property-panel-fontSize]").text(), "Font Size"
+    assert.equal $(".property-panel label[for=property-panel-fontFamily]").text(), "Font Family"
+    assert.equal $(".property-panel label[for=property-panel-fontColor]").text(), "Font Color"
+    assert.equal $(".property-panel label[for=property-panel-borderColor]").text(), "Border Color"
+    assert.equal $(".property-panel label[for=property-panel-borderWidth]").text(), "Border Width"
+    assert.equal $(".property-panel label[for=property-panel-fillColor]").text(), "Fill Color"

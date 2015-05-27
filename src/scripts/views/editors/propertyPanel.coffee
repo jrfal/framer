@@ -60,7 +60,9 @@ class PropertyPanel extends BaseView
       @previous = {}
       for property in properties
         @previous[property.property.property] = property.value
-        $(@el).find('.framer-fields').append $("<label for=\"property-panel-#{property.property.property}\">#{property.property.property}</label>")
+        label = property.property.property
+        label = plugins.labels[label] if plugins.labels[label]?
+        $(@el).find('.framer-fields').append $("<label for=\"property-panel-#{property.property.property}\">#{label}</label>")
         $(@el).find('.framer-fields').append getPropEl(property.property, property.value)
 
       $(oldEl).replaceWith $(@el)

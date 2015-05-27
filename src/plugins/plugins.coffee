@@ -21,6 +21,7 @@ plugins.validations = {
 plugins.propertyTypes = require('./propertyTypes.json')
 plugins.renderers = {}
 plugins.postRenderers = {}
+plugins.labels = {}
 
 module.exports = plugins
 

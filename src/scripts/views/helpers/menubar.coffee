@@ -224,18 +224,52 @@ class MenuBar
     @app_view.saveFileCmd()
 
   copyHandler: ->
-    selection = @app_view.projectView.pageView.editor.selectedData()
-    @clipboard.set JSON.stringify(selection)
+    activeElement = global.window.document.activeElement
+    textSelection = global.window.getSelection().toString()
+    if textSelection != "" or activeElement.tagName == "INPUT" or activeElement.tagName == "TEXTAREA"
+      @clipboard.set textSelection
+    else
+      selection = @app_view.projectView.pageView.editor.selectedData()
+      @clipboard.set JSON.stringify(selection)
+
+  pasteText: (text) ->
+    activeElement = global.window.document.activeElement
+    if activeElement.tagName == "INPUT" or activeElement.tagName == "TEXTAREA"
+      startPos = 0
+      endPos = 0
+      if activeElement.selectionStart?
+        startPos = activeElement.selectionStart
+        endPos = activeElement.selectionEnd
+      activeElement.value = activeElement.value.substring(0, startPos)+text+activeElement.value.substring(endPos,activeElement.value.length);
+      activeElement.selectionStart = startPos + text.length
+      activeElement.selectionEnd = activeElement.selectionStart
+      return true
+
+    false
 
   cutHandler: ->
-    selection = @app_view.projectView.pageView.editor.selectedData()
-    @clipboard.set JSON.stringify(selection)
-    @app_view.projectView.pageView.editor.deleteSelected()
+    @copyHandler()
+    activeElement = global.window.document.activeElement
+    textSelection = global.window.getSelection().toString()
+    if textSelection != "" or activeElement.tagName == "INPUT" or activeElement.tagName == "TEXTAREA"
+      @pasteText ""
+    else
+      @app_view.projectView.pageView.editor.deleteSelected()
 
   pasteHandler: ->
-    data = JSON.parse @clipboard.get()
-    for item in data
-      @app_view.projectView.pageView.model.addElement item
+    pasteElement = true
+    try
+      data = JSON.parse @clipboard.get()
+    catch e
+      data = @clipboard.get()
+      pasteElement = false
+
+    if @pasteText data
+      return
+
+    if pasteElement
+      for item in data
+        @app_view.projectView.pageView.model.addElement item
 
   duplicateHandler: ->
     data = @app_view.projectView.pageView.editor.selectedData()

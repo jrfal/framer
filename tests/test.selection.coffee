@@ -3,6 +3,7 @@ framer = require '../src/scripts/framer.coffee'
 $ = require 'jquery'
 _ = require 'underscore'
 cbox = null
+MenuBar = require '../src/scripts/views/helpers/menubar.coffee'
 
 describe 'Selecting', ->
   before ->
@@ -190,3 +191,41 @@ describe 'Select All', ->
       editor = framer.app_view.projectView.pageView.controlLayer.editor
       for element in elements.models
         assert.ok editor.isSelected(element)
+
+describe 'Select text', ->
+  menubar = null
+
+  before ->
+    framer.app.loadFile './testData/basicElements.json'
+    element = framer.app.get("project").get("pages").first().get("elements").first()
+    framer.app_view.projectView.pageView.editor.selectElement element
+    $(".property-panel #property-panel-text").select()
+    menubar = new MenuBar framer.app, framer.app_view
+    menubar.copyHandler()
+    $(".property-panel #property-panel-text").val("")
+    $(".property-panel #property-panel-text").focus()
+    menubar.pasteHandler()
+
+  it "should have the right text in the clipboard", ->
+    assert.equal "First, Last\nJeff, Fal\nDarth, Vader\nSpider, Man", menubar.clipboard.get()
+
+  it "should have the right text in the text field", ->
+    assert.equal "First, Last\nJeff, Fal\nDarth, Vader\nSpider, Man", $(".property-panel #property-panel-text").val()
+
+describe 'Cut text', ->
+  menubar = null
+
+  before ->
+    framer.app.loadFile './testData/basicElements.json'
+    element = framer.app.get("project").get("pages").first().get("elements").first()
+    framer.app_view.projectView.pageView.editor.selectElement element
+    $(".property-panel #property-panel-text").focus()
+    $(".property-panel #property-panel-text").select()
+    menubar = new MenuBar framer.app, framer.app_view
+    menubar.cutHandler()
+
+  it "should have the right text in the clipboard", ->
+    assert.equal "First, Last\nJeff, Fal\nDarth, Vader\nSpider, Man", menubar.clipboard.get()
+
+  it "should have no text in the text field", ->
+    assert.equal "", $(".property-panel #property-panel-text").val()

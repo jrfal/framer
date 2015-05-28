@@ -2,7 +2,7 @@ _ = require 'underscore'
 
 class MenuBar
   constructor: (app, app_view) ->
-    _.bindAll @, 'toggleGridLinesHandler', 'showElementPaletteHandler', 'newPageHandler',
+    _.bindAll @, 'toggleGridLinesHandler', 'toggleElementPaletteHandler', 'newPageHandler',
       'newProjectHandler', 'loadFileHandler', 'saveFileHandler', 'selectAllHandler',
       'deselectHandler', 'nextPageHandler', 'renamePageHandler', 'updateShowGridCheck',
       'editGridHandler', 'toggleSnappingHandler', 'updateSnapping', 'setMasterPageHandler',
@@ -125,11 +125,13 @@ class MenuBar
       label: "Edit Grid",
       click: @editGridHandler
     })
-    view_menu.append new gui.MenuItem({
+    @showelementpalette_menuitem = new gui.MenuItem({
+      type: "checkbox",
       label: "Show Element Palette",
-      click: @showElementPaletteHandler,
+      click: @toggleElementPaletteHandler,
       key: "1"
     })
+    view_menu.append @showelementpalette_menuitem
     view_menu.append new gui.MenuItem({
       label: "Zoom In",
       click: @zoomInHandler,
@@ -202,8 +204,11 @@ class MenuBar
     else
       @app.hideGridLines()
 
-  showElementPaletteHandler: ->
-    @app.showElementPalette()
+  toggleElementPaletteHandler: ->
+    if @showelementpalette_menuitem.checked
+      @app.showElementPalette()
+    else
+      @app.hideElementPalette()
 
   selectAllHandler: ->
     @app_view.projectView.pageView.controlLayer.selectAll()

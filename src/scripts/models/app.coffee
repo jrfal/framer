@@ -20,8 +20,8 @@ class App extends Backbone.Model
     settings.on "change", @saveSettings
     @newProject()
 
-    @grid = new Guide.Grid({cellSize: settings.get('gridCellSize'), cellGroup: settings.get('gridCellGroup')})
-    settings.on "change:gridCellSize change:gridCellGroup", @updateGrid
+    @grid = new Guide.Grid({cellSize: settings.get('gridCellSize'), cellGroup: settings.get('gridCellGroup'), lineColor: settings.get('gridLinesColor')})
+    settings.on "change:gridCellSize change:gridCellGroup change:gridLinesColor", @updateGrid
 
   newProject: ->
     newProject = new Project()
@@ -92,7 +92,7 @@ class App extends Backbone.Model
 
   updateGrid: ->
     settings = @get 'settings'
-    @grid.set {cellSize: settings.get('gridCellSize'), cellGroup: settings.get('gridCellGroup')}
+    @grid.set {cellSize: settings.get('gridCellSize'), cellGroup: settings.get('gridCellGroup'), lineColor: settings.get('gridLinesColor')}
 
   saveSettings: ->
     content = JSON.stringify(@get('settings').attributes)

@@ -158,21 +158,24 @@ class AppView extends BaseView
     masterPage = @projectView.currentPage.get('masterPage')
     masterPageSlug = masterPage.get('slug') if masterPage?
     edit = Dialog.edit messages["set master page header"], [{class: "set-master-page", value: masterPageSlug, options: options}], messages["set master page submit"]
-    $(edit.el).find(".submit").on "click", @setMasterPageHandler
+    $(edit.el).find("form").on "submit", @setMasterPageHandler
 
   setMasterPageHandler: (e) ->
+    e.preventDefault()
     newMasterPageSlug =  $(e.target).closest('.bbm-modal').find('.edit-value.set-master-page').val()
     newMasterPage = @model.get('project').getPageBySlug(newMasterPageSlug)
     @projectView.currentPage.set {'masterPage': newMasterPage}
 
   editGrid: ->
-    edit = Dialog.edit messages["edit grid header"], [{class: "grid-cell", value: @model.get('settings').get('gridCellSize')}, {class: "grid-group", value: @model.get('settings').get('gridCellGroup')}], messages["edit grid submit"]
-    $(edit.el).find(".submit").on "click", @editGridHandler
+    edit = Dialog.edit messages["edit grid header"], [{class: "grid-cell", value: @model.get('settings').get('gridCellSize')}, {class: "grid-group", value: @model.get('settings').get('gridCellGroup')}, {class: "grid-lines-color", value: @model.get('settings').get('gridLinesColor')}], messages["edit grid submit"]
+    $(edit.el).find("form").on "submit", @editGridHandler
 
   editGridHandler: (e) ->
+    e.preventDefault()
     newCellSize = $(e.target).closest('.bbm-modal').find('.edit-value.grid-cell').val()
     newCellGroup = $(e.target).closest('.bbm-modal').find('.edit-value.grid-group').val()
-    @model.get('settings').set({gridCellSize: newCellSize, gridCellGroup: newCellGroup})
+    newLinesColor = $(e.target).closest('.bbm-modal').find('.edit-value.grid-lines-color').val()
+    @model.get('settings').set({gridCellSize: newCellSize, gridCellGroup: newCellGroup, gridLinesColor: newLinesColor})
 
   getSelected: ->
     return @projectView.pageView.controlLayer.editor.get 'selection'

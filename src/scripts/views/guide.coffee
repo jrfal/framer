@@ -15,6 +15,6 @@ class GuideView extends BaseView
 
   render: ->
     if @model.get('type') == 'grid'
-      $(@el).html @template({smallCell: @model.get('cellSize'), bigCell: @model.get('cellSize') * @model.get('cellGroup')})
+      $(@el).html @template({smallCell: @model.get('cellSize'), bigCell: @model.get('cellSize') * @model.get('cellGroup'), lineColor: @model.get('lineColor')})
 
 module.exports = GuideView

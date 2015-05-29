@@ -10,6 +10,7 @@ class GridGuide extends Guide
     type: 'grid'
     cellSize: 8
     cellGroup: 10
+    lineColor: "gray"
 
   getGeosFor: (geo) ->
     geos = []

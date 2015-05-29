@@ -4,7 +4,7 @@ class MenuBar
   constructor: (app, app_view) ->
     _.bindAll @, 'toggleGridLinesHandler', 'toggleElementPaletteHandler', 'newPageHandler',
       'newProjectHandler', 'loadFileHandler', 'saveFileHandler', 'selectAllHandler',
-      'deselectHandler', 'nextPageHandler', 'renamePageHandler', 'updateShowGridCheck',
+      'deselectHandler', 'nextPageHandler', 'previousPageHandler', 'renamePageHandler', 'updateShowGridCheck',
       'editGridHandler', 'toggleSnappingHandler', 'updateSnapping', 'setMasterPageHandler',
       'copyHandler', 'cutHandler', 'pasteHandler', 'duplicateHandler', 'zoomInHandler',
       'zoomOutHandler'
@@ -102,7 +102,13 @@ class MenuBar
     })
     pages_menu.append new gui.MenuItem({
       label: "Next Page",
-      click: @nextPageHandler
+      click: @nextPageHandler,
+      key: String.fromCharCode(29)
+    })
+    pages_menu.append new gui.MenuItem({
+      label: "Previous Page",
+      click: @previousPageHandler,
+      key: String.fromCharCode(28)
     })
     pages_menu.append new gui.MenuItem({
       label: "Rename Page",
@@ -190,6 +196,11 @@ class MenuBar
   nextPageHandler: ->
     index = 1 + @app.get('project').get('pages').models.indexOf(@app_view.projectView.currentPage)
     index = 0 if index >= @app.get('project').get('pages').size()
+    @app_view.projectView.showPage @app.get('project').get('pages').at(index)
+
+  previousPageHandler: ->
+    index = -1 + @app.get('project').get('pages').models.indexOf(@app_view.projectView.currentPage)
+    index = @app.get('project').get('pages').size() - 1 if index < 0
     @app_view.projectView.showPage @app.get('project').get('pages').at(index)
 
   renamePageHandler: ->

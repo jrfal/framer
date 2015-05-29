@@ -1,5 +1,16 @@
 [
   {
+    "component": "base",
+    "renderers": [
+      "handlebars"
+    ],
+    "properties": [
+      {"property": "fontSize", "type": "number"},
+      {"property": "fontFamily", "type": "string"},
+      {"property": "fontColor", "type": "color"}
+    ]
+  },
+  {
     "title": "Label",
     "component": "label",
     "text": "Label",
@@ -8,9 +19,7 @@
     ],
     "properties": [
       {"property": "text", "type": "paragraph"},
-      {"property": "fontSize", "type": "number"},
-      {"property": "fontFamily", "type": "string"},
-      {"property": "fontColor", "type": "color"}
+      {"inherit": "base"}
     ]
   },
   {
@@ -121,6 +130,18 @@
     ],
     "properties": [
       {"inherit": "label"}
+    ]
+  },
+  {
+    "title": "Number Input",
+    "component": "numberInput",
+    "number": 1,
+    "renderers": [
+      "handlebars"
+    ],
+    "properties": [
+      {"inherit": "base"},
+      {"property": "number", "type": "number"}
     ]
   }
 ]

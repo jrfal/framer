@@ -79,3 +79,14 @@ describe "Create a text block", ->
 
   it "should have content to match the formatted reference", ->
     assert.equal $("[data-element=#{element.get('id')}] .framer-text").html(), reference
+
+describe "Create a number input", ->
+  data = null
+  element = null
+
+  before ->
+    data = setup.appSetup()
+    element = setup.addComponent data.page, "numberInput"
+
+  it "should have a number input element", ->
+    assert.equal $("#framer_pages input[type=number]").length, 1

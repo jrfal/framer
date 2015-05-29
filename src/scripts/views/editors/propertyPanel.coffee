@@ -25,6 +25,8 @@ class PropertyPanel extends BaseView
         prop_el = $ "<textarea></textarea>"
       else if input == 'checkbox'
         prop_el = $ '<input type="checkbox" value="true" />'
+      else if input == 'number'
+        prop_el = $ '<input type="number" />'
       else
         prop_el = $ "<input type=\"text\" />"
       prop_el.attr "id", "property-panel-#{property.property}"

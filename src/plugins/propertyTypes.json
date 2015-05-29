@@ -5,7 +5,7 @@
   },
   "number": {
     "validation": "number",
-    "input": "text"
+    "input": "number"
   },
   "string": {
     "validation": "string",

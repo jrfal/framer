@@ -224,6 +224,15 @@ describe 'Snapping', ->
     framer.app.get('settings').set {gridCellSize: 13}
     framer.app.loadFile './testData/test.json'
 
+    # remove elements guide
+    snapper = framer.app_view.projectView.pageView.controlLayer.snapper
+    i = 0
+    while i < snapper.guides.length
+      if snapper.guides[i].get("type") == "elements"
+        snapper.guides.splice i, 1
+      else
+        i++
+
     # moving
     controlBox = $('#framer_controls .control-box:last')
     e = $.Event 'mousedown'

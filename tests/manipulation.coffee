@@ -80,6 +80,7 @@ describe "Create a grid and resize it", ->
 describe "Create a grid and resize it with handlers", ->
   page = new Page()
   pageEditor = new PageEditor {model: page}
+  pageEditor.controlLayer.snapper.active = false
   $("body").append pageEditor.el
   component = _.findWhere components, {component: "grid"}
   element = new Element(component)

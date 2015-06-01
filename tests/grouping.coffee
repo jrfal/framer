@@ -63,6 +63,7 @@ describe 'Grouping:', ->
 
     before ->
       data = setup.appSetup()
+      data.app.get("settings").set "snapping", false
       element1 = setup.addElement data.page
       element1.set "x", 203
       element1.set "y", 511

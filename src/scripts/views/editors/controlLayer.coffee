@@ -11,6 +11,7 @@ components = plugins.components
 PropertyPanel = require './propertyPanel.coffee'
 Snapper = require './../helpers/snapper.coffee'
 MinimizeButton = require './minimizeButton.coffee'
+Guide = require './../../models/guide.coffee'
 
 elBoundaries = (el) ->
   return el[0].getBoundingClientRect()
@@ -41,6 +42,7 @@ class ControlLayer extends PageView
   transformBox: null
   snapper: null
   propertyPanelButton: null
+  elementsGuide: null
 
   initialize: (options) ->
     _.bindAll @, 'startDragHandler', 'moveDragHandler', 'stopDragHandler', 'selectionChange',
@@ -56,10 +58,16 @@ class ControlLayer extends PageView
     $(@el).append @selectingFrameEl
     @transformBox = new TransformBox {collection:@editor.get('selection'), editor: @editor}
     @snapper = new Snapper()
+    @elementsGuide = new Guide.Elements {page: @model}
+    @snapper.addGuide @elementsGuide
     @transformBox.snapper = @snapper
     @propertyPanelButton = new MinimizePropertiesButton()
     @propertyPanelButton.on "click", @togglePropertyPanel
     super()
+
+  setModel: (model) ->
+    super(model)
+    @elementsGuide.set "page", model
 
   render: ->
     super()
@@ -279,11 +287,7 @@ class ControlBox extends BaseView
     $(document).on 'mousemove', @moveHandler
     $(document).on 'mouseup', @stopMoveHandler
 
-  moveHandler: (e) ->
-    e.stopPropagation()
-    dx =  (e.screenX - @grab.x) / @zoomFactor
-    dy =  (e.screenY - @grab.y) / @zoomFactor
-
+  move: (dx, dy, locked) ->
     if not @editor.isSelected @model
       @editor.selectOnlyElement @model
 
@@ -296,13 +300,25 @@ class ControlBox extends BaseView
     dy = dy + snapped.y
 
     # lock to 90 deg angles?
-    if e.shiftKey
+    if locked? and locked
       if Math.abs(dx) < Math.abs(dy)
         dx = 0
       else
         dy = 0
 
     @editor.setTranslation dx, dy
+
+  moveHandler: (e) ->
+    e.stopPropagation()
+    dx =  (e.screenX - @grab.x) / @zoomFactor
+    dy =  (e.screenY - @grab.y) / @zoomFactor
+
+    locked = false
+    if e.shiftKey
+      locked = true
+
+    @move dx, dy, locked
+
 
   stopMoveHandler: (e) ->
     e.stopPropagation()

@@ -87,10 +87,14 @@ class Element extends Backbone.Model
 
   getGeos: ->
     geos = []
-    if @attributes.x? and @attributes.y?
-      geos.push {x: @attributes.x, y: @attributes.y}
-      if @attributes.w? and @attributes.h?
-        geos.push {x: @attributes.x + @attributes.w, y: @attributes.y + @attributes.h}
+    if @attributes.x?
+      geos.push {x: @attributes.x}
+      if @attributes.w?
+        geos.push {x: @attributes.x + @attributes.w}
+    if @attributes.y?
+      geos.push {y: @attributes.y}
+      if @attributes.h?
+        geos.push {y: @attributes.y + @attributes.h}
 
     return geos
 

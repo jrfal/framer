@@ -58,7 +58,7 @@ class Snapper
     offsets = _.sortBy offsets, (item) ->
       if item.distance?
         return item.distance
-      return 100000
+      return 9999999999999
 
     snapping = {}
     while (not snapping.x? or not snapping.y?) and offsets.length > 0

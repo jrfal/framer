@@ -37,13 +37,17 @@ class Snapper
       geo.y = geo.y + translateY if geo.y?
 
   getOffset: (geo1, geo2) ->
+    geo1.weight = 1 if not geo1.weight?
+    geo2.weight = 1 if not geo2.weight?
+    weight = geo1.weight * geo2.weight
+
     if geo1.x? and geo2.x?
       if geo1.y? and geo2.y?
-        return {x: geo2.x - geo1.x, y: geo2.y - geo1.y, distance: Math.sqrt(((geo1.x - geo2.x) ** 2) + ((geo1.y - geo2.y) ** 2))}
+        return {x: geo2.x - geo1.x, y: geo2.y - geo1.y, distance: Math.sqrt(((geo1.x - geo2.x) ** 2) + ((geo1.y - geo2.y) ** 2)) * weight}
       else
-        return {x: geo2.x - geo1.x, distance: Math.abs(geo1.x - geo2.x)}
+        return {x: geo2.x - geo1.x, distance: Math.abs(geo1.x - geo2.x) * weight}
     else if geo1.y? and geo2.y?
-      return {y: geo2.y - geo1.y, distance: Math.abs(geo1.y - geo2.y)}
+      return {y: geo2.y - geo1.y, distance: Math.abs(geo1.y - geo2.y) * weight}
 
     return {}
 

@@ -236,12 +236,12 @@ describe 'Snapping', ->
     # moving
     controlBox = $('#framer_controls .control-box:last')
     e = $.Event 'mousedown'
-    e.screenX = 100 + 11
-    e.screenY = 100 + 23
+    e.screenX = 100 + 200
+    e.screenY = 100 + 125
     $(controlBox).find('.control-border').trigger e
     e = $.Event 'mousemove'
-    e.screenX = 160 + 11
-    e.screenY = 5 + 23
+    e.screenX = 160 + 200
+    e.screenY = 5 + 125
     $(document).trigger e
     e = $.Event 'mouseup'
     $(document).trigger e

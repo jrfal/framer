@@ -277,15 +277,39 @@ class ControlBox extends BaseView
         position.y = elel.position().top
       @model.set position
 
+  startMove: (x, y) ->
+    @editor.resetMods()
+    @giveModelPosition()
+    @grab = {x: x, y: y}
+
   startMoveHandler: (e) ->
     e.stopPropagation()
     e.preventDefault()
-    @editor.resetMods()
-    @giveModelPosition()
-    @grab = {x: e.screenX, y: e.screenY}
+
+    @startMove e.screenX, e.screenY
 
     $(document).on 'mousemove', @moveHandler
     $(document).on 'mouseup', @stopMoveHandler
+
+  weightGeos: (geos) ->
+    if not @grab?
+      return
+
+    xDistance = 0
+    yDistance = 0
+    for geo in geos
+      if geo.x?
+        xDistance += Math.abs(geo.x - @grab.x)
+      if geo.y?
+        yDistance += Math.abs(geo.y - @grab.y)
+
+    for geo in geos
+      if not geo.weight?
+        geo.weight = 1
+      if geo.x?
+        geo.weight *= Math.abs(geo.x - @grab.x)/xDistance
+      if geo.y?
+        geo.weight *= Math.abs(geo.y - @grab.y)/yDistance
 
   move: (dx, dy, locked) ->
     if not @editor.isSelected @model
@@ -293,6 +317,7 @@ class ControlBox extends BaseView
 
     # let's do some snapping
     geos = @editor.getSelectedGeos()
+    @weightGeos geos
     @snapper.moveGeos geos, dx, dy
     snapped = @snapper.getSnap geos
 

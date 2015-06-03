@@ -25,8 +25,21 @@ describe "Initial Setup", ->
   it "should have a pages icon", ->
     assert.equal $("#wirekit_pages_button").length, 1
 
-  it "should be showing the property panel", ->
-    assert.equal $(".property-panel.showing").length, 1
+  it "should not be showing the property panel", ->
+    assert.equal $(".property-panel").css("display"), "none"
+
+describe "Doesn't hit property panel button", ->
+  data = null
+  element = null
+
+  before ->
+    data = setup.appSetup()
+    element = setup.addElement data.page
+
+    data.app_view.projectView.pageView.editor.selectElement element
+
+  it "should not be showing the property panel now", ->
+    assert.equal $(".property-panel").css("display"), "none"
 
 describe "Hits property panel button", ->
   data = null
@@ -39,8 +52,8 @@ describe "Hits property panel button", ->
     data.app_view.projectView.pageView.editor.selectElement element
     $("#wirekit_properties_button").trigger "click"
 
-  it "should not be showing the property panel now", ->
-    assert.equal $(".property-panel.showing").length, 0
+  it "should be showing the property panel now", ->
+    assert.notEqual $(".property-panel").css("display"), "none"
 
 describe "Hits pages panel button", ->
   data = null
@@ -116,6 +129,7 @@ describe "Labels on the property panel", ->
     element = setup.addComponent data.page, "rectangle"
 
     data.app_view.projectView.pageView.editor.selectElement element
+    data.app_view.projectView.propertyPanel.show()
 
   it "should show English labels", ->
     assert.equal $(".property-panel label[for=property-panel-text]").text(), "Text"
@@ -125,3 +139,22 @@ describe "Labels on the property panel", ->
     assert.equal $(".property-panel label[for=property-panel-borderColor]").text(), "Border Color"
     assert.equal $(".property-panel label[for=property-panel-borderWidth]").text(), "Border Width"
     assert.equal $(".property-panel label[for=property-panel-fillColor]").text(), "Fill Color"
+
+describe "Property panel exists without element", ->
+  data = null
+
+  before ->
+    data = setup.appSetup()
+
+  it "should have the property panel", ->
+    assert.equal $(".property-panel").length, 1
+
+describe "Property panel without element", ->
+  data = null
+
+  before ->
+    data = setup.appSetup()
+    $("#wirekit_properties_button").click()
+
+  it "should be showing the property panel", ->
+    assert.notEqual $(".property-panel").css("display"), "none"

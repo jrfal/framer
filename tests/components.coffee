@@ -3,11 +3,13 @@ global.document = require('jsdom').jsdom()
 global.window = document.defaultView
 
 assert = require "assert"
+Project = require "../src/scripts/models/project.coffee"
 Page = require "../src/scripts/models/page.coffee"
 Element = require "../src/scripts/models/element.coffee"
 Group = require "../src/scripts/models/group.coffee"
 Editor = require "../src/scripts/models/editor.coffee"
 
+ProjectEditor = require "../src/scripts/views/editors/projectEditor.coffee"
 PageEditor = require "../src/scripts/views/editors/pageEditor.coffee"
 ElementView = require "../src/scripts/views/element.coffee"
 
@@ -37,8 +39,11 @@ describe "Creating a component element and assigning it to an existing element",
     assert.equal attributes1.h, attributes2.h
 
 describe "Create a component with an editor", ->
-  page = new Page()
-  pageEditor = new PageEditor {model: page}
+  project = new Project()
+  page = project.addPage()
+  projectEditor = new ProjectEditor {model: project}
+  projectEditor.showPage page
+  pageEditor = projectEditor.pageView
 
   component = _.findWhere components, {component: "rectangle"}
   element = new Element(component)
@@ -49,7 +54,7 @@ describe "Create a component with an editor", ->
     h: 700
   page.addElement element
   pageEditor.editor.selectElement element
-  pageEditor.controlLayer.propertyPanel.componentizeHandler({preventDefault: -> true})
+  projectEditor.propertyPanel.componentizeHandler({preventDefault: -> true})
   instance = page.get("elements").last()
 
   it "should have the same dimensions in the view attributes", ->

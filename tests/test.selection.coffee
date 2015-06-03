@@ -17,20 +17,6 @@ describe 'Selecting', ->
     it 'should contain the correct id in the selection', ->
       elementID = cbox.data 'element'
       assert.ok framer.app_view.projectView.pageView.controlLayer.editor.isSelectedID(elementID)
-    it 'should be able to move the edit panel', ->
-      position = $('.property-panel').position()
-      e = $.Event 'mousedown'
-      e.screenX = 0
-      e.screenY = 0
-      $('.property-panel').trigger e
-      e = $.Event 'mousemove'
-      e.screenX = 50
-      e.screenY = 75
-      $('.property-panel').trigger e
-      e = $.Event 'mouseup'
-      $('.property-panel').trigger e
-      assert.equal Math.round(position.left) + 50, Math.round($('.property-panel').position().left)
-      assert.equal Math.round(position.top) + 75, Math.round($('.property-panel').position().top)
 
     it 'should show the resize handles', ->
       count = 0
@@ -199,6 +185,7 @@ describe 'Select text', ->
     framer.app.loadFile './testData/basicElements.json'
     element = framer.app.get("project").get("pages").first().get("elements").first()
     framer.app_view.projectView.pageView.editor.selectElement element
+    framer.app_view.projectView.propertyPanel.show()
     $(".property-panel #property-panel-text").select()
     menubar = new MenuBar framer.app, framer.app_view
     menubar.copyHandler()
@@ -219,6 +206,7 @@ describe 'Cut text', ->
     framer.app.loadFile './testData/basicElements.json'
     element = framer.app.get("project").get("pages").first().get("elements").first()
     framer.app_view.projectView.pageView.editor.selectElement element
+    framer.app_view.projectView.propertyPanel.show()
     $(".property-panel #property-panel-text").focus()
     $(".property-panel #property-panel-text").select()
     menubar = new MenuBar framer.app, framer.app_view

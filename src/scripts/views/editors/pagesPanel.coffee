@@ -1,13 +1,13 @@
 $ = require 'jquery'
 Backbone = require 'backbone'
-BaseView = require './../baseView.coffee'
+Panel = require './panel.coffee'
 uiTemplates = require './../../uiTemplates.coffee'
 plugins = require './../../../plugins/plugins.coffee'
 _ = require 'underscore'
 
-class PagesPanel extends BaseView
+class PagesPanel extends Panel
   template: uiTemplates.pagesPanel
-  shown: false
+  collection: null
 
   initialize: ->
     super()
@@ -25,35 +25,11 @@ class PagesPanel extends BaseView
     @render()
 
   templateAttributes: ->
-    attributes = []
+    attributes = {pages: []}
     if @collection?
       for page in @collection.models
-        attributes.push {slug: page.get("slug")}
+        attributes.pages.push {slug: page.get("slug")}
     attributes
-
-  render: ->
-    if @collection?
-      oldEl = @el
-      @setElement $(@template({pages: @templateAttributes()}))
-      if @shown
-        @show()
-      else
-        @hide()
-      $(oldEl).replaceWith @el
-
-  hide: ->
-    @shown = false
-    $(@el).hide()
-
-  show: ->
-    @shown = true
-    $(@el).show()
-
-  toggle: ->
-    if @shown
-      @hide()
-    else
-      @show()
 
   pageClickHandler: (e) ->
     e.preventDefault()

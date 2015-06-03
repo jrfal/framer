@@ -8,9 +8,7 @@ Editor = require './../../models/editor.coffee'
 Element = require './../../models/element.coffee'
 plugins = require './../../../plugins/plugins.coffee'
 components = plugins.components
-PropertyPanel = require './propertyPanel.coffee'
 Snapper = require './../helpers/snapper.coffee'
-MinimizeButton = require './minimizeButton.coffee'
 Guide = require './../../models/guide.coffee'
 
 elBoundaries = (el) ->
@@ -38,21 +36,17 @@ class ControlLayer extends PageView
   shiftKey: false
   cmdKey: false
   toggling: null
-  propertyPanel: null
   transformBox: null
   snapper: null
-  propertyPanelButton: null
   elementsGuide: null
 
   initialize: (options) ->
-    _.bindAll @, 'startDragHandler', 'moveDragHandler', 'stopDragHandler', 'selectionChange',
-      'updateSnapping', "togglePropertyPanel"
+    _.bindAll @, 'startDragHandler', 'moveDragHandler', 'stopDragHandler',
+      'updateSnapping'
     if options.editor?
       @editor = options.editor
     else
       @editor = new Editor()
-    @editor.on "change:selection", @selectionChange
-    @editor.get('selection').on "add remove", @selectionChange
     @selectingFrameEl = $(uiTemplates.selectingFrame())
     $(@selectingFrameEl).hide()
     $(@el).append @selectingFrameEl
@@ -61,8 +55,6 @@ class ControlLayer extends PageView
     @elementsGuide = new Guide.Elements {page: @model}
     @snapper.addGuide @elementsGuide
     @transformBox.snapper = @snapper
-    @propertyPanelButton = new MinimizePropertiesButton()
-    @propertyPanelButton.on "click", @togglePropertyPanel
     super()
 
   setModel: (model) ->
@@ -75,7 +67,6 @@ class ControlLayer extends PageView
     $(@transformBox.el).hide()
     $(@el).append @transformBox.el
     $(@el).append @selectingFrameEl
-    $(@el).append @propertyPanelButton.el
 
   newElementView: (model) ->
     controlBox = new ControlBox {model: model, editor: @editor}
@@ -128,26 +119,6 @@ class ControlLayer extends PageView
     $(document).off 'mouseup', @stopDragHandler
     @hideSelectingFrame()
 
-  selectionChange: ->
-    selected = @editor.get 'selection'
-    if selected.length > 0
-      if @propertyPanel?
-        overlap = 0
-        if selected.size() == @propertyPanel.collection.size()
-          overlap = _.intersection(selected.models, @propertyPanel.collection.models).length
-        if overlap <= 0 or overlap < selected.length
-          @propertyPanel.slideOut()
-          @propertyPanel = null
-      if not @propertyPanel?
-        collection = new Backbone.Collection [], {model: Element}
-        collection.add selected.models
-        @propertyPanel = new PropertyPanel {collection: collection, editor: @editor}
-        $("#framer_controls").append @propertyPanel.el
-        @propertyPanel.slideIn()
-    else if @propertyPanel?
-      @propertyPanel.slideOut()
-      @propertyPanel = null
-
   selectAll: ->
     elements = @model.get 'elements'
     @editor.selectElements(elements.models)
@@ -193,16 +164,6 @@ class ControlLayer extends PageView
     for view in @elementViews
       view.changeZoom factor
     @transformBox.changeZoom factor
-
-  togglePropertyPanel: ->
-    if @propertyPanel?
-      if $(@propertyPanel.el).hasClass "showing"
-        @propertyPanel.slideOut()
-      else
-        @propertyPanel = null
-        @selectionChange()
-    else
-      @selectionChange()
 
   events:
     "mousedown" : "startDragHandler"
@@ -550,8 +511,5 @@ class TransformBox extends BaseView
 
   events:
     "mousedown .resize-handle"  : "startResizeHandler"
-
-class MinimizePropertiesButton extends MinimizeButton
-  id: "wirekit_properties_button"
 
 module.exports = ControlLayer

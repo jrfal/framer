@@ -1,49 +1,28 @@
 $ = require 'jquery'
 Backbone = require 'backbone'
-BaseView = require './../baseView.coffee'
+Panel = require './panel.coffee'
 uiTemplates = require './../../uiTemplates.coffee'
 plugins = require './../../../plugins/plugins.coffee'
 components = plugins.components
 _ = require 'underscore'
 
-class PropertyPanel extends BaseView
+class PropertyPanel extends Panel
   template: uiTemplates.propertyPanel
 
   initialize: (options) ->
-    _.bindAll @, 'render', 'cancelHandler', 'saveHandler', 'remove',
-      'startDragHandler', 'dragHandler', 'stopDragHandler', 'alignTopHandler',
+    super()
+    _.bindAll @, 'render', 'saveHandler', 'remove',
+      'alignTopHandler',
       'alignRightHandler', 'alignBottomHandler', 'alignLeftHandler',
       'alignCenterHandler', 'alignMiddleHandler', 'inputMouseHandler'
     @previous = {}
-    @editor = options.editor if options.editor
+    @editor = options.editor if options.editor?
+    if @editor?
+      @setCollection @editor.get("selection")
     @render()
 
-  render: ->
-    getPropEl = (property, modelProperty) ->
-      input = plugins.propertyTypes[property.type].input
-      if input == 'textarea'
-        prop_el = $ "<textarea></textarea>"
-      else if input == 'checkbox'
-        prop_el = $ '<input type="checkbox" value="true" />'
-      else if input == 'number'
-        prop_el = $ '<input type="number" />'
-      else if input == 'color'
-        prop_el = $ '<input type="color" />'
-      else
-        prop_el = $ "<input type=\"text\" />"
-      prop_el.attr "id", "property-panel-#{property.property}"
-      prop_el.attr "name", "property-panel-#{property.property}"
-      prop_el.attr "data-property", property.property
-      prop_el.attr "placeholder", property.property
-      if property.type == "boolean"
-        if modelProperty
-          prop_el.attr "checked", "checked"
-      else
-        prop_el.val modelProperty
-      return prop_el
-
+  templateAttributes: ->
     if @collection?
-      oldEl = @el
       properties = []
 
       for model in @collection.models
@@ -58,21 +37,24 @@ class PropertyPanel extends BaseView
               else
                 value = model.get property.property
                 value = '' if not value?
-                properties.push {propName: property.property, property: property, value: value}
+                newProp = {propName: property.property, property: property, value: value}
+
+                input = plugins.propertyTypes[property.type].input
+                newProp.typeTextarea = true if input == 'textarea'
+                newProp.typeCheckbox = true if input == 'checkbox'
+                newProp.typeNumber = true if input == 'number'
+                newProp.typeColor = true if input == 'color'
+
+                properties.push newProp
 
       @setElement $(@template())
       @previous = {}
       for property in properties
         @previous[property.property.property] = property.value
-        label = property.property.property
-        label = plugins.labels[label] if plugins.labels[label]?
-        $(@el).find('.framer-fields').append $("<label for=\"property-panel-#{property.property.property}\">#{label}</label>")
-        $(@el).find('.framer-fields').append getPropEl(property.property, property.value)
+        property.label = property.property.property
+        property.label = plugins.labels[property.label] if plugins.labels[property.label]?
 
-      $(oldEl).replaceWith $(@el)
-
-  cancelHandler: ->
-    @slideOut()
+    return {properties: properties}
 
   saveHandler: ->
     fields = $(@el).find(".framer-fields > *")
@@ -92,33 +74,6 @@ class PropertyPanel extends BaseView
     for model in @collection.models
       modelUpdates = model.validateProperties updates
       model.set modelUpdates
-
-  slideIn: ->
-    $(@el).css("margin-left", $(document).width() + "px")
-    $(@el).animate({marginLeft: 0}, 400)
-
-  slideOut: ->
-    $(@el).removeClass "showing"
-    $(@el).animate({marginLeft: $(document).width() + "px"}, 400, @remove)
-
-  startDragHandler: (e) ->
-    e.stopPropagation()
-    $(document).on 'mousemove', @dragHandler
-    $(document).on 'mouseup', @stopDragHandler
-    @grab = {x: e.screenX - $(@el).position().left, y: e.screenY - $(@el).position().top}
-
-  dragHandler: (e) ->
-    e.stopPropagation()
-    e.preventDefault()
-    x =  e.screenX - @grab.x
-    y =  e.screenY - @grab.y
-    $(@el).css "left", x
-    $(@el).css "top", y
-
-  stopDragHandler: (e) ->
-    e.stopPropagation()
-    $(document).off 'mousemove', @dragHandler
-    $(document).off 'mouseup', @stopDragHandler
 
   alignTopHandler: (e) ->
     e.preventDefault()
@@ -184,9 +139,8 @@ class PropertyPanel extends BaseView
     e.stopPropagation()
 
   events:
-    "click .cancel" : "cancelHandler"
     "click .save"   : "saveHandler"
-    "mousedown"     : "startDragHandler"
+
     "click .framer-align-top"     : "alignTopHandler"
     "click .framer-align-right"   : "alignRightHandler"
     "click .framer-align-bottom"  : "alignBottomHandler"

@@ -1,5 +1,23 @@
 <div class="framer-modal property-panel showing">
-  <div class="framer-fields"></div>
+  <div class="framer-fields">
+    {{#each properties}}
+      <label for="property-panel-{{propName}}">{{label}}</label>
+      {{#if typeTextarea}}
+      <textarea {{> _propertyPanelInputData}}>{{value}}</textarea>
+      {{else}}
+      {{#if typeCheckbox}}
+      <input type="checkbox" value="true" {{> _propertyPanelInputData}}{{#if value}}checked="true"{{/if}} />
+      {{else}}
+      {{#if typeNumber}}
+      <input type="number" value="{{value}}" {{> _propertyPanelInputData}} />
+      {{else}}
+      {{#if typeColor}}
+      <input type="color" value="{{value}}" {{> _propertyPanelInputData}} />
+      {{else}}
+      <input type="text" value="{{value}}" {{> _propertyPanelInputData}} />
+      {{/if}}{{/if}}{{/if}}{{/if}}
+    {{/each}}
+  </div>
   <div class="framer-group-controls">
     <a href="#" class="framer-align-left"></a>
     <a href="#" class="framer-align-right"></a>
@@ -20,5 +38,4 @@
     <a href="#" class="framer-componentize"></a>
   </div>
   <button class="save">Save</button>
-  <button class="cancel">Cancel</button>
 </div>

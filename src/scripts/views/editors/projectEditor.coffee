@@ -6,16 +6,19 @@ uiTemplates = require './../../uiTemplates.coffee'
 _ = require 'underscore'
 MinimizeButton = require './minimizeButton.coffee'
 PagesPanel = require './pagesPanel.coffee'
+PropertyPanel = require './propertyPanel.coffee'
 
 class ProjectEditor extends ProjectView
   saved: true
   filename: ""
   pagesPanelButton: null
   pagesPanel: null
+  propertyPanelButton: null
+  propertyPanel: null
 
   initialize: ->
     super()
-    _.bindAll @, 'projectChanged', 'checkNewPage', 'togglePagesPanel', 'pageSwitchHandler'
+    _.bindAll @, 'projectChanged', 'checkNewPage', 'togglePagesPanel', 'pageSwitchHandler', "togglePropertyPanel"
     if @model?
       @setModel @model
     @pagesPanelButton = new MinimizePagesButton()
@@ -25,10 +28,18 @@ class ProjectEditor extends ProjectView
     @pagesPanel.hide()
     @pagesPanel.on "pageSwitch", @pageSwitchHandler
 
+    @propertyPanel = new PropertyPanel {editor: @pageView.editor}
+    @propertyPanel.render()
+    @propertyPanel.hide()
+    @propertyPanelButton = new MinimizePropertiesButton()
+    @propertyPanelButton.on "click", @togglePropertyPanel
+
   render: ->
     super()
     $("#wire_panels").append @pagesPanelButton.el
     $("#wire_panels").append @pagesPanel.el
+    $("#wire_panels").append @propertyPanelButton.el
+    $("#wire_panels").append @propertyPanel.el
 
   checkNewPage: (page) ->
     page.on 'change', @projectChanged
@@ -62,7 +73,13 @@ class ProjectEditor extends ProjectView
   pageSwitchHandler: (slug) ->
     @showPageSlug slug
 
+  togglePropertyPanel: ->
+    @propertyPanel.toggle()
+
 class MinimizePagesButton extends MinimizeButton
   id: "wirekit_pages_button"
+
+class MinimizePropertiesButton extends MinimizeButton
+  id: "wirekit_properties_button"
 
 module.exports = ProjectEditor

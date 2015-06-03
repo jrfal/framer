@@ -62,7 +62,7 @@
     "properties": [
       {"inherit": "label"},
       {"property": "borderColor", "type": "color"},
-      {"property": "borderWidth", "type": "color"},
+      {"property": "borderWidth", "type": "number"},
       {"property": "fillColor", "type": "color"}
     ]
   },

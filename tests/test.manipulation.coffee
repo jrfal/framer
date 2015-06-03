@@ -28,18 +28,18 @@ describe 'Manipulating', ->
     $(".property-panel.showing [data-property=text]").val("so what is up?")
     $(".property-panel.showing [data-property=fontFamily]").val("sans-serif")
     $(".property-panel.showing [data-property=fontSize]").val("19")
-    $(".property-panel.showing [data-property=fontColor]").val("#0f0")
-    $(".property-panel.showing [data-property=borderColor]").val("#f00")
+    $(".property-panel.showing [data-property=fontColor]").val("#00ff00")
+    $(".property-panel.showing [data-property=borderColor]").val("#ff0000")
     $(".property-panel.showing [data-property=borderWidth]").val("4")
-    $(".property-panel.showing [data-property=fillColor]").val("#00f")
+    $(".property-panel.showing [data-property=fillColor]").val("#0000ff")
     $(".property-panel.showing .save").trigger "click"
 
     # edit grid
     el_id = $("#framer_pages .framer-element:last").prev(".framer-element").data("element")
     $("#framer_controls .control-box[data-element=#{el_id}]").trigger "click"
     $(".property-panel.showing [data-property=text]").val("one\ntwo\nthree")
-    $(".property-panel.showing [data-property=evenColor]").val("red")
-    $(".property-panel.showing [data-property=oddColor]").val("yellow")
+    $(".property-panel.showing [data-property=evenColor]").val("#ff0000")
+    $(".property-panel.showing [data-property=oddColor]").val("#ffff00")
     $(".property-panel.showing .save").trigger "click"
 
     # edit check box

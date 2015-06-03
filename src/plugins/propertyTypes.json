@@ -13,7 +13,7 @@
   },
   "color": {
     "validation": "string",
-    "input": "text"
+    "input": "color"
   },
   "boolean": {
     "validation": "boolean",

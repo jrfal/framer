@@ -12,30 +12,11 @@
       <input type="number" value="{{value}}" {{> _propertyPanelInputData}} />
       {{else}}
       {{#if typeColor}}
-      <input type="color" value="{{value}}" {{> _propertyPanelInputData}} />
+      <input type="color" {{#if value}}value="{{value}}" {{/if}}{{> _propertyPanelInputData}} />
       {{else}}
       <input type="text" value="{{value}}" {{> _propertyPanelInputData}} />
       {{/if}}{{/if}}{{/if}}{{/if}}
     {{/each}}
-  </div>
-  <div class="framer-group-controls">
-    <a href="#" class="framer-align-left"></a>
-    <a href="#" class="framer-align-right"></a>
-    <a href="#" class="framer-align-top"></a>
-    <a href="#" class="framer-align-bottom"></a>
-    <a href="#" class="framer-align-center"></a>
-    <a href="#" class="framer-align-middle"></a>
-  </div>
-  <div class="framer-group-controls">
-    <a href="#" class="framer-distribute-left"></a>
-    <a href="#" class="framer-distribute-right"></a>
-    <a href="#" class="framer-distribute-top"></a>
-    <a href="#" class="framer-distribute-bottom"></a>
-    <a href="#" class="framer-distribute-center"></a>
-    <a href="#" class="framer-distribute-middle"></a>
-    <a href="#" class="framer-group"></a>
-    <a href="#" class="framer-ungroup"></a>
-    <a href="#" class="framer-componentize"></a>
   </div>
   <button class="save">Save</button>
 </div>

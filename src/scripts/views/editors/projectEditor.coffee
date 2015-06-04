@@ -7,6 +7,7 @@ _ = require 'underscore'
 MinimizeButton = require './minimizeButton.coffee'
 PagesPanel = require './pagesPanel.coffee'
 PropertyPanel = require './propertyPanel.coffee'
+ArrangementPanel = require './arrangementPanel.coffee'
 
 class ProjectEditor extends ProjectView
   saved: true
@@ -21,7 +22,7 @@ class ProjectEditor extends ProjectView
     _.bindAll @, 'projectChanged', 'checkNewPage', 'togglePagesPanel', 'pageSwitchHandler', "togglePropertyPanel"
     if @model?
       @setModel @model
-    @pagesPanelButton = new MinimizePagesButton()
+    @pagesPanelButton = new MinimizeButton {id:"wirekit_pages_button" }
     @pagesPanelButton.on "click", @togglePagesPanel
     @pagesPanel = new PagesPanel {collection: @model.get("pages")}
     @pagesPanel.render()
@@ -31,8 +32,14 @@ class ProjectEditor extends ProjectView
     @propertyPanel = new PropertyPanel {editor: @pageView.editor}
     @propertyPanel.render()
     @propertyPanel.hide()
-    @propertyPanelButton = new MinimizePropertiesButton()
+    @propertyPanelButton = new MinimizeButton {id:"wirekit_properties_button" }
     @propertyPanelButton.on "click", @togglePropertyPanel
+
+    @arrangementPanel = new ArrangementPanel {editor: @pageView.editor}
+    @arrangementPanel.render()
+    @arrangementPanel.hide()
+    @arrangementPanelButton = new MinimizeButton {id:"wirekit_arrange_button", panel: @arrangementPanel}
+    # @propertyPanelButton.on "click", @togglePropertyPanel
 
   render: ->
     super()
@@ -40,6 +47,8 @@ class ProjectEditor extends ProjectView
     $("#wire_panels").append @pagesPanel.el
     $("#wire_panels").append @propertyPanelButton.el
     $("#wire_panels").append @propertyPanel.el
+    $("#wire_panels").append @arrangementPanel.el
+    $("#wire_panels").append @arrangementPanelButton.el
 
   checkNewPage: (page) ->
     page.on 'change', @projectChanged
@@ -76,10 +85,10 @@ class ProjectEditor extends ProjectView
   togglePropertyPanel: ->
     @propertyPanel.toggle()
 
-class MinimizePagesButton extends MinimizeButton
-  id: "wirekit_pages_button"
-
-class MinimizePropertiesButton extends MinimizeButton
-  id: "wirekit_properties_button"
+# class MinimizePagesButton extends MinimizeButton
+#   id: "wirekit_pages_button"
+#
+# class MinimizePropertiesButton extends MinimizeButton
+#   id: "wirekit_properties_button"
 
 module.exports = ProjectEditor

@@ -25,6 +25,12 @@ describe "Initial Setup", ->
   it "should have a pages icon", ->
     assert.equal $("#wirekit_pages_button").length, 1
 
+  it "should have an arrangement icon", ->
+    assert.equal $("#wirekit_arrange_button").length, 1
+
+  it "should have the arrangement panel", ->
+    assert.equal $("#wg_arrangement_panel").length, 1
+
   it "should not be showing the property panel", ->
     assert.equal $(".property-panel").css("display"), "none"
 
@@ -69,6 +75,16 @@ describe "Hits pages panel button", ->
 
   it "should have one li element in the pages panel", ->
     assert.equal $(".pages-panel li").length, 1
+
+describe "Hits arrangement panel button", ->
+  data = null
+
+  before ->
+    data = setup.appSetup()
+    $("#wirekit_arrange_button").trigger "click"
+
+  it "should be showing the arrangement panel now", ->
+    assert.notEqual $("#wg_arrangement_panel").css("display"), "none"
 
 describe "Hits pages panel button twice", ->
   data = null

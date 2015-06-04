@@ -1,6 +1,7 @@
 Handlebars = require 'handlebars'
 fs = require 'fs'
 
+Handlebars.registerPartial 'arrangementPanel', fs.readFileSync(global.cfg.guiTemplateDir+'arrangementPanel.handleBars').toString()
 Handlebars.registerPartial 'propertyPanel', fs.readFileSync(global.cfg.guiTemplateDir+'propertyPanel.handleBars').toString()
 Handlebars.registerPartial '_propertyPanelInputData', fs.readFileSync(global.cfg.guiTemplateDir+'_propertyPanelInputData.handleBars').toString()
 Handlebars.registerPartial 'pagesPanel', fs.readFileSync(global.cfg.guiTemplateDir+'pagesPanel.handleBars').toString()
@@ -12,6 +13,7 @@ Handlebars.registerPartial 'elementPalette', fs.readFileSync(global.cfg.guiTempl
 Handlebars.registerPartial 'selectingFrame', fs.readFileSync(global.cfg.guiTemplateDir+'selectingFrame.handleBars').toString()
 Handlebars.registerPartial 'gridLines', fs.readFileSync(global.cfg.guiTemplateDir+'gridLines.handleBars').toString()
 
+module.exports.arrangementPanel = Handlebars.compile "{{> arrangementPanel}}"
 module.exports.propertyPanel = Handlebars.compile "{{> propertyPanel}}"
 module.exports.pagesPanel = Handlebars.compile "{{> pagesPanel}}"
 module.exports.app = Handlebars.compile "{{> app}}"

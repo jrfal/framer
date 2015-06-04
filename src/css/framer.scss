@@ -148,6 +148,12 @@ input, textarea {
   right: 40px;
 }
 
+#wg_arrangement_panel {
+  left: auto;
+  top: 5px;
+  right: 40px;
+}
+
 #framer_elementPalette {
   position: absolute;
   bottom: 0;
@@ -250,20 +256,31 @@ a.framer-componentize {
   transform-origin: 0 0;
 }
 
-#wirekit_properties_button, #wirekit_pages_button {
+@mixin minimizeButton {
   width: 24px;
   height: 24px;
   position: absolute;
+}
+
+#wirekit_properties_button {
+  @include minimizeButton;
   right: 0;
   top: 0;
   background: url('../images/icon_properties.svg');
 }
 #wirekit_pages_button {
+  @include minimizeButton;
   background: url('../images/icon_pages.svg');
-  right: auto;
+  top: 0;
   left: 0;
+}
+#wirekit_arrange_button {
+  @include minimizeButton;
+  background: url('../images/icon_arrangement.svg');
+  top: 34px;
+  right: 0;
 }
 
 .pages-panel {
-  
+
 }

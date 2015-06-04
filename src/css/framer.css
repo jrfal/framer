@@ -102,6 +102,11 @@ input, textarea {
   top: 5px;
   right: 40px; }
 
+#wg_arrangement_panel {
+  left: auto;
+  top: 5px;
+  right: 40px; }
+
 #framer_elementPalette {
   position: absolute;
   bottom: 0;
@@ -241,7 +246,7 @@ a.framer-componentize {
 .framer-page {
   transform-origin: 0 0; }
 
-#wirekit_properties_button, #wirekit_pages_button {
+#wirekit_properties_button {
   width: 24px;
   height: 24px;
   position: absolute;
@@ -250,7 +255,18 @@ a.framer-componentize {
   background: url('../images/icon_properties.svg'); }
 
 #wirekit_pages_button {
+  width: 24px;
+  height: 24px;
+  position: absolute;
   background: url('../images/icon_pages.svg');
-  right: auto;
+  top: 0;
   left: 0; }
+
+#wirekit_arrange_button {
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  background: url('../images/icon_arrangement.svg');
+  top: 34px;
+  right: 0; }
 

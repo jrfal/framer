@@ -1,6 +1,7 @@
 global.cfg = require './scripts/config.coffee'
 global.document = require('jsdom').jsdom()
 global.window = document.defaultView
+setup = require './setups.coffee'
 
 assert = require "assert"
 Page = require "../src/scripts/models/page.coffee"
@@ -132,3 +133,25 @@ describe "Create a grid and resize it from a natural width and height", ->
   it "should be scaled to 110x460", ->
     assert.equal element.get("w"), 110
     assert.equal element.get("h"), 460
+
+describe "Create an element and nudge it", ->
+  data = null
+  element = null
+
+  before ->
+    data = setup.appSetup()
+    element = setup.addComponent data.page, "rectangle"
+    element.set {x: 45, y: 30, w: 10, h: 10}
+
+    data.app_view.projectView.pageView.editor.selectElement element
+    data.app_view.projectView.pageView.controlLayer.keyHandler {keyCode: 39}
+    data.app_view.projectView.pageView.controlLayer.keyHandler {keyCode: 39}
+    data.app_view.projectView.pageView.controlLayer.keyHandler {keyCode: 37}
+    data.app_view.projectView.pageView.controlLayer.keyHandler {keyCode: 40}
+    data.app_view.projectView.pageView.controlLayer.keyHandler {keyCode: 40}
+    data.app_view.projectView.pageView.controlLayer.keyHandler {keyCode: 40}
+    data.app_view.projectView.pageView.controlLayer.keyHandler {keyCode: 38}
+
+  it "should have moved the rectangle to 46,32", ->
+    assert.equal element.get("x"), 46
+    assert.equal element.get("y"), 32

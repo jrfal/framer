@@ -42,7 +42,7 @@ class ControlLayer extends PageView
 
   initialize: (options) ->
     _.bindAll @, 'startDragHandler', 'moveDragHandler', 'stopDragHandler',
-      'updateSnapping'
+      'updateSnapping', 'keyHandler'
     if options.editor?
       @editor = options.editor
     else
@@ -55,6 +55,7 @@ class ControlLayer extends PageView
     @elementsGuide = new Guide.Elements {page: @model}
     @snapper.addGuide @elementsGuide
     @transformBox.snapper = @snapper
+    $(document).on "keydown", @keyHandler
     super()
 
   setModel: (model) ->
@@ -164,6 +165,16 @@ class ControlLayer extends PageView
     for view in @elementViews
       view.changeZoom factor
     @transformBox.changeZoom factor
+
+  keyHandler: (e) ->
+    if e.keyCode == 37
+      @editor.nudgeSelected {x: -1}
+    else if e.keyCode == 38
+      @editor.nudgeSelected {y: -1}
+    else if e.keyCode == 39
+      @editor.nudgeSelected {x: 1}
+    else if e.keyCode == 40
+      @editor.nudgeSelected {y: 1}
 
   events:
     "mousedown" : "startDragHandler"

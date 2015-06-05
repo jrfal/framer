@@ -366,6 +366,13 @@ class Editor extends Backbone.Model
       @get('context').removeElement element
     @unselectAll()
 
+  nudgeSelected: (vector) ->
+    for element in @get('selection').models
+      if vector.x? and element.has("x")
+        element.set {x: element.get("x") + vector.x}
+      if vector.y? and element.has("y")
+        element.set {y: element.get("y") + vector.y}
+
   modifyViewAttributes: (element, viewAttributes) ->
     if @isSelected element
       scale = @get 'scale'

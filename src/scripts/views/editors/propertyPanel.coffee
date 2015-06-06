@@ -14,7 +14,8 @@ class PropertyPanel extends Panel
     _.bindAll @, 'render', 'saveHandler', 'remove',
       'alignTopHandler',
       'alignRightHandler', 'alignBottomHandler', 'alignLeftHandler',
-      'alignCenterHandler', 'alignMiddleHandler', 'inputMouseHandler'
+      'alignCenterHandler', 'alignMiddleHandler', 'inputMouseHandler',
+      'propertyChangedHandler'
     @previous = {}
     @editor = options.editor if options.editor?
     if @editor?
@@ -56,8 +57,11 @@ class PropertyPanel extends Panel
 
     return {properties: properties}
 
+  propertyChangedHandler: (e) ->
+    $(e.target).attr "data-modified", "true"
+
   saveHandler: ->
-    fields = $(@el).find(".framer-fields > *")
+    fields = $(@el).find(".framer-fields > input, .framer-fields > textarea")
     updates = {}
     for field in fields
       newValue = null
@@ -69,7 +73,8 @@ class PropertyPanel extends Panel
           newValue = false
       else
         newValue = $(field).val()
-      if newValue != @previous[property]
+      # if newValue != @previous[property]
+      if $(field).data("modified")
         updates[property] = newValue
     for model in @collection.models
       modelUpdates = model.validateProperties updates
@@ -162,5 +167,8 @@ class PropertyPanel extends Panel
 
     "mousedown input": "inputMouseHandler"
     "mousedown textarea": "inputMouseHandler"
+
+    "change input"      : "propertyChangedHandler"
+    "change textarea"   : "propertyChangedHandler"
 
 module.exports = PropertyPanel

@@ -1,6 +1,9 @@
 assert = require 'assert'
 framer = require '../src/scripts/framer.coffee'
 $ = require 'jquery'
+plugins = require '../src/plugins/plugins.coffee'
+components = plugins.components
+Element = require '../src/scripts/models/element.coffee'
 
 describe 'Manipulating', ->
   before ->
@@ -25,28 +28,28 @@ describe 'Manipulating', ->
     # edit text, font, size
     el_id = $("#framer_pages .framer-element:last").data("element")
     $("#framer_controls .control-box[data-element=#{el_id}]").trigger "click"
-    $(".property-panel.showing [data-property=text]").val("so what is up?")
-    $(".property-panel.showing [data-property=fontFamily]").val("sans-serif")
-    $(".property-panel.showing [data-property=fontSize]").val("19")
-    $(".property-panel.showing [data-property=fontColor]").val("#00ff00")
-    $(".property-panel.showing [data-property=borderColor]").val("#ff0000")
-    $(".property-panel.showing [data-property=borderWidth]").val("4")
-    $(".property-panel.showing [data-property=fillColor]").val("#0000ff")
+    $(".property-panel.showing [data-property=text]").val("so what is up?").change()
+    $(".property-panel.showing [data-property=fontFamily]").val("sans-serif").change()
+    $(".property-panel.showing [data-property=fontSize]").val("19").change()
+    $(".property-panel.showing [data-property=fontColor]").val("#00ff00").change()
+    $(".property-panel.showing [data-property=borderColor]").val("#ff0000").change()
+    $(".property-panel.showing [data-property=borderWidth]").val("4").change()
+    $(".property-panel.showing [data-property=fillColor]").val("#0000ff").change()
     $(".property-panel.showing .save").trigger "click"
 
     # edit grid
     el_id = $("#framer_pages .framer-element:last").prev(".framer-element").data("element")
     $("#framer_controls .control-box[data-element=#{el_id}]").trigger "click"
-    $(".property-panel.showing [data-property=text]").val("one\ntwo\nthree")
-    $(".property-panel.showing [data-property=evenColor]").val("#ff0000")
-    $(".property-panel.showing [data-property=oddColor]").val("#ffff00")
+    $(".property-panel.showing [data-property=text]").val("one\ntwo\nthree").change()
+    $(".property-panel.showing [data-property=evenColor]").val("#ff0000").change()
+    $(".property-panel.showing [data-property=oddColor]").val("#ffff00").change()
     $(".property-panel.showing .save").trigger "click"
 
     # edit check box
     el_id = $("#framer_pages .framer-element:last").prev(".framer-element").prev(".framer-element").data("element")
     $("#framer_controls .control-box[data-element=#{el_id}]").trigger "click"
-    $(".property-panel.showing [data-property=text]").val("helllo")
-    $(".property-panel.showing [data-property=selected]").attr("checked", "checked")
+    $(".property-panel.showing [data-property=text]").val("helllo").change()
+    $(".property-panel.showing [data-property=selected]").attr("checked", "checked").change()
     $(".property-panel.showing .save").trigger "click"
 
   describe 'moving', ->
@@ -206,7 +209,7 @@ describe 'Editing Multiple', ->
     e.metaKey = true
     $('.control-box:last').trigger e
 
-    $(".property-panel.showing [data-property=fontFamily]").val("sans-serif")
+    $(".property-panel.showing [data-property=fontFamily]").val("sans-serif").change()
     $(".property-panel.showing .save").trigger "click"
 
   describe 'select a second element with cmd-click', ->
@@ -321,3 +324,18 @@ describe 'Locked Moving and Resizing', ->
       rectangle = $ '#framer_pages .framer-element:last'
       assert.equal rectangle.outerWidth(), 175
       assert.equal rectangle.outerHeight(), 175
+
+describe "Submit no color", ->
+  element = null
+
+  before ->
+    framer.app.newProject()
+    component = _.findWhere components, {component: "rectangle"}
+    element = new Element(component)
+    framer.app.get("project").get("pages").first().addElement element
+    framer.app_view.projectView.pageView.editor.selectElement element
+    framer.app_view.projectView.propertyPanel.show()
+    framer.app_view.projectView.propertyPanel.saveHandler()
+
+  it "should not have a fill color", ->
+    assert(not element.has("fillColor"))

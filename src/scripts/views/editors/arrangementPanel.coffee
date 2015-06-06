@@ -14,7 +14,10 @@ class ArrangementPanel extends Panel
     _.bindAll @, 'render',
       'alignTopHandler',
       'alignRightHandler', 'alignBottomHandler', 'alignLeftHandler',
-      'alignCenterHandler', 'alignMiddleHandler', 'inputMouseHandler'
+      'alignCenterHandler', 'alignMiddleHandler', 'inputMouseHandler',
+      'distributeTopHandler', 'distributeLeftHandler', 'distributeRightHandler',
+      'distributeBottomHandler', 'distributeMiddleHandler', 'distributeCenterHandler',
+      'distributeHorizontalGapsHandler', 'distributeVerticalGapsHandler'
     @previous = {}
     @editor = options.editor if options.editor?
     if @editor?
@@ -69,6 +72,14 @@ class ArrangementPanel extends Panel
     e.preventDefault()
     @editor.distributeSelectedMiddle()
 
+  distributeHorizontalGapsHandler: (e) ->
+    e.preventDefault()
+    @editor.distributeSelectedHorizontalGaps()
+
+  distributeVerticalGapsHandler: (e) ->
+    e.preventDefault()
+    @editor.distributeSelectedVerticalGaps()
+
   groupHandler: (e) ->
     e.preventDefault()
     @editor.groupSelected()
@@ -98,6 +109,8 @@ class ArrangementPanel extends Panel
     "click .framer-distribute-left"    : "distributeLeftHandler"
     "click .framer-distribute-center"  : "distributeCenterHandler"
     "click .framer-distribute-middle"  : "distributeMiddleHandler"
+    "click .framer-distribute-hgaps"   : "distributeHorizontalGapsHandler"
+    "click .framer-distribute-vgaps"   : "distributeVerticalGapsHandler"
 
     "click .framer-group"   : "groupHandler"
     "click .framer-ungroup" : "ungroupHandler"

@@ -219,6 +219,22 @@ a.framer-distribute-middle {
   height: 24px;
   background: url('../images/icon_distribute_middle.svg'); }
 
+a.framer-distribute-hgaps {
+  border: 1px solid #555;
+  padding: 5px;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background: url('../images/icon_distribute_hgap.svg'); }
+
+a.framer-distribute-vgaps {
+  border: 1px solid #555;
+  padding: 5px;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background: url('../images/icon_distribute_vgap.svg'); }
+
 a.framer-group {
   border: 1px solid #555;
   padding: 5px;

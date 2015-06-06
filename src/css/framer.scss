@@ -239,6 +239,14 @@ a.framer-distribute-middle {
   @include align-button();
   background: url('../images/icon_distribute_middle.svg');
 }
+a.framer-distribute-hgaps {
+  @include align-button();
+  background: url('../images/icon_distribute_hgap.svg');
+}
+a.framer-distribute-vgaps {
+  @include align-button();
+  background: url('../images/icon_distribute_vgap.svg');
+}
 a.framer-group {
   @include panel-button();
   background: url('../images/icon_group.svg');

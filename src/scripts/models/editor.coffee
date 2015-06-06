@@ -299,6 +299,45 @@ class Editor extends Backbone.Model
     return @distribute('center')
   distributeSelectedMiddle: ->
     return @distribute('middle')
+  distributeSelectedHorizontalGaps: ->
+    order = @get('selection').sortBy (element) -> element.left()
+    rightEdge = _.max(order, (element) -> element.right()).right()
+    while order[order.length - 1].right() < rightEdge
+      moveMe = order[order.length - 1]
+      order.splice order.length - 1, 1
+      order.splice order.length - 1, 0, moveMe
+    leftEdge = order[0].left()
+
+    totalWidth = 0
+    for element in order
+      totalWidth += element.get "w"
+    gap = ((rightEdge - leftEdge) - totalWidth)/(order.length - 1)
+
+    placement = leftEdge - gap
+    for element in order
+      placement += gap
+      element.left(placement)
+      placement += element.get("w")
+
+  distributeSelectedVerticalGaps: ->
+    order = @get('selection').sortBy (element) -> element.top()
+    bottomEdge = _.max(order, (element) -> element.bottom()).bottom()
+    while order[order.length - 1].bottom() < bottomEdge
+      moveMe = order[order.length - 1]
+      order.splice order.length - 1, 1
+      order.splice order.length - 1, 0, moveMe
+    topEdge = order[0].top()
+
+    totalHeight = 0
+    for element in order
+      totalHeight += element.get "h"
+    gap = ((bottomEdge - topEdge) - totalHeight)/(order.length - 1)
+
+    placement = topEdge - gap
+    for element in order
+      placement += gap
+      element.top(placement)
+      placement += element.get("h")
 
   getSelectedGeos: ->
     geos = []
